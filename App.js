@@ -3,6 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import { Text } from 'react-native'; // arrumar aqui
+import "./global.css"
 // Telas
 
 import CadastroScreen from './pastaBolada/screens/CadastroScreen';
@@ -12,6 +14,7 @@ import PerfilScreen from './pastaBolada/screens/PerfilScreen';
 import ConfigScreen from './pastaBolada/screens/ConfigScreen';
 import ChatScreen from './pastaBolada/screens/ChatScreen';
 import NotificaScreen from './pastaBolada/screens/NotificaScreen';
+import { View } from 'react-native-web';
 
 // Stack
 
@@ -66,15 +69,14 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-    <Tab.Navigator>
-      <Tab.Screen name="Home" component={StartHome} />
-      <Tab.Screen name="Oportuindades" component={SecOportunidades} />
-      <Tab.Screen name="+" component={SecOportunidades} />
-      <Tab.Screen name="Perfil" component={PerfilScreen} />
-      <Tab.Screen name="Config" component={ConfigScreen} />
-    </Tab.Navigator>
+<NavigationContainer>
+  <Tab.Navigator>
+    <Tab.Screen name="Home" component={StartHome} />
+    <Tab.Screen name="Oportuindades" component={SecOportunidades} />
+    <Tab.Screen name="+" component={SecOportunidades} />
+    <Tab.Screen name="Perfil" component={PerfilScreen} />
+    <Tab.Screen name="Config" component={ConfigScreen} />
+  </Tab.Navigator>
   </NavigationContainer>
-
   );
 }
