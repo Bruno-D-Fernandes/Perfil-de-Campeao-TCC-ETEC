@@ -14,7 +14,7 @@ export default function Postagem({
       {/* Cabeçalho */}
       <View className="flex-row items-center">
         <Image
-          source={require("../../assets/post/perfilFoto.png")}
+          source={require("../../assets/post/perfilFoto.png")} // Aqui
           className="w-10 h-10 rounded-full"
         />
         <Text className="font-bold text-lg ml-2">{nameUser} {idUsuario}</Text>
