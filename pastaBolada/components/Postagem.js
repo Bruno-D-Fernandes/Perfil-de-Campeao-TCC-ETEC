@@ -6,8 +6,8 @@ export default function Postagem({
   tags = ['Legal', 'opa'],
   descricao = 'postgane',
   imagem = true,
-  likes = 10,
-  comentarios = 19
+  likes = 4,
+  comentarios = 6
 }) {
   return (
     <View className="w-full bg-white p-4 rounded-3xl border-[2px] border-[#61D483] gap-4">
