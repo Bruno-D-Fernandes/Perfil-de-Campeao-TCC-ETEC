@@ -79,6 +79,7 @@ const nav = useNavigation();
     screenOptions={{
     headerStyle:{
       backgroundColor:'white',
+      border: 0
     }}}
     >
       <Stack.Screen 
