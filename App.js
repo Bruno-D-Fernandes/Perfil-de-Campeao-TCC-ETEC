@@ -76,7 +76,10 @@ function CriarPost(){
 const nav = useNavigation();
   return(
     <Stack.Navigator initialRouteName="Postagem"
-    
+    screenOptions={{
+    headerStyle:{
+      backgroundColor:'white',
+    }}}
     >
       <Stack.Screen 
         name="Postagem" 

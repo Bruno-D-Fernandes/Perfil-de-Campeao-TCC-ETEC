@@ -95,13 +95,13 @@ return (
     {/* Modal abaixo */}
 
 <Modal transparent={true} visible={cellModal} animationType="slide">
-    <View className="flex-1 justify-end items-center"> {/*Arrumar isso depois, dessa forma sem volta e iteração*/}
+    <Pressable className="flex-1 justify-end items-center" onPress={() => {useCellModal(false)}}> {/*Arrumar isso depois, dessa forma sem volta e iteração*/}
    <View className="w-[90%] h-[50%] bg-white border-[2px] border-[#61D483] rounded-tl-[36px] rounded-tr-[36px] rounded-bl-[0px] rounded-br-[0px]">
 
 
 
     </View>
-    </View>
+    </Pressable>
 </Modal>
 
 </View>
