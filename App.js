@@ -28,7 +28,9 @@ function StartHome(){
   <Stack.Navigator initialRouteName="Feed">
 
     <Stack.Screen 
+      headerShown="false"
       name="Feed" 
+      options={{ headerShown: false }} 
       component={HomeScreen} 
     />
     <Stack.Screen 
@@ -52,7 +54,7 @@ function SecOportunidades(){
       <Stack.Screen 
         name="Oportunidades" 
         component={OportunidadesScreen} 
-        options={{ title: 'Oportunidades' }} 
+        options={{ headerShown: false  }} 
       />
       <Stack.Screen 
         name="Notificações" 
