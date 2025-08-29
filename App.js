@@ -18,6 +18,7 @@ import ConfigScreen from './pastaBolada/screens/ConfigScreen';
 import ChatScreen from './pastaBolada/screens/ChatScreen';
 import NotificaScreen from './pastaBolada/screens/NotificaScreen';
 import PostagemScreen from './pastaBolada/screens/PostagemScreen';
+import { Pressable } from 'react-native';
 
 // Stack
 const Stack = createNativeStackNavigator();
@@ -86,14 +87,21 @@ const nav = useNavigation();
         name="Postagem" 
         component={PostagemScreen} 
         options={({ navigation }) => ({
-          title: 'Postagem',
-          headerRight: () => (
+          // title: 'Postagem',
+          headerLeft: () => (
             <Button
               onPress={() => {nav.navigate('Home')}}
               title="Voltar" // aqui vai a imagem
               color="gray"
             />
           ),
+          headerTitle: () => (
+            <Text className="">Novo Post</Text>
+           )//,
+          // headerRight: () => (
+          //   <Pressable
+          //   >
+          // )
         })} 
       />
       <Stack.Screen 

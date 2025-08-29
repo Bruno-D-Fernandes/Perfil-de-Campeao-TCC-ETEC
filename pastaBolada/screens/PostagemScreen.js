@@ -14,22 +14,23 @@ export default function HomeScreen() {
   function Usuario() {
     // {imagem, nome} colocar parametro depois
     return (
-      <View className="w-full h-13 flex-row justify-start gap-[10px] items-center">
+      <View className="w-full h-[63px] flex-row justify-start gap-[14px] items-center my-4 ml-5">
         {" "}
         {/*Parte do Perfil*/}
         <Image
-          source={require("../../assets/post/perfilFoto.png")}
-          className="w-10 h-10"
+          source={require('../../assets/post/perfilFoto.png')}
+          style={{ width: 63, height: 63}}
+          resizeMode="cover"
         />
-        <Text className="text-base">VInicius</Text>
+        <Text className="text-[18px] font-semibold text-[#959595]">Vinicius</Text>
       </View>
     );
   }
 
   function IconsBottom() {
     return (
-      <View className="w-full h-20 flex-row justify-between items-center">
-        <View className="flex-row gap-[5px]">
+      <View className="w-90 h-10 flex-row justify-between mx-[5px]">
+        <View className="flex-row gap-[16px]">
           <Pressable
             onPress={() => {
               setCellModal(true);
@@ -62,7 +63,7 @@ export default function HomeScreen() {
           </Pressable>
         </View>
 
-        <Pressable>
+        <Pressable className="justify-center items-center">
           {" "}
           {/*Arrumar o onClick()*/}
           <Image
@@ -87,47 +88,50 @@ export default function HomeScreen() {
     /* <Button title="Ir para Detalhes" onPress={() => navigation.navigate('Detalhes')} /> */
   }
 
-  return (
-    <View className="w-full h-full bg-white gap-10 direction-col justify-between    ">
-      <View className="h-[50%]">
-        <Usuario />
+return (
+  <View className="w-full h-full bg-white gap-10 direction-col justify-between    ">
+    <View className="h-[50%] w-full items-center">
+      <Usuario />
 
-        <TextInput
-          className="w-85 h-[70%] bg-white p-4 rounded-2xl border-[2px] border-[#61D483] "
-          multiline={true}
-        />
-      </View>
+      <TextInput
+      className="w-[95%] h-[70%] bg-white p-4 rounded-[20px] border-[2px] border-[#61D483] font-medium text-[#61D483] text-[20px]"
+      multiline={true}
+      placeholder="Sobre o que você quer falar?"
+      placeholderTextColor="#61D483"
+      />
 
-      {/* Icones inferior, faz aparecer modal */}
-      <IconsBottom />
-
-      {/* Modal abaixo */}
-
-      <Modal transparent={true} visible={cellModal} animationType="slide">
-        <Pressable
-          className="flex-1 justify-end items-center"
-          onPress={() => setCellModal(false)} 
-        >
-          <Pressable
-            className="w-[80%] h-[50%] bg-white border-[2px] border-[#61D483] rounded-tl-[36px] rounded-tr-[36px] p-4 items-center border-b-0"
-          >
-            <View className="h-[2px] w-[80px] bg-[#61D483] m-[20px] mb-[40px]">
-              {" "}
-            </View>
-            <View className="flex-row flex-wrap justify-between">
-              <View className="w-1/2 p-2">
-                <Card nome={"Mídia"} imagem={0} />
-              </View>
-              <View className="w-1/2 p-2">
-                <Card nome={"Localização"} imagem={1} />
-              </View>
-              <View className="w-1/2 p-2">
-                <Card nome={"Hashtag"} imagem={2} />
-              </View>
-            </View>
-          </Pressable>
-        </Pressable>
-      </Modal>
     </View>
-  );
+
+    {/* Icones inferior, faz aparecer modal */}
+    <IconsBottom />
+
+    {/* Modal abaixo */}
+
+  <Modal transparent={true} visible={cellModal} animationType="slide">
+      <Pressable
+        className="flex-1 justify-end items-center"
+        onPress={() => setCellModal(false)} 
+      >
+        <Pressable
+          className="w-[95%] h-[45%] bg-white border-[2px] border-[#61D483] rounded-tl-[36px] rounded-tr-[36px] p-4 items-center border-b-0"
+        >
+          <View className="h-[2px] w-[80px] bg-[#61D483] m-[20px] mb-[40px]">
+            {" "}
+          </View>
+          <View className="flex-row flex-wrap justify-between">
+            <View className="w-1/2 p-2">
+              <Card nome={"Mídia"} imagem={0} />
+            </View>
+            <View className="w-1/2 p-2">
+              <Card nome={"Localização"} imagem={1} />
+            </View>
+            <View className="w-1/2 p-2">
+              <Card nome={"Hashtag"} imagem={2} />
+            </View>
+          </View>
+        </Pressable>
+      </Pressable>
+    </Modal>
+  </View>
+);
 }
