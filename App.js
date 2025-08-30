@@ -3,6 +3,7 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Button } from 'react-native-web';
+
 import "./global.css"
 
 //icons nav
@@ -18,7 +19,7 @@ import ConfigScreen from './pastaBolada/screens/ConfigScreen';
 import ChatScreen from './pastaBolada/screens/ChatScreen';
 import NotificaScreen from './pastaBolada/screens/NotificaScreen';
 import PostagemScreen from './pastaBolada/screens/PostagemScreen';
-import { Pressable } from 'react-native';
+import { Pressable, Text } from 'react-native';
 
 // Stack
 const Stack = createNativeStackNavigator();
@@ -87,7 +88,6 @@ const nav = useNavigation();
         name="Postagem" 
         component={PostagemScreen} 
         options={({ navigation }) => ({
-          // title: 'Postagem',
           headerLeft: () => (
             <Button
               onPress={() => {nav.navigate('Home')}}
@@ -97,11 +97,14 @@ const nav = useNavigation();
           ),
           headerTitle: () => (
             <Text className="">Novo Post</Text>
-           )//,
-          // headerRight: () => (
-          //   <Pressable
-          //   >
-          // )
+           ),
+          headerRight: () => (
+            <Pressable
+              onPress={() => { /* ação ao pressionar o botão */ }}
+            >
+              <Text className="">Publicar</Text>
+            </Pressable>
+          )
         })} 
       />
       <Stack.Screen 
