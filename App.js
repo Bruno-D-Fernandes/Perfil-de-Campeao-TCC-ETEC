@@ -1,8 +1,9 @@
-import * as React from 'react'; // arrumar aqui
-import { NavigationContainer } from '@react-navigation/native';
+import * as React from 'react'; // arrumar aqui | TIRAR ISSO DEPOIS
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text } from 'react-native'; // arrumar aqui
+import { Button } from 'react-native-web';
+
 import "./global.css"
 
 //icons nav
@@ -17,16 +18,19 @@ import PerfilScreen from './pastaBolada/screens/PerfilScreen';
 import ConfigScreen from './pastaBolada/screens/ConfigScreen';
 import ChatScreen from './pastaBolada/screens/ChatScreen';
 import NotificaScreen from './pastaBolada/screens/NotificaScreen';
-import { View } from 'react-native-web';
+import PostagemScreen from './pastaBolada/screens/PostagemScreen';
+import { Pressable, Text } from 'react-native';
 
 // Stack
-
 const Stack = createNativeStackNavigator();
 
 function StartHome(){
   return(
-  <Stack.Navigator initialRouteName="Feed">
-
+  <Stack.Navigator initialRouteName="Feed"
+  screenOptions={{
+    headerShown: false,
+  }}
+  >
     <Stack.Screen 
       name="Feed" 
       component={HomeScreen} 
@@ -48,11 +52,60 @@ function StartHome(){
 
 function SecOportunidades(){
   return(
-    <Stack.Navigator initialRouteName="Oportunidades">
-      <Stack.Screen 
+    <Stack.Navigator initialRouteName="Oportunidades"
+    screenOptions={{
+      headerShown: false,
+    }}
+    >
+      <Stack.Screen
         name="Oportunidades" 
         component={OportunidadesScreen} 
         options={{ title: 'Oportunidades' }} 
+      />
+      <Stack.Screen 
+        name="Notificações" 
+        component={NotificaScreen} 
+      />
+      <Stack.Screen 
+        name="Chat" 
+        component={ChatScreen} 
+      />
+    </Stack.Navigator>
+  )
+}
+
+function CriarPost(){
+const nav = useNavigation();
+  return(
+    <Stack.Navigator initialRouteName="Postagem"
+    screenOptions={{
+    headerStyle:{
+      backgroundColor:'white',
+      border: 0
+    }}}
+    >
+      <Stack.Screen 
+        name="Postagem" 
+        component={PostagemScreen} 
+        options={({ navigation }) => ({
+          headerLeft: () => (
+            <Button
+              onPress={() => {nav.navigate('Home')}}
+              title="Voltar" // aqui vai a imagem
+              color="gray"
+            />
+          ),
+          headerTitle: () => (
+            <Text className="">Novo Post</Text>
+           ),
+          headerRight: () => (
+            <Pressable
+              onPress={() => { /* ação ao pressionar o botão */ }}
+            >
+              <Text className="">Publicar</Text>
+            </Pressable>
+          )
+        })} 
       />
       <Stack.Screen 
         name="Notificações" 
@@ -106,18 +159,11 @@ export default function App() {
           tabBarIcon: ({ color, size }) => {
             let iconName;
 
-            if (route.name === 'Home') {
-              iconName = 'home';
-            } else if (route.name === 'Oportunidades') {
-              iconName = 'briefcase';
-            } else if (route.name === '+') {
-              iconName = 'plus-circle';
-              size = 36; 
-            } else if (route.name === 'Perfil') {
-              iconName = 'user';
-            } else if (route.name === 'Config') {
-              iconName = 'settings';
-            }
+            if (route.name === 'Home') {iconName = 'home';}
+            if (route.name === 'Oportunidades') {iconName = 'briefcase';}
+            if (route.name === '+') {iconName = 'plus-circle'; size = 36;} 
+            if (route.name === 'Perfil') {iconName = 'user';}
+            if (route.name === 'Config') {iconName = 'settings';}
 
             return <Feather name={iconName} size={size} color={color} />;
           },
@@ -125,7 +171,10 @@ export default function App() {
       >
         <Tab.Screen name="Home" component={StartHome} />
         <Tab.Screen name="Oportunidades" component={SecOportunidades} />
-        <Tab.Screen name="+" component={SecOportunidades} />
+        <Tab.Screen name="+" component={CriarPost}     
+        options={{
+        tabBarStyle: { display: 'none' },
+        }}/>
         <Tab.Screen name="Perfil" component={PerfilScreen} />
         <Tab.Screen name="Config" component={ConfigScreen} />
       </Tab.Navigator>
