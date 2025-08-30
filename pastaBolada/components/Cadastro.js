@@ -1,4 +1,5 @@
-import { Text, View, Image, TextInput, ScrollView, Pressable } from "react-native";
+import { Text, View, Image, TextInput, ScrollView, Pressable,  Modal } from "react-native";
+import { useState } from "react";
 
 export default function Cadastro({
   idUser = "1",
@@ -13,8 +14,50 @@ export default function Cadastro({
   cidadeUser = "",
   imagem = true,
 }) {
+  const [modalVisible, setModalVisible] = useState(true);
+  const [tipoUser, setTipoUser] = useState("");
+
   return (
     <View className="flex-1 bg-white">
+       <Modal visible={modalVisible} animationType="fade" transparent>
+        <View className="flex-1 justify-end items-center bg-black/50">
+          <View className="bg-white w-full p-6 rounded-3xl items-center">
+            <Text className="text-[24px] font-bold mb-4 text-[#4ADC76]">
+              Escolha a opção que
+            </Text>
+            <Text className="break-normal text-[24px] font-bold mb-4 text-[#4ADC76]">
+              melhor representa
+            </Text>
+            <Text className="break-normal text-[24px] font-bold mb-4 text-[#4ADC76]">
+              você.
+            </Text>
+
+            <Pressable
+              onPress={() => {
+                setTipoUser("Atleta");
+                setModalVisible(false);
+              }}
+              className="bg-[#4ADC76] w-full py-3 rounded-xl mb-3"
+            >
+              <Text className="text-white text-center font-bold text-lg">
+                Atleta
+              </Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => {
+                setTipoUser("Treinador");
+                setModalVisible(false);
+              }}
+              className="bg-[#4ADC76] w-full py-3 rounded-xl"
+            >
+              <Text className="text-white text-center font-bold text-lg">
+                Treinador
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
 
       <View className="w-full h-64 relative">
         {imagem && (

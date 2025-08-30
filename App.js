@@ -25,7 +25,7 @@ const Stack = createNativeStackNavigator();
 
 function StartHome(){
   return(
-  <Stack.Navigator initialRouteName="Feed">
+  <Stack.Navigator initialRouteName="Cadastro">
 
     <Stack.Screen 
       name="Feed" 

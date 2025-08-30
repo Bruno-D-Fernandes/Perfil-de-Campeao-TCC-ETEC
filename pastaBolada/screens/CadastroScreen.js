@@ -6,6 +6,7 @@ const fraseImagem1 = "Venha conhecer um";
   const fraseImagem2 = "mundo";
   const fraseImagem3 = "de";
   const fraseImagem4 = "oportunidades";
+   const tipoUser = ["Aluno", "Treinador"];
   return (
     <View>
         {/* <Button title="Ir para Detalhes" onPress={() => navigation.navigate('Detalhes')} /> */}
@@ -15,6 +16,7 @@ const fraseImagem1 = "Venha conhecer um";
                     fraseImagem2={fraseImagem2}
                     fraseImagem3={fraseImagem3}
                     fraseImagem4={fraseImagem4}
+                    tipoUser={tipoUser}
                   />
                   
                 </View>
