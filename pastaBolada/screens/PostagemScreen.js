@@ -94,10 +94,10 @@ return (
       <Usuario />
 
       <TextInput
-      className="w-[95%] h-[70%] bg-white p-4 rounded-[20px] border-[2px] border-[#61D483] font-medium text-[#61D483] text-[20px]"
+      className="w-[95%] h-[70%] bg-white p-4 rounded-[20px] border-[2px] border-[#61D483]/60 font-medium text-[#61D483] text-[20px]"
       multiline={true}
       placeholder="Sobre o que você quer falar?"
-      placeholderTextColor="#61D483"
+      placeholderTextColor="#61D483/60"
       />
 
     </View>
@@ -118,6 +118,7 @@ return (
           <View className="h-[2px] w-[80px] bg-[#61D483] m-[20px] mb-[40px]">
             {" "}
           </View>
+          <Text className="font-semibold text-[24px] text-[#61D483] mb-[10px] mr-[10px]">Adicione Seu post:</Text>
           <View className="flex-row flex-wrap justify-between">
             <View className="w-1/2 p-2">
               <Card nome={"Mídia"} imagem={0} />
