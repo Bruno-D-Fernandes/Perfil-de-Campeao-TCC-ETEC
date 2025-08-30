@@ -1,4 +1,4 @@
-import { Text, View, Image, TextInput, ScrollView, Pressable,  Modal } from "react-native";
+import { Text, View, Image, TextInput, ScrollView, Pressable,  Modal, CheckBox} from "react-native";
 import { useState } from "react";
 
 export default function Cadastro({
@@ -19,8 +19,8 @@ export default function Cadastro({
 
   return (
     <View className="flex-1 bg-white">
-       <Modal visible={modalVisible} animationType="fade" transparent>
-        <View className="flex-1 justify-end items-center bg-black/50">
+       <Modal visible={modalVisible} animationType="slide" transparent>
+        <View className="flex-1 justify-end bg-black/50">
           <View className="bg-white w-full p-6 rounded-3xl items-center">
             <Text className="text-[24px] font-bold mb-4 text-[#4ADC76]">
               Escolha a opção que
@@ -31,13 +31,13 @@ export default function Cadastro({
             <Text className="break-normal text-[24px] font-bold mb-4 text-[#4ADC76]">
               você.
             </Text>
-
+        <View className="flex-row justify-around w-[70%] bg-[#95959563] border-2 border-[#95959533]">
             <Pressable
               onPress={() => {
                 setTipoUser("Atleta");
                 setModalVisible(false);
               }}
-              className="bg-[#4ADC76] w-full py-3 rounded-xl mb-3"
+              className="bg-[#4ADC76] w-[45%] py-3 rounded-full mb-3"
             >
               <Text className="text-white text-center font-bold text-lg">
                 Atleta
@@ -46,15 +46,16 @@ export default function Cadastro({
 
             <Pressable
               onPress={() => {
-                setTipoUser("Treinador");
+                setTipoUser("Clube");
                 setModalVisible(false);
               }}
-              className="bg-[#4ADC76] w-full py-3 rounded-xl"
+              className="bg-[#4ADC76] w-[45%] py-3 rounded-full mb-3"
             >
               <Text className="text-white text-center font-bold text-lg">
-                Treinador
+                Clube
               </Text>
             </Pressable>
+            </View>
           </View>
         </View>
       </Modal>
