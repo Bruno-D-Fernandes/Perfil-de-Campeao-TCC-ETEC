@@ -16,6 +16,7 @@ const fraseImagem1 = "Venha conhecer um";
                     fraseImagem3={fraseImagem3}
                     fraseImagem4={fraseImagem4}
                   />
+                  
                 </View>
     </View>
   )}
