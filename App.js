@@ -11,7 +11,7 @@ import Feather from '@expo/vector-icons/Feather';
 
 // Telas
 
-import CadastroScreen from './pastaBolada/screens/CadastroScreen';
+// import CadastroScreen from './pastaBolada/screens/CadastroScreen';
 import HomeScreen from './pastaBolada/screens/HomeScreen';
 import OportunidadesScreen from './pastaBolada/screens/OportunidadesScreen';
 import PerfilScreen from './pastaBolada/screens/PerfilScreen';
@@ -19,6 +19,7 @@ import ConfigScreen from './pastaBolada/screens/ConfigScreen';
 import ChatScreen from './pastaBolada/screens/ChatScreen';
 import NotificaScreen from './pastaBolada/screens/NotificaScreen';
 import PostagemScreen from './pastaBolada/screens/PostagemScreen';
+import SplashScreen from './pastaBolada/screens/SplashScreen';
 import { Pressable, Text } from 'react-native';
 
 // Stack
@@ -26,21 +27,23 @@ const Stack = createNativeStackNavigator();
 
 function StartHome(){
   return(
-  <Stack.Navigator initialRouteName="Feed"
+  <Stack.Navigator initialRouteName="Splash"
   screenOptions={{
     headerShown: false,
   }}
   >
+
+    
     <Stack.Screen 
       headerShown="false"
       name="Feed" 
       options={{ headerShown: false }} 
       component={HomeScreen} 
     />
-    <Stack.Screen 
+    {/* <Stack.Screen 
       name="Cadastro" 
       component={CadastroScreen} 
-    />
+    /> */}
     <Stack.Screen   
       name="Notificações" 
       component={NotificaScreen} 
@@ -132,54 +135,68 @@ const Tab = createBottomTabNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          headerShown: false,
-           tabBarShowLabel: false,
-          tabBarStyle: {
-            height: '8%',
-            width: '95%',
-            marginLeft:'2.5%',
-            marginRight:'2.5%',
-            position:'absolute',
-            bottom:'2%',
-            borderRadius:60,
-            padding:'4%',
-            alignItems:'',
-            justifyContent:'center',
-
-            backgroundColor: '#ffff',
-            shadowColor: '#000',
-            shadowOffset: { width: 1, height: 0.1 },
-            shadowOpacity: 0.1,
-            shadowRadius: 15,
-
-            
-          },
-          tabBarActiveTintColor: '#4CAF50',
-          tabBarInactiveTintColor: '#888',
-          tabBarIcon: ({ color, size }) => {
-            let iconName;
-
-            if (route.name === 'Home') {iconName = 'home';}
-            if (route.name === 'Oportunidades') {iconName = 'briefcase';}
-            if (route.name === '+') {iconName = 'plus-circle'; size = 36;} 
-            if (route.name === 'Perfil') {iconName = 'user';}
-            if (route.name === 'Config') {iconName = 'settings';}
-
-            return <Feather name={iconName} size={size} color={color} />;
-          },
-        })}
-      >
-        <Tab.Screen name="Home" component={StartHome} />
-        <Tab.Screen name="Oportunidades" component={SecOportunidades} />
-        <Tab.Screen name="+" component={CriarPost}     
-        options={{
-        tabBarStyle: { display: 'none' },
-        }}/>
-        <Tab.Screen name="Perfil" component={PerfilScreen} />
-        <Tab.Screen name="Config" component={ConfigScreen} />
-      </Tab.Navigator>
+      <Stack.Navigator initialRouteName="Splash">
+          <Stack.Screen 
+      name="Splash" 
+      options={{ 
+        headerShown: false,
+        tabBarVisible: false,
+        tabBarStyle:{
+          display: "none"
+        }
+      }} 
+      component={SplashScreen} 
+    />
+    </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
+      // <Tab.Navigator
+      //   screenOptions={({ route }) => ({
+      //     headerShown: false,
+      //      tabBarShowLabel: false,
+      //     tabBarStyle: {
+      //       height: '8%',
+      //       width: '95%',
+      //       marginLeft:'2.5%',
+      //       marginRight:'2.5%',
+      //       position:'absolute',
+      //       bottom:'2%',
+      //       borderRadius:60,
+      //       padding:'4%',
+      //       alignItems:'',
+      //       justifyContent:'center',
+
+      //       backgroundColor: '#ffff',
+      //       shadowColor: '#000',
+      //       shadowOffset: { width: 1, height: 0.1 },
+      //       shadowOpacity: 0.1,
+      //       shadowRadius: 15,
+
+            
+      //     },
+      //     tabBarActiveTintColor: '#4CAF50',
+      //     tabBarInactiveTintColor: '#888',
+      //     tabBarIcon: ({ color, size }) => {
+      //       let iconName;
+
+      //       if (route.name === 'Home') {iconName = 'home';}
+      //       if (route.name === 'Oportunidades') {iconName = 'briefcase';}
+      //       if (route.name === '+') {iconName = 'plus-circle'; size = 36;} 
+      //       if (route.name === 'Perfil') {iconName = 'user';}
+      //       if (route.name === 'Config') {iconName = 'settings';}
+
+      //       return <Feather name={iconName} size={size} color={color} />;
+      //     },
+      //   })}
+      // >
+      //   <Tab.Screen name="Home" component={StartHome} />
+      //   <Tab.Screen name="Oportunidades" component={SecOportunidades} />
+      //   <Tab.Screen name="+" component={CriarPost}     
+      //   options={{
+      //   tabBarStyle: { display: 'none' },
+      //   }}/>
+      //   <Tab.Screen name="Perfil" component={PerfilScreen} />
+      //   <Tab.Screen name="Config" component={ConfigScreen} />
+      // </Tab.Navigator>
