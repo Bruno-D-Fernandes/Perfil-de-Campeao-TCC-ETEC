@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { View, Text, Image, Pressable } from "react-native";
-import usuarioApi from "../../api/usuarioApi";
-import { useNavigation } from "@react-navigation/native/lib/typescript/src"; //typeScript???
+import usuarioApi from "../../services/usuarioApi";
+import { useNavigation } from "@react-navigation/native";
 
 export default function SplashScreen() {
 
@@ -12,8 +12,8 @@ export default function SplashScreen() {
         try {
             const token = localStorage.getItem('token');
             const response = usuarioApi.splashUser(token);
-            if ({user}){
-              navigation.navigate('') // tela de login ou cadastro
+            if (response.user) {
+              navigation.navigate('MainApp');
             }
         } catch (error) {
             console.error(error);
@@ -33,7 +33,7 @@ export default function SplashScreen() {
           Pratique o esporte como você nunca viu.
         </Text>
 
-        <Pressable className="mt-4 w-[80%] rounded-[40px] h-[50px] bg-white rounded-full flex-row items-center justify-between   ">
+        <Pressable className="mt-4 w-[80%] rounded-[40px] h-[50px] bg-white rounded-full flex-row items-center justify-between" onPress={() => navigation.navigate('AuthStack', { screen: 'Login' })}>
           <Text className="ml-5 text-[20px] text-[#2BEF66]">LET'S GO</Text>
 
           <View className="h-10 w-10 rounded-full bg-[#2BEF66] justify-center items-center mr-1">

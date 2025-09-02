@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import {  View, Text,  TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image} from 'react-native';
 import RNPickerSelect from 'react-native-picker-select'; 
 import tw from 'twrnc';
-import api from '../../api/usuario';
+import api from '../../services/usuario';
 import { useNavigation } from '@react-navigation/native';
 
-const CadastroScreen = () => {
+export default CadastroScreen = () => {
 
   const navigation = useNavigation();
 
@@ -378,5 +378,3 @@ const CadastroScreen = () => {
     </KeyboardAvoidingView>
   );
 };
-
-export default CadastroScreen;
