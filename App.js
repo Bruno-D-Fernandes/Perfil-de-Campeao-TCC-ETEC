@@ -127,6 +127,14 @@ export default function App() {
           component={AuthStack} 
           options={{ headerShown: false }} 
         />
+        <Stack.Screen 
+          name="MainTabs" 
+          component={MainTabs} 
+        />
+
+
+
+
       </Stack.Navigator>
     </NavigationContainer>
   );

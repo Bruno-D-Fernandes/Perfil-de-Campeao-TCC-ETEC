@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {  View, Text,  TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image} from 'react-native';
 import RNPickerSelect from 'react-native-picker-select'; 
 import tw from 'twrnc';
-import api from '../../services/usuario';
+import usuario from '../../services/usuario';
 import { useNavigation } from '@react-navigation/native';
 
 export default CadastroScreen = () => {
@@ -80,20 +80,8 @@ export default CadastroScreen = () => {
     }
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if(token) {
-      api.login(token)
-      .then(response => {
-        const { user } = response.data;
-        localStorage.setItem('user', JSON.stringify(user));
-        navigation.navigate('MainApp');
-      });
-    }
-  }, []);
-
   const handleSubmit = () => { // Axios aqui, REMOVER DEPOIS DA PRIMEIRA ENTREGA
-    api.createUser(formData)
+    usuario.createUser(formData)
       .then(response => {
         const { accessToken } = response.data;
         localStorage.setItem('token', accessToken);

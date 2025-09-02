@@ -1,19 +1,64 @@
 import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TextInput, Pressable, Alert } from 'react-native';
+// import AsyncStorage from '@react-native-async-storage/async-storage'; // Tenho que por assync storage
+import usuario from './../../services/usuario';
 
 export default function HomeScreen() {
-  // const navigation = useNavigation(); 
+  const navigation = useNavigation();
 
-  const[Email, setEmail] = useState();
-  const[Senha, setSenha] = useState();
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
 
-  
+  async function handleLogin() {
+    try {
+      const response = await usuario.loginUser({ email, senha });
 
+      if (response.data.token) {
+        await AsyncStorage.setItem('token', response.data.token);
+        navigation.navigate('MainApp');
+      } else {
+        Alert.alert('Login falhou', 'Verifique suas credenciais.'); // arrumar isso
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Erro', 'Ocorreu um erro durante o login. Tente novamente.'); // arrumar isso
+    }
+  }
 
   return (
-    <View>
-        <Text>Login</Text>
-        {/* <Button title="Ir para Detalhes" onPress={() => navigation.navigate('Detalhes')} /> */}
+    <View className="flex-1 bg-white justify-center px-6">
+      <Text className="text-3xl font-bold mb-8 text-center">Login</Text>
+
+      <TextInput
+        value={email}
+        onChangeText={setEmail}
+        placeholder="Email"
+        keyboardType="email-address"
+        autoCapitalize="none"
+        className="border border-gray-300 rounded-md px-4 py-3 mb-4 text-base"
+      />
+
+      <TextInput
+        value={senha}
+        onChangeText={setSenha}
+        placeholder="Senha"
+        secureTextEntry
+        className="border border-gray-300 rounded-md px-4 py-3 mb-6 text-base"
+      />
+
+      <Pressable
+        onPress={handleLogin}
+        className="bg-blue-600 rounded-md py-3"
+        android_ripple={{ color: 'rgba(255,255,255,0.3)' }}
+      >
+        <Text className="text-white text-center font-semibold text-lg">Entrar</Text>
+      </Pressable>
+
+      
+      <Pressable onPress={() => navigation.navigate('AuthStack', { screen: 'Cadastro' })} className=" mt-4 items-center">
+          <Text className="text-black text-[18px]">Criar Conta</Text>
+        </Pressable>
     </View>
-  )}
+  );
+}

@@ -11,14 +11,27 @@ export default function SplashScreen() {
     useEffect(() => {
         try {
             const token = localStorage.getItem('token');
-            const response = splashUser(token);
-            if (response.user) {
-              navigation.navigate('MainApp');
-            }
+            splashUser(token).then((response) => {
+                if (response.data.token) {
+                    navigation.navigate('MainApp');
+                } 
+              });	
         } catch (error) {
             console.error(error);
         }
     }, []);
+
+      // useEffect(() => {
+      //   const token = localStorage.getItem('token');
+      //   if(token) {
+      //     api.login(token)
+      //     .then(response => {
+      //       const { user } = response.data;
+      //       localStorage.setItem('user', JSON.stringify(user));
+      //       navigation.navigate('MainApp');
+      //     });
+      //   }
+      // }, []);
 
   return (
     <View className="flex-1 justify-end items-end h-full flex-col items-center">
@@ -40,6 +53,7 @@ export default function SplashScreen() {
             <Text className="text-[25px] text-white">&gt;</Text>
           </View>
         </Pressable>
+
       </View>
     </View>
   );
