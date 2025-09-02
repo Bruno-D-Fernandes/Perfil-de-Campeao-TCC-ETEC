@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { View, Text, Image, Pressable } from "react-native";
-import usuarioApi from "../../services/usuarioApi";
 import { useNavigation } from "@react-navigation/native";
+import splashUser from "./../../services/usuario"
 
 export default function SplashScreen() {
 
@@ -11,7 +11,7 @@ export default function SplashScreen() {
     useEffect(() => {
         try {
             const token = localStorage.getItem('token');
-            const response = usuarioApi.splashUser(token);
+            const response = splashUser(token);
             if (response.user) {
               navigation.navigate('MainApp');
             }
