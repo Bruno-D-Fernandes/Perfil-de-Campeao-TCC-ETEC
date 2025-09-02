@@ -1,21 +1,20 @@
 import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import { View, Text, TextInput, Pressable, Alert } from 'react-native';
-// import AsyncStorage from '@react-native-async-storage/async-storage'; // Tenho que por assync storage
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import usuario from './../../services/usuario';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
 
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+  const [emailUsuario, setEmailUsuario] = useState('');
+  const [senhaUsuario, setSenhaUsuario] = useState('');
 
   async function handleLogin() {
     try {
-      const response = await usuario.loginUser({ email, senha });
-
-      if (response.data.token) {
-        await AsyncStorage.setItem('token', response.data.token);
+      const response = await usuario.loginUser({ emailUsuario, senhaUsuario });
+      if (response.data.access_token) {
+        await AsyncStorage.setItem('token', response.data.access_token);
         navigation.navigate('MainApp');
       } else {
         Alert.alert('Login falhou', 'Verifique suas credenciais.'); // arrumar isso
@@ -31,8 +30,8 @@ export default function HomeScreen() {
       <Text className="text-3xl font-bold mb-8 text-center">Login</Text>
 
       <TextInput
-        value={email}
-        onChangeText={setEmail}
+        value={emailUsuario}
+        onChangeText={setEmailUsuario}
         placeholder="Email"
         keyboardType="email-address"
         autoCapitalize="none"
@@ -40,8 +39,8 @@ export default function HomeScreen() {
       />
 
       <TextInput
-        value={senha}
-        onChangeText={setSenha}
+        value={senhaUsuario}
+        onChangeText={setSenhaUsuario}
         placeholder="Senha"
         secureTextEntry
         className="border border-gray-300 rounded-md px-4 py-3 mb-6 text-base"

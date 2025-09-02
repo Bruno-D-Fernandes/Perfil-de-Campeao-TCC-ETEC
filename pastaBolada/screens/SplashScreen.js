@@ -1,38 +1,31 @@
 import { useEffect } from "react";
 import { View, Text, Image, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import splashUser from "./../../services/usuario"
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import usuario from "./../../services/usuario";
 
 export default function SplashScreen() {
+  const navigation = useNavigation();
 
-    // Arrumar fontes
-    const navigation = useNavigation();
+  useEffect(() => {
+    async function checkToken() {
+      try {
+        const token = await AsyncStorage.getItem('token');
 
-    useEffect(() => {
-        try {
-            const token = localStorage.getItem('token');
-            splashUser(token).then((response) => {
-                if (response.data.token) {
-                    navigation.navigate('MainApp');
-                } 
-              });	
-        } catch (error) {
-            console.error(error);
+        if (token) {
+          const response = await usuario.splashUser(token.split(' ')[1]);
+          const user = response.data;
+
+          await AsyncStorage.setItem('user', JSON.stringify(user));
+          navigation.navigate('MainTabs');
         }
-    }, []);
+      } catch (error) {
+        console.error('Erro ao validar token:', error); // arrumar isso
+      }
+    }
 
-      // useEffect(() => {
-      //   const token = localStorage.getItem('token');
-      //   if(token) {
-      //     api.login(token)
-      //     .then(response => {
-      //       const { user } = response.data;
-      //       localStorage.setItem('user', JSON.stringify(user));
-      //       navigation.navigate('MainApp');
-      //     });
-      //   }
-      // }, []);
-
+    checkToken();
+  }, []);
   return (
     <View className="flex-1 justify-end items-end h-full flex-col items-center">
       <Image

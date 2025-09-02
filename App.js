@@ -70,6 +70,7 @@ function MainTabs() {
         name="CriarPost" 
         component={PostagemScreen}
         options={{
+          headerShown: true,
           tabBarStyle: { display: 'none' },
         }}
       />

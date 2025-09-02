@@ -11,7 +11,7 @@ const loginUser = (data) => {
 };
 
 const splashUser = (data) => {
-    const response = api.post('/perfil', data);
+    const response = api.get('/perfil', data);
     return response;
 };
 
