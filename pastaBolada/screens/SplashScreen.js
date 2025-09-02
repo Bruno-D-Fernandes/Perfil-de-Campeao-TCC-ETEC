@@ -1,16 +1,20 @@
 import { useEffect } from "react";
 import { View, Text, Image, Pressable } from "react-native";
 import usuarioApi from "../../api/usuarioApi";
+import { useNavigation } from "@react-navigation/native/lib/typescript/src"; //typeScript???
 
 export default function SplashScreen() {
 
     // Arrumar fontes
+    const navigation = useNavigation();
 
     useEffect(() => {
         try {
             const token = localStorage.getItem('token');
             const response = usuarioApi.splashUser(token);
-            // const 
+            if ({user}){
+              navigation.navigate('') // tela de login ou cadastro
+            }
         } catch (error) {
             console.error(error);
         }

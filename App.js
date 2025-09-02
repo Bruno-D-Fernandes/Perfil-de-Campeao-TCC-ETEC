@@ -10,8 +10,6 @@ import "./global.css"
 import Feather from '@expo/vector-icons/Feather';
 
 // Telas
-
-// import CadastroScreen from './pastaBolada/screens/CadastroScreen';
 import HomeScreen from './pastaBolada/screens/HomeScreen';
 import OportunidadesScreen from './pastaBolada/screens/OportunidadesScreen';
 import PerfilScreen from './pastaBolada/screens/PerfilScreen';
@@ -19,7 +17,7 @@ import ConfigScreen from './pastaBolada/screens/ConfigScreen';
 import ChatScreen from './pastaBolada/screens/ChatScreen';
 import NotificaScreen from './pastaBolada/screens/NotificaScreen';
 import PostagemScreen from './pastaBolada/screens/PostagemScreen';
-
+import SplashScreen from './pastaBolada/screens/SplashScreen'
 
 // Stack
 const Stack = createNativeStackNavigator();
@@ -79,7 +77,7 @@ function MainTabs() {
   );
 }
 
-function AuthStack() {
+function AuthStack() { // aqui vai a tela de login 
   return (
     <Stack.Navigator
       initialRouteName="Cadastro"
