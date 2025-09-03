@@ -5,18 +5,18 @@ const createUser = (data) => {
 };
 
 const loginUser = (data) => {
-    const response = api.post('/login', data);
+    const response = api.post('/login', data); // Sapoha não precisa passar o token no payload chapei, arruma ai Bruno do futuro
 
     return response;
 };
 
 const splashUser = (data) => {
-    const response = api.get('/perfil', data);
+    const response = api.get('/perfil', data); // Sapoha não precisa passar o token no payload chapei, arruma ai Bruno do futuro
     return response;
 };
 
 const deleteUser = (id) => {
-    return api.delete(`/users/${id}`);
+     return api.delete(`/destroy/${id}`);  // seria interessante colocar um tratamento de erro aqui | depois por
 }; // arrumar isso
 
 const editUser = (data, id) => {
