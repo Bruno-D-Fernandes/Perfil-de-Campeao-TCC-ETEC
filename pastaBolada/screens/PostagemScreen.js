@@ -77,7 +77,7 @@ export default function HomeScreen() {
 
   function Card({ nome, imagem }) {
     return (
-      <Pressable className="bg-[#D9D9D9]/50 flex-row rounded-3x2 ">
+      <Pressable className="bg-[#D9D9D9]/50 flex-row rounded-[12px] h-full w-full items-center p-2 my-[10px]">
         <Image source={imageMap[imagem]} className="w-10 h-10" />
         <Text>{nome}</Text>
       </Pressable>
@@ -120,13 +120,13 @@ return (
           </View>
           <Text className="font-semibold text-[24px] text-[#61D483] mb-[10px] mr-[10px]">Adicione Seu post:</Text>
           <View className="flex-row flex-wrap justify-between">
-            <View className="w-[45%] h-[25px]">
+            <View className="w-[48%] h-[50px] rounded-[12px] my-[10px]">
               <Card nome={"Mídia"} imagem={0} />
             </View>
-            <View className="w-1/2 p-2">
+            <View className="w-[48%] h-[50px] rounded-[12px] my-[10px]">
               <Card nome={"Localização"} imagem={1} />
             </View>
-            <View className="w-1/2 p-2">
+            <View className="w-[48%] h-[50px] rounded-[12px] my-[10px]">
               <Card nome={"Hashtag"} imagem={2} />
             </View>
           </View>
