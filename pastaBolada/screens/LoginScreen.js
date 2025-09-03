@@ -5,6 +5,7 @@ import { useFonts, Poppins_400Regular, Poppins_700Bold, Poppins_500Medium } from
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import usuario from './../../services/usuario';
 
+
 export default function HomeScreen() {
   const navigation = useNavigation();
 

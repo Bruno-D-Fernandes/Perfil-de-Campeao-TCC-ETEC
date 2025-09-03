@@ -3,9 +3,15 @@ import { View, Text, Image, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import usuario from "./../../services/usuario";
+import { useFonts, KonkhmerSleokchher_400Regular } from "@expo-google-fonts/konkhmer-sleokchher";
 
 export default function SplashScreen() {
   const navigation = useNavigation();
+
+  const [fontsLoaded] = useFonts({
+    KonkhmerSleokchher_400Regular,
+  });
+  
 
   useEffect(() => {
     async function checkToken() {
@@ -35,15 +41,16 @@ export default function SplashScreen() {
       />
 
       <View className="w-full h-[350px] justify-evenly items-center">
-        <Text className="w-[80%] text-white text-[48px] leading-[90%]">
+        <Text style={{ fontFamily: "KonkhmerSleokchher_400Regular", fontSize: 40 }} className="w-[80%] text-white text-[48px] leading-[90%]">
           Pratique o esporte como você nunca viu.
         </Text>
 
         <Pressable className="mt-4 w-[80%] rounded-[40px] h-[50px] bg-white rounded-full flex-row items-center justify-between" onPress={() => navigation.navigate('AuthStack', { screen: 'Login' })}>
-          <Text className="ml-5 text-[20px] text-[#2BEF66]">LET'S GO</Text>
+          <Text style={{ fontFamily: "KonkhmerSleokchher_400Regular", fontSize: 20 }} className="ml-5 text-[20px] text-[#2BEF66]">LET'S GO</Text>
 
           <View className="h-10 w-10 rounded-full bg-[#2BEF66] justify-center items-center mr-1">
-            <Text className="text-[25px] text-white">&gt;</Text>
+            <Text className="text-[25px] text-white justify-center mb-[2px]">&gt;
+            </Text>
           </View>
         </Pressable>
 
