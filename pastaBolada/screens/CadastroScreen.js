@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import {  View, Text,  TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image} from 'react-native';
+import {  View, Text,  TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image, PanResponder} from 'react-native';
 import RNPickerSelect from 'react-native-picker-select'; 
 import tw from 'twrnc';
 import usuario from '../../services/usuario';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default CadastroScreen = () => {
 
@@ -80,12 +81,17 @@ export default CadastroScreen = () => {
     }
   };
 
-  const handleSubmit = () => { // Axios aqui, REMOVER DEPOIS DA PRIMEIRA ENTREGA
+  const handleSubmit = async () => { // Axios aqui, REMOVER DEPOIS DA PRIMEIRA ENTREGA
     usuario.createUser(formData)
-      .then(response => {
-        const { accessToken } = response.data;
-        localStorage.setItem('token', accessToken);
-        navigation.navigate('MainApp');
+      .then(async response => {
+        const { access_token } = response.data;
+        localStorage.setItem('token', access_token);
+
+        const responseDois = await usuario.splashUser(access_token);
+        const user = responseDois.data;
+
+        AsyncStorage.setItem('user', JSON.stringify(user));
+        navigation.navigate('MainTabs');
       })
       .catch(error => {
         console.error('Erro ao criar usuário:', error); // Não tem tela de erro, nem modal, deus nos proteja
