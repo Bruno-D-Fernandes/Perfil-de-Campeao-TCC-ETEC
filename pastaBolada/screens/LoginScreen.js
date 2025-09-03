@@ -25,7 +25,7 @@ export default function HomeScreen() {
       if (response?.data?.access_token) { // alguem isso aqui no chat ein
         await AsyncStorage.setItem('token', response.data.access_token);
         
-        const responseDois = await usuario.splashUser(response.data.access_token);
+        const responseDois = await usuario.perfilUser(response.data.access_token);
         const user = responseDois.data;
 
         await AsyncStorage.setItem('user', JSON.stringify(user));

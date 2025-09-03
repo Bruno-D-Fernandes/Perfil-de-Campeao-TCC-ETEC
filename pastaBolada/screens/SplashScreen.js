@@ -13,7 +13,7 @@ export default function SplashScreen() {
         const token = await AsyncStorage.getItem('token');
 
         if (token) {
-          const response = await usuario.splashUser(token.split(' ')[1]);
+          const response = await usuario.perfilUser(token.split(' ')[1]);
           const user = response.data;
 
           await AsyncStorage.setItem('user', JSON.stringify(user));

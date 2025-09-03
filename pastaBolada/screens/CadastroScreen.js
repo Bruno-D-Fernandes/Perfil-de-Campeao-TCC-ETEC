@@ -87,7 +87,7 @@ export default CadastroScreen = () => {
         const { access_token } = response.data;
         localStorage.setItem('token', access_token);
 
-        const responseDois = await usuario.splashUser(access_token);
+        const responseDois = await usuario.perfilUser(access_token);
         const user = responseDois.data;
 
         AsyncStorage.setItem('user', JSON.stringify(user));

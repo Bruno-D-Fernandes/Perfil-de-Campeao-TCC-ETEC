@@ -13,7 +13,14 @@ const loginUser = (data) => {
 const splashUser = (data) => {
     const response = api.get('/perfil', data); // Sapoha não precisa passar o token no payload chapei, arruma ai Bruno do futuro
     return response;
+}; // manter esse metodo spash user para essa primeira entrega | tirar depois
+
+const perfilUser = (data) => {
+    const response = api.get('/perfil', data); // Sapoha não precisa passar o token no payload chapei, arruma ai Bruno do futuro
+    console.log('Perfil user usado');
+    return response;
 };
+
 
 const deleteUser = (id) => {
      return api.delete(`/destroy/${id}`);  // seria interessante colocar um tratamento de erro aqui | depois por
@@ -29,4 +36,4 @@ const editUser = (data, id) => {
     return api.put(`/users/${id}`, data);
 };
 
-export default { createUser, loginUser, splashUser, deleteUser, editUser, logoutUser };
+export default { createUser, loginUser, splashUser, deleteUser, editUser, logoutUser, perfilUser };
