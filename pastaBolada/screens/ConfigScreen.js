@@ -62,8 +62,8 @@ export default function ConfigScreen() {
             color="#D46161"
             onPress={async () => {
               try {
-                await usuario.logoutUser().then(() => {
-                  AsyncStorage.clear();
+                await usuario.logoutUser().then(async() => {
+                  await AsyncStorage.clear();
                   navigation.navigate("Splash");
                 });
               } catch (e) {

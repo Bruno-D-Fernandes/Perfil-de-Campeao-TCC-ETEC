@@ -22,11 +22,16 @@ export default function HomeScreen() {
     try {
       const response = await usuario.loginUser({ emailUsuario, senhaUsuario });
 
-      if (response?.data?.access_token) {
+      if (response?.data?.access_token) { // alguem isso aqui no chat ein
         await AsyncStorage.setItem('token', response.data.access_token);
-        navigation.navigate('MainApp');
+        
+        const responseDois = await usuario.splashUser(response.data.access_token);
+        const user = responseDois.data;
+
+        await AsyncStorage.setItem('user', JSON.stringify(user));
+        navigation.navigate('MainTabs');
       } else {
-        Alert.alert('Login inválido', 'E-mail ou senha incorretos.');
+        Alert.alert('Login inválido', 'E-mail ou senha incorretos.'); // fazer modal para possiveis erros
       }
     } catch (error) {
       console.error(error);

@@ -67,13 +67,75 @@ function MainTabs() {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Oportunidades" component={OportunidadesScreen} />
       <Tab.Screen 
-        name="CriarPost" 
-        component={PostagemScreen}
-        options={{
-          headerShown: true,
-          tabBarStyle: { display: 'none' },
+  name="CriarPost" 
+  component={PostagemScreen}
+  options={({ navigation }) => ({ // ✅ CORREÇÃO: Recebe navigation como parâmetro
+    headerShown: true,
+    tabBarStyle: { display: 'none' },
+    headerStyle: {
+      backgroundColor: '#ffffff',
+      elevation: 0,
+      shadowOpacity: 0,
+      borderBottomWidth: 0,
+    },
+    headerTitle: () => (
+      <Text style={{
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#4ADE80',
+        textAlign: 'center',
+      }}>
+        Novo post
+      </Text>
+    ),
+    headerLeft: () => (
+      <Pressable 
+        onPress={() => {
+          // ✅ CORREÇÃO: Usa o navigation do parâmetro, não o hook
+          navigation.navigate('Home');
         }}
-      />
+        style={{
+          backgroundColor: '#4ADE80',
+          borderRadius: 20,
+          width: 40,
+          height: 40,
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginLeft: 15,
+        }}
+      >
+        <Feather name="arrow-left" size={24} color="#ffffff" />
+      </Pressable>
+    ),
+    headerRight: () => (
+      <Pressable 
+        onPress={() => {
+          // Adicione aqui a lógica para postar
+          console.log('Postar pressionado');
+        }}
+        style={{
+          backgroundColor: '#4ADE80',
+          borderRadius: 20,
+          paddingHorizontal: 15,
+          paddingVertical: 8,
+          flexDirection: 'row',
+          alignItems: 'center',
+          marginRight: 15,
+        }}
+      >
+        <Text style={{
+          color: '#ffffff',
+          fontSize: 16,
+          fontWeight: '600',
+        }}>
+          Postar
+        </Text>
+        <Feather name="arrow-right" size={16} color="#ffffff" style={{ marginLeft: 5 }} />
+      </Pressable>
+    ),
+    headerTitleAlign: 'center',
+  })}
+/>
       <Tab.Screen name="Perfil" component={PerfilScreen} />
       <Tab.Screen name="Config" component={ConfigScreen} />
     </Tab.Navigator>
@@ -131,11 +193,8 @@ export default function App() {
         <Stack.Screen 
           name="MainTabs" 
           component={MainTabs} 
+          options={{ headerShown: false }} 
         />
-
-
-
-
       </Stack.Navigator>
     </NavigationContainer>
   );

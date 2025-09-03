@@ -120,7 +120,7 @@ return (
           </View>
           <Text className="font-semibold text-[24px] text-[#61D483] mb-[10px] mr-[10px]">Adicione Seu post:</Text>
           <View className="flex-row flex-wrap justify-between">
-            <View className="w-1/2 p-2">
+            <View className="w-[45%] h-[25px]">
               <Card nome={"Mídia"} imagem={0} />
             </View>
             <View className="w-1/2 p-2">
