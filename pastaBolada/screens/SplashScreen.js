@@ -30,7 +30,7 @@ export default function SplashScreen() {
     <View className="flex-1 justify-end items-end h-full flex-col items-center">
       <Image
         source={require("../../assets/Splash/imagem.png")}
-        className="absolute w-full h-full"
+        className="absolute w-full h-full" style={{width:'100%', height:'100%',}}
         resizeMode="cover"
       />
 
