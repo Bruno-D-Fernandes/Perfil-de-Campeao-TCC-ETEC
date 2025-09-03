@@ -19,8 +19,14 @@ const deleteUser = (id) => {
      return api.delete(`/destroy/${id}`);  // seria interessante colocar um tratamento de erro aqui | depois por
 }; // arrumar isso
 
+const logoutUser = () => {
+    return api.post('/logout');
+};
+
+// Arrumar a parte de baixo 
+
 const editUser = (data, id) => {
     return api.put(`/users/${id}`, data);
 };
 
-export default { createUser, loginUser, splashUser, deleteUser, editUser };
+export default { createUser, loginUser, splashUser, deleteUser, editUser, logoutUser };

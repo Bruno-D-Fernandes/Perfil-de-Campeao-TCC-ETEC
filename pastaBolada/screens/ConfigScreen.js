@@ -60,7 +60,16 @@ export default function ConfigScreen() {
             icon={<MaterialIcons name="logout" size={24} color="#D46161" />}
             text="Sair"
             color="#D46161"
-            onPress={() => {/* Lógica para sair */ }}
+            onPress={async () => {
+              try {
+                await usuario.logoutUser().then(() => {
+                  AsyncStorage.clear();
+                  navigation.navigate("Splash");
+                });
+              } catch (e) {
+                console.error("Erro ao sair:", e);
+              }
+            }}
           />
           <ConfiguracaoItem
             icon={<AntDesign name="delete" size={24} color="#D46161" />}
