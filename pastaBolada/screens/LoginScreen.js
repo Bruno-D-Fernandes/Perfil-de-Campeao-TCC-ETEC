@@ -67,7 +67,7 @@ export default function HomeScreen() {
               onChangeText={setEmailUsuario}
               placeholder="Digite seu e-mail"
               placeholderTextColor="#ccc"
-              className='w-[98%] h-[100%] text-white'
+              className='w-[98%] h-[100%] text-white outline-none'
               style={{fontFamily:'Poppins_500Medium'}}
             />
           </View>
@@ -82,7 +82,7 @@ export default function HomeScreen() {
               secureTextEntry={true}
               placeholder="Digite sua senha"
               placeholderTextColor="#ccc"
-              className='w-[98%] h-[100%] text-white'
+              className='w-[98%] h-[100%] text-white outline-none'
               style={{fontFamily:'Poppins_500Medium'}}
             />
           </View>
@@ -97,7 +97,7 @@ export default function HomeScreen() {
             </View>
           </Pressable>
 
-          <Pressable onPress={() => navigation.navigate('AuthStack', { screen: 'Cadastro' })} className='w-full items-center'>
+          <Pressable onPress={() => navigation.navigate('Cadastro')} className='w-full items-center'>
             <Text className='text-[#98FFB7]' style={{fontFamily:'Poppins_500Medium'}}>
               Ainda não tem <Text className='underline'>cadastro?</Text>
             </Text>
