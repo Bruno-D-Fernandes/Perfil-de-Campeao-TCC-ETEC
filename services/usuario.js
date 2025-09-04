@@ -33,7 +33,7 @@ const logoutUser = () => {
 // Arrumar a parte de baixo 
 
 const editUser = (data, id) => {
-    return api.put(`/users/${id}`, data);
+    return api.put(`/update/${id}`, data);
 };
 
 export default { createUser, loginUser, splashUser, deleteUser, editUser, logoutUser, perfilUser };
