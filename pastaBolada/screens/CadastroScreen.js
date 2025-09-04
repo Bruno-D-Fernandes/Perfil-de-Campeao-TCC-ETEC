@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, Image } from 'react-native';
+import usuario from '../../services/usuario'
 import tw from 'twrnc';
 import RNPickerSelect from 'react-native-picker-select';
 
@@ -80,16 +81,46 @@ const CadastroScreen = () => {
         }
     };
 
-    const handleSubmit = () => {
-        console.log('Dados do formulário:', formData);
-    };
+function formatDateBRtoISO(dateStr) {
+  const [day, month, year] = dateStr.split('/');
+
+  if (!day || !month || !year) return null;
+
+  const dd = day.padStart(2, '0');
+  const mm = month.padStart(2, '0');
+
+  return `${year}-${mm}-${dd}`;
+}
+
+
+
+
+const handleSubmit = async () => {
+  const dataFormatada = formatDateBRtoISO(formData.dataNascimentoUsuario);
+  const formDataFinal = { ...formData, dataNascimentoUsuario: dataFormatada };
+
+  usuario.createUser(formDataFinal)
+    .then(async response => {
+      const { access_token } = response.data;
+      localStorage.setItem('token', access_token);
+
+      const responseDois = await usuario.perfilUser(access_token);
+      const user = responseDois.data;
+
+      AsyncStorage.setItem('user', JSON.stringify(user));
+      navigation.navigate('MainTabs');
+    })
+    .catch(error => {
+      console.error('Erro ao criar usuário:', error);
+    });
+};
 
     const renderStep1 = () => (
         <View style={tw`mb-8`}>
             <View style={tw`w-full`}>
                 <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Nome</Text>
                 <View style={tw` flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
-                    <Image className='mx-3' style={{width:16, height:19}} source={require('../../assets/cadastro/icon_user.png')} />
+                    <Image className='mx-3' style={{ width: 16, height: 19 }} source={require('../../assets/cadastro/icon_user.png')} />
                     <TextInput
                         className='outline-none flex-1 h-[90%] text-[90%]'
                         placeholder="Seu nome completo"
@@ -103,20 +134,23 @@ const CadastroScreen = () => {
                 <View style={tw`w-[48%]`}>
                     <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Ano de nasc.</Text>
                     <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
-                        <Image className='mx-3' style={{width:16, height:16}} source={require('../../assets/cadastro/icon_data.png')} />
+                        <Image className='mx-3' style={{ width: 16, height: 16 }} source={require('../../assets/cadastro/icon_data.png')} />
                         <TextInput
                             className='outline-none w-[80%] h-full text-[90%]'
                             placeholder="DD/MM/AAAA"
                             placeholderTextColor="#A9A9A9"
                             value={formData.dataNascimentoUsuario}
-                            onChangeText={(text) => updateField('dataNascimentoUsuario', text)}
+                            onChangeText={(text) => {
+                                updateField('dataNascimentoUsuario', text);
+                            }}
+
                         />
                     </View>
                 </View>
                 <View style={tw`w-[48%]`}>
                     <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Gênero</Text>
                     <View style={tw`flex-row items-center rounded-xl p-[5] h-12 border-[#4ADC76] border-2`}>
-                        <Image className='mx-1' style={{width:16, height:20}} source={require('../../assets/cadastro/icon_genero.png')} />
+                        <Image className='mx-1' style={{ width: 16, height: 20 }} source={require('../../assets/cadastro/icon_genero.png')} />
                         <View style={tw`w-[80%] h-[100%] justify-center `}>
                             <RNPickerSelect
                                 onValueChange={(value) => updateField('generoUsuario', value)}
@@ -138,7 +172,7 @@ const CadastroScreen = () => {
             <View style={tw`w-full mt-4`}>
                 <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Estado</Text>
                 <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
-                    <Image className='mx-3' style={{width:16, height:20}} source={require('../../assets/cadastro/icon_local.png')} />
+                    <Image className='mx-3' style={{ width: 16, height: 20 }} source={require('../../assets/cadastro/icon_local.png')} />
                     <TextInput
                         className='outline-none flex-1 h-full text-[90%]'
                         placeholder="Estado"
@@ -148,11 +182,11 @@ const CadastroScreen = () => {
                     />
                 </View>
             </View>
-            
+
             <View style={tw`w-full mt-4`}>
                 <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Cidade</Text>
                 <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
-                    <Image className='mx-3' style={{width: 16, height:14}} source={require('../../assets/cadastro/icon_cidade.png')} />
+                    <Image className='mx-3' style={{ width: 16, height: 14 }} source={require('../../assets/cadastro/icon_cidade.png')} />
                     <TextInput
                         className='outline-none flex-1 h-full text-[90%]'
                         placeholder="Cidade"
@@ -161,12 +195,12 @@ const CadastroScreen = () => {
                         onChangeText={(text) => updateField('cidadeUsuario', text)}
                     />
                 </View>
-                
+
             </View>
         </View>
     );
 
-    {/*cadastro 2*/}
+    {/*cadastro 2*/ }
     const renderStep2 = () => (
         <View style={tw`mb-8`}>
             <View style={tw`w-full`}>
@@ -191,7 +225,7 @@ const CadastroScreen = () => {
                 <View style={tw`w-[48%]`}>
                     <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Temporadas</Text>
                     <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
-                        <Image className='mx-3' style={{width:16, height:19}} source={require('../../assets/cadastro/icon_tempo.png')} />
+                        <Image className='mx-3' style={{ width: 16, height: 19 }} source={require('../../assets/cadastro/icon_tempo.png')} />
                         <TextInput
                             style={tw`w-[80%] h-full text-[90%]`}
                             placeholder="Anos"
@@ -206,7 +240,7 @@ const CadastroScreen = () => {
                 <View style={tw`w-[48%]`}>
                     <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Altura (cm)</Text>
                     <View style={tw`flex-row items-center rounded-xl p-[5] h-12 border-[#4ADC76] border-2`}>
-                        <Image className='mx-3' style={{width:16, height:19}} source={require('../../assets/cadastro/icon_altura.png')} />
+                        <Image className='mx-3' style={{ width: 16, height: 19 }} source={require('../../assets/cadastro/icon_altura.png')} />
                         <TextInput
                             style={tw`w-[80%] h-[100%] justify-center `}
                             className='outline-none'
@@ -222,7 +256,7 @@ const CadastroScreen = () => {
             <View style={tw`w-full mt-4`}>
                 <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Esporte</Text>
                 <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
-                    <Image className='mx-3' style={{width:22, height:13}} source={require('../../assets/cadastro/icon_esporte.png')} />
+                    <Image className='mx-3' style={{ width: 22, height: 13 }} source={require('../../assets/cadastro/icon_esporte.png')} />
                     <View style={tw`w-[80%] h-[100%] justify-center `}>
                         <RNPickerSelect
                             onValueChange={(value) => {
@@ -235,7 +269,7 @@ const CadastroScreen = () => {
                                 { label: 'Vôlei', value: 'volei' },
                                 { label: 'Tênis', value: 'tenis' },
                             ]}
-                            
+
                             style={pickerSelectStyles}
                             value={formData.esporte}
                             placeholderTextColor="#A9A9A9"
@@ -248,8 +282,8 @@ const CadastroScreen = () => {
                 <View style={tw`w-full mt-4`}>
                     <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Posição</Text>
                     <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
-                    <Image className='mx-3' style={{width:16, height:19}} source={require('../../assets/cadastro/icon_posicao.png')} />
-                            <View style={tw`w-[80%] h-[100%] justify-center`}>
+                        <Image className='mx-3' style={{ width: 16, height: 19 }} source={require('../../assets/cadastro/icon_posicao.png')} />
+                        <View style={tw`w-[80%] h-[100%] justify-center`}>
                             <RNPickerSelect
                                 onValueChange={(value) => updateField('posicao', value)}
                                 items={posicoesPorEsporte[formData.esporte] || []}
@@ -270,7 +304,7 @@ const CadastroScreen = () => {
             <View style={tw`w-full`}>
                 <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>E-mail</Text>
                 <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
-                    <Image className='mx-3' style={{width:16, height:12}} source={require('../../assets/cadastro/icon_email.png')} />
+                    <Image className='mx-3' style={{ width: 16, height: 12 }} source={require('../../assets/cadastro/icon_email.png')} />
                     <TextInput
                         className='outline-none flex-1 h-full text-[90%]'
                         placeholder="E-mail"
@@ -285,7 +319,7 @@ const CadastroScreen = () => {
             <View style={tw`w-full mt-4`}>
                 <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Senha</Text>
                 <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
-                    <Image className='mx-3' style={{width:16, height:18}} source={require('../../assets/cadastro/icon_senha.png')} />
+                    <Image className='mx-3' style={{ width: 16, height: 18 }} source={require('../../assets/cadastro/icon_senha.png')} />
                     <TextInput
                         className='outline-none flex-1 h-full text-[90%]'
                         placeholder="Senha"
@@ -299,7 +333,7 @@ const CadastroScreen = () => {
             <View style={tw`w-full mt-4`}>
                 <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Confirme a Senha</Text>
                 <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
-                    <Image className='mx-3' style={{width:16, height:18}} source={require('../../assets/cadastro/icon_senha.png')} />
+                    <Image className='mx-3' style={{ width: 16, height: 18 }} source={require('../../assets/cadastro/icon_senha.png')} />
                     <TextInput
                         className='outline-none flex-1 h-full text-[90%]'
                         placeholder="Confirme sua senha"
@@ -331,9 +365,9 @@ const CadastroScreen = () => {
             {/* Este View substitui a imagem para que o código compile, mas num projeto real deve ser substituído pela sua imagem local. */}
 
             <Text className=''>Venha conhecer um mundo de oportunidades</Text>
-            <Image className='absolute' style={{width:'100%', height:'40%'}} source={require('../../assets/cadastro/cadastro_imagem.png')} />
+            <Image className='absolute' style={{ width: '100%', height: '40%' }} source={require('../../assets/cadastro/cadastro_imagem.png')} />
 
-            
+
             <View style={tw`absolute h-[74%] bottom-0 w-full max-w-xl self-center bg-white p-5 rounded-tl-[30px] rounded-tr-[30px] shadow-lg`}>
                 <View style={tw`w-full items-center mb-2`}>
                     <View style={tw`flex-row items-center w-full mb-2`}>
@@ -353,8 +387,8 @@ const CadastroScreen = () => {
                         style={[tw`flex-row justify-between items-center w-[48%] p-[1.5%] h-12 bg-white border-2 border-[#4ADC76] rounded-full`, currentStep === 0 && tw`hidden`]}
                         onPress={prevStep}
                     >
-                         <View className='justify-center items-center w-[27%]  h-[100%] rounded-[100px] bg-[#4ADC76]'>
-                            <Image className='mx-3' style={{width:12, height:20}} source={require('../../assets/cadastro/icon_voltar.png')} />
+                        <View className='justify-center items-center w-[27%]  h-[100%] rounded-[100px] bg-[#4ADC76]'>
+                            <Image className='mx-3' style={{ width: 12, height: 20 }} source={require('../../assets/cadastro/icon_voltar.png')} />
                         </View>
                         <Text style={tw`mr-3 font-semibold text-lg text-[#4ADC76]`}>Anterior</Text>
                     </Pressable>
@@ -364,7 +398,7 @@ const CadastroScreen = () => {
                     >
                         <Text className='' style={tw`ml-3 font-semibold text-lg text-white`}>{currentStep < 2 ? 'Próximo' : 'Finalizar'}</Text>
                         <View className='justify-center items-center w-[27%] h-[100%] rounded-[100px] bg-[#ffff]'>
-                            <Image className='mx-3' style={{width:12, height:20}} source={require('../../assets/cadastro/icon_proximo.png')} />
+                            <Image className='mx-3' style={{ width: 12, height: 20 }} source={require('../../assets/cadastro/icon_proximo.png')} />
                         </View>
                     </Pressable>
                 </View>
@@ -374,27 +408,27 @@ const CadastroScreen = () => {
 };
 
 const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-     color: '#A9A9A9',
-     height: '100%',
-    paddingLeft: 8,     
-    paddingVertical: 0,  
-    textAlignVertical: 'center',
-    outline:'none',
-  },
-  inputAndroid: {
-    fontSize: 16,
-    color: '#A9A9A9',
-    height: '100%',
-    paddingLeft: 8,   
-    paddingVertical: 0,
-    textAlignVertical: 'center',
+    inputIOS: {
+        fontSize: 16,
+        color: '#A9A9A9',
+        height: '100%',
+        paddingLeft: 8,
+        paddingVertical: 0,
+        textAlignVertical: 'center',
+        outline: 'none',
+    },
+    inputAndroid: {
+        fontSize: 16,
+        color: '#A9A9A9',
+        height: '100%',
+        paddingLeft: 8,
+        paddingVertical: 0,
+        textAlignVertical: 'center',
 
-  },
-  placeholder: {
-    color: '#A9A9A9', // cinza claro
-  },
+    },
+    placeholder: {
+        color: '#A9A9A9', // cinza claro
+    },
 });
 
 
