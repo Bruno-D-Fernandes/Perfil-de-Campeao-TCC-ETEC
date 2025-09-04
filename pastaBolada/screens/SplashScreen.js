@@ -4,15 +4,15 @@ import { useNavigation } from "@react-navigation/native";
 import { useFonts, Poppins_400Regular, Poppins_700Bold, Poppins_500Medium } from "@expo-google-fonts/poppins";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import usuario from "./../../services/usuario";
-import { useFonts, KonkhmerSleokchher_400Regular } from "@expo-google-fonts/konkhmer-sleokchher";
 
 export default function SplashScreen() {
   const navigation = useNavigation();
 
-  const [fontsLoaded] = useFonts({
-    KonkhmerSleokchher_400Regular,
+     const [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_700Bold,
+    Poppins_500Medium
   });
-  
 
   useEffect(() => {
     async function checkToken() {
