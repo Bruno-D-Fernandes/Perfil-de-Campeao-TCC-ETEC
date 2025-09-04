@@ -1,374 +1,402 @@
-import React, { useEffect, useState } from 'react';
-import {  View, Text,  TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image, PanResponder} from 'react-native';
-import RNPickerSelect from 'react-native-picker-select'; 
+import React, { useState } from 'react';
+import { View, Text, TextInput, Pressable, StyleSheet, Image } from 'react-native';
 import tw from 'twrnc';
-import usuario from '../../services/usuario';
-import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import RNPickerSelect from 'react-native-picker-select';
 
-export default CadastroScreen = () => {
-
-  const navigation = useNavigation();
-
-  const posicoesPorEsporte = {
+const posicoesPorEsporte = {
     futebol: [
-      { label: 'Atacante', value: 'atacante' },
-      { label: 'Zagueiro', value: 'zagueiro' },
-      { label: 'Goleiro', value: 'goleiro' },
-      { label: 'Meio-campo', value: 'meio-campo' },
+        { label: 'Atacante', value: 'atacante' },
+        { label: 'Zagueiro', value: 'zagueiro' },
+        { label: 'Goleiro', value: 'goleiro' },
+        { label: 'Meio-campo', value: 'meio-campo' },
     ],
     basquete: [
-      { label: 'Armador', value: 'armador' },
-      { label: 'Ala-armador', value: 'ala-armador' },
-      { label: 'Ala', value: 'ala' },
-      { label: 'Ala-pivô', value: 'ala-pivo' },
-      { label: 'Pivô', value: 'pivo' },
+        { label: 'Armador', value: 'armador' },
+        { label: 'Ala-armador', value: 'ala-armador' },
+        { label: 'Ala', value: 'ala' },
+        { label: 'Ala-pivô', value: 'ala-pivo' },
+        { label: 'Pivô', value: 'pivo' },
     ],
     volei: [
-      { label: 'Levantador', value: 'levantador' },
-      { label: 'Ponteiro', value: 'ponteiro' },
-      { label: 'Oposto', value: 'oposto' },
-      { label: 'Central', value: 'central' },
-      { label: 'Líbero', value: 'libero' },
+        { label: 'Levantador', value: 'levantador' },
+        { label: 'Ponteiro', value: 'ponteiro' },
+        { label: 'Oposto', value: 'oposto' },
+        { label: 'Central', value: 'central' },
+        { label: 'Líbero', value: 'libero' },
     ],
     tenis: [
-      { label: 'Simples', value: 'simples' },
-      { label: 'Duplas', value: 'duplas' },
+        { label: 'Simples', value: 'simples' },
+        { label: 'Duplas', value: 'duplas' },
     ]
-  };
-
-  const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState({
-    nomeCompletoUsuario: '',
-    nomeUsuario: '',
-    emailUsuario: '', 
-    senhaUsuario: '', 
-    nacionalidadeUsuario: '',
-    dataNascimentoUsuario: '',
-    fotoPerfilUsuario: '',
-    fotoBannerUsuario: '',
-    bioUsuario: '',
-    alturaCm: '',
-    pesoKg: '',
-    peDominante: '',
-    maoDominante: '',
-    generoUsuario: '',
-    esporte: '',
-    posicao: '',
-    estadoUsuario: '',
-    cidadeUsuario: '',
-    categoria: '',
-    temporadasUsuario: '',
-    confirmacaoSenhaUsuario: ''
-  });
-
-  const updateField = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const nextStep = () => {
-    if (currentStep < 2) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const prevStep = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const handleSubmit = async () => { // Axios aqui, REMOVER DEPOIS DA PRIMEIRA ENTREGA
-    usuario.createUser(formData)
-      .then(async response => {
-        const { access_token } = response.data;
-        localStorage.setItem('token', access_token);
-
-        const responseDois = await usuario.perfilUser(access_token);
-        const user = responseDois.data;
-
-        AsyncStorage.setItem('user', JSON.stringify(user));
-        navigation.navigate('MainTabs');
-      })
-      .catch(error => {
-        console.error('Erro ao criar usuário:', error); // Não tem tela de erro, nem modal, deus nos proteja
-      });
-  };
-  const renderStep1 = () => (
-    <View className="mb-8 gap-y-4">
-      <View className="w-full flex-col">
-        <Text className="text-[#4ADC76] text-[20px] font-semibold">Nome</Text>
-
-        <TextInput
-          className="bg-white border rounded-[19px] h-[57px] p-4 text-base mb-4 border-[#4ADC76] border-[3px]"
-          value={formData.nomeCompletoUsuario}
-          onChangeText={(value) => updateField('nomeCompletoUsuario', value)}
-        />
-
-      </View>
-
-      <View className="w-full flex-row justify-between">
-        <View className="w-[60%] justify-center">
-          <Text className="text-[#4ADC76] text-[20px] font-semibold">Data de Nasc.</Text>
-          <TextInput
-            className="bg-white border w-[100%] w-[98%] h-[57px] rounded-[19px] p-4 text-base mb-4 border-[#4ADC76] border-[3px]"
-            value={formData.dataNascimentoUsuario}
-            onChangeText={(value) => updateField('dataNascimentoUsuario', value)}
-            keyboardType='default'
-          />
-        </View>
-        <View className="w-[40%]">
-          <Text className="text-[#4ADC76] text-[20px] font-semibold">Gênero</Text>
-          <RNPickerSelect
-            style={{
-              inputIOS: tw`bg-white border rounded-[19px] h-[57px] p-4 text-base border-[#4ADC76] border-[3px]`,
-              inputAndroid: tw`bg-white border rounded-[19px] h-[57px] p-4 text-base border-[#4ADC76] border-[3px]`,
-              inputWeb: tw`bg-white border rounded-[19px] h-[57px] p-4 text-base text-[#4ADC76] font-semibold border-[#4ADC76] border-[3px]`,
-              placeholder: {
-                color: 'gray',
-                fontSize: 16,
-              },
-            }}
-            onValueChange={(value) => updateField('generoUsuario', value)}
-            value={formData.generoUsuario}
-            placeholder={{
-              label: 'Selecione...',
-              value: null,
-            }}
-            items={[
-              { label: 'Masculino', value: 'masculino' },
-              { label: 'Feminino', value: 'feminino' },
-              { label: 'Não binário', value: 'nao-binario' },
-              { label: 'Outro', value: 'outro' },
-            ]}
-          />
-        </View>
-      </View>
-      <View className="w-full flex-col">
-        <Text className="text-[#4ADC76] text-[20px] font-semibold">Estado</Text>
-        <TextInput
-          className="bg-white border rounded-[19px] h-[57px] p-4 text-base mb-4 border-[#4ADC76] border-[3px]"
-          value={formData.estadoUsuario} 
-          onChangeText={(value) => updateField('estadoUsuario', value)} 
-        />
-      </View>
-
-      <View className="w-full flex-col">
-        <Text className="text-[#4ADC76] text-[20px] font-semibold">Cidade</Text>
-        <TextInput
-          className="bg-white border rounded-[19px] h-[57px] p-4 text-base mb-4 border-[#4ADC76] border-[3px]"
-          value={formData.cidadeUsuario} 
-          onChangeText={(value) => updateField('cidadeUsuario', value)} 
-        />
-      </View>
-    </View>
-  );
-
-  const renderStep2 = () => (
-    <View className="mb-8 gap-y-4">
-      <View className="w-full flex-col">
-        <Text className="text-[#4ADC76] text-[20px] font-semibold">Categoria</Text>
-        <RNPickerSelect
-          style={{
-            inputIOS: tw`bg-white border rounded-[19px] h-[57px] p-4 text-base border-[#4ADC76] border-[3px]`,
-            inputAndroid: tw`bg-white border rounded-[19px] h-[57px] p-4 text-base border-[#4ADC76] border-[3px]`,
-            inputWeb: tw`bg-white border rounded-[19px] h-[57px] p-4 text-base text-[#4ADC76] font-semibold border-[#4ADC76] border-[3px]`,
-            placeholder: { color: 'gray' },
-          }}
-          onValueChange={(value) => updateField('categoria', value)}
-          value={formData.categoria}
-          placeholder={{ label: 'Selecione a categoria...', value: null }}
-          items={[
-            { label: 'Profissional', value: 'profissional' },
-            { label: 'Amador', value: 'amador' },
-            { label: 'Infantil', value: 'infantil' },
-          ]}
-        />
-      </View>
-
-      <View className="w-full flex-row justify-between">
-        <View className="w-[60%] justify-center">
-          <Text className="text-[#4ADC76] text-[20px] font-semibold">Temporadas</Text>
-          <TextInput
-            className="bg-white border w-[100%] w-[98%] h-[57px] rounded-[19px] p-4 text-base mb-4 border-[#4ADC76] border-[3px]"
-            value={formData.temporadasUsuario} 
-            onChangeText={(value) => updateField('temporadasUsuario', value)} 
-            keyboardType='default'
-          />
-        </View>
-
-        <View className="w-[40%] justify-center">
-          <Text className="text-[#4ADC76] text-[20px] font-semibold">Altura</Text>
-          <TextInput
-            className="bg-white border rounded-[19px] h-[57px] p-4 w-[100%] text-base mb-4 border-[#4ADC76] border-[3px]"
-            value={formData.alturaCm} 
-            onChangeText={(value) => updateField('alturaCm', value)} 
-          />
-        </View>
-      </View>
-      {/* Esporte */}
-
-      <View className="w-full flex-col">
-        <Text className="text-[#4ADC76] text-[20px] font-semibold">Esporte</Text>
-        <RNPickerSelect
-          style={{
-            inputIOS: tw`bg-white border rounded-[19px] h-[57px] p-4 text-base mb-4 border-[#4ADC76] border-[3px]`,
-            inputAndroid: tw`bg-white border rounded-[19px] h-[57px] p-4 text-base mb-4 border-[#4ADC76] border-[3px]`,
-            inputWeb: tw`bg-white border rounded-[19px] h-[57px] p-4 text-base text-[#4ADC76] font-semibold border-[#4ADC76] border-[3px]`, // Web certo
-            placeholder: { color: 'gray' },
-          }}
-
-          onValueChange={(value) => updateField('esporte', value)}
-          value={formData.esporte}
-          placeholder={{ label: 'Selecione o esporte...', value: null }}
-          items={[
-            { label: 'Futebol', value: 'futebol' },
-            { label: 'Basquete', value: 'basquete' },
-            { label: 'Vôlei', value: 'volei' },
-            { label: 'Tênis', value: 'tenis' },
-          ]}
-        />
-      </View>
-
-      {/* Posição */}
-
-      <View className="w-full flex-col">
-        <Text className="text-[#4ADC76] text-[20px] font-semibold">Posição</Text>
-        <RNPickerSelect
-          style={{
-            inputIOS: tw`bg-white border rounded-[19px] h-[57px] p-4 text-base mb-4 border-[#4ADC76] border-[3px]`,
-            inputAndroid: tw`bg-white border rounded-[19px] h-[57px] p-4 text-base mb-4 border-[#4ADC76] border-[3px]`,
-            inputWeb: tw`bg-white border rounded-[19px] h-[57px] p-4 text-base text-[#4ADC76] font-semibold border-[#4ADC76] border-[3px]`, // Web certo
-            placeholder: { color: 'gray' },
-          }}
-          onValueChange={(value) => updateField('posicao', value)}
-          value={formData.posicao}
-          placeholder={{ label: 'Selecione a posição...', value: null }}
-          items={posicoesPorEsporte[formData.esporte] || []}
-        />
-      </View>
-    </View>
-  );
-
-  const renderStep3 = () => (
-    <View className="mb-8">
-      <Text className="text-xl font-semibold mb-5 text-center text-gray-800">
-        Segurança
-      </Text>
-
-      {/* Campo de E-mail */}
-      <TextInput
-        className="bg-white border rounded-[19px] h-[57px] p-4 text-base mb-4 border-[#4ADC76] border-[3px]"
-        placeholder="E-mail"
-        value={formData.emailUsuario}
-        onChangeText={(value) => updateField('emailUsuario', value)}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-
-      {/* Campo de Senha */}
-      <TextInput
-        className="bg-white border rounded-[19px] h-[57px] p-4 text-base mb-4 border-[#4ADC76] border-[3px]"
-        placeholder="Senha"
-        value={formData.senhaUsuario}
-        onChangeText={(value) => updateField('senhaUsuario', value)}
-        secureTextEntry
-      />
-
-      {/* Campo de Confirmação de Senha */}
-      <TextInput
-        className="bg-white border rounded-[19px] h-[57px] p-4 text-base mb-4 border-[#4ADC76] border-[3px]"
-        placeholder="Confirme sua senha"
-        value={formData.confirmacaoSenhaUsuario}
-        onChangeText={(value) => updateField('confirmacaoSenhaUsuario', value)}
-        secureTextEntry
-      />
-    </View>
-  );
-
-  const renderCurrentStep = () => {
-    switch (currentStep) {
-      case 0:
-        return renderStep1();
-      case 1:
-        return renderStep2();
-      case 2:
-        return renderStep3();
-      default:
-        return renderStep1();
-    }
-  };
-
-  return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-gray-100 w-full items-center"
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // isso aqui chat
-    >
-
-      <Image
-        source={require('../../assets/cadastro/cadastro_imagem.png')}
-        className="w-full"
-        fit="cover"
-      />
-      <Text className="text-3xl font-bold text-center mb-8 text-gray-800">
-        Criar Conta
-      </Text>
-
-      {/*Janela/Capa branco fundo inputs*/}
-      <View className="bg-white w-full h-[70%] p-5 rounded-t-[60px] absolute bottom-0">
-
-        {/* Indicador de progresso */}
-        <View className="flex-row justify-center mb-8">
-          {[0, 1, 2].map((step) => (
-            <View
-              key={step}
-              className={`w-3 h-3 rounded-full mx-1 ${currentStep >= step ? 'bg-blue-500' : 'bg-gray-300'
-                }`}
-            />
-          ))}
-        </View>
-
-        {renderCurrentStep()}
-
-        {/* Botões de navegação */}
-        <View className="flex-row justify-between mt-5">
-          {currentStep > 0 && (
-            <TouchableOpacity
-              className="bg-transparent border border-blue-500 py-4 px-8 rounded-lg flex-1 mx-1"
-              onPress={prevStep}
-            >
-              <Text className="text-blue-500 text-base font-semibold text-center">
-                Anterior
-              </Text>
-            </TouchableOpacity>
-          )}
-
-          {currentStep < 2 ? (
-            <TouchableOpacity
-              className="bg-blue-500 py-4 px-8 rounded-lg flex-1 mx-1"
-              onPress={nextStep}
-            >
-              <Text className="text-white text-base font-semibold text-center">
-                Próximo
-              </Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              className="bg-blue-500 py-4 px-8 rounded-lg flex-1 mx-1"
-              onPress={handleSubmit}
-            >
-              <Text className="text-white text-base font-semibold text-center">
-                Finalizar
-              </Text>
-            </TouchableOpacity>
-          )}
-        </View>
-
-      </View>
-
-    </KeyboardAvoidingView>
-  );
 };
+
+const getProgress = (step) => {
+    switch (step) {
+        case 0:
+            return '25%';
+        case 1:
+            return '50%';
+        case 2:
+            return '100%';
+        default:
+            return '0%';
+    }
+};
+
+const CadastroScreen = () => {
+    const [currentStep, setCurrentStep] = useState(0);
+    const [formData, setFormData] = useState({
+        nomeCompletoUsuario: '',
+        dataNascimentoUsuario: '',
+        generoUsuario: '',
+        estadoUsuario: '',
+        cidadeUsuario: '',
+        categoria: '',
+        temporadasUsuario: '',
+        alturaCm: '',
+        esporte: '',
+        posicao: '',
+        emailUsuario: '',
+        senhaUsuario: '',
+        confirmacaoSenhaUsuario: '',
+    });
+
+    const updateField = (field, value) => {
+        setFormData(prev => ({
+            ...prev,
+            [field]: value
+        }));
+    };
+
+    const nextStep = () => {
+        if (currentStep < 2) {
+            setCurrentStep(currentStep + 1);
+        }
+    };
+
+    const prevStep = () => {
+        if (currentStep > 0) {
+            setCurrentStep(currentStep - 1);
+        }
+    };
+
+    const handleSubmit = () => {
+        console.log('Dados do formulário:', formData);
+    };
+
+    const renderStep1 = () => (
+        <View style={tw`mb-8`}>
+            <View style={tw`w-full`}>
+                <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Nome</Text>
+                <View style={tw` flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
+                    <Image className='mx-3' style={{width:16, height:19}} source={require('../../assets/cadastro/icon_user.png')} />
+                    <TextInput
+                        className='outline-none flex-1 h-[90%] text-[90%]'
+                        placeholder="Seu nome completo"
+                        placeholderTextColor="#A9A9A9"
+                        value={formData.nomeCompletoUsuario}
+                        onChangeText={(text) => updateField('nomeCompletoUsuario', text)}
+                    />
+                </View>
+            </View>
+            <View style={tw`w-full flex-row justify-between mt-4`}>
+                <View style={tw`w-[48%]`}>
+                    <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Ano de nasc.</Text>
+                    <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
+                        <Image className='mx-3' style={{width:16, height:16}} source={require('../../assets/cadastro/icon_data.png')} />
+                        <TextInput
+                            className='outline-none w-[80%] h-full text-[90%]'
+                            placeholder="DD/MM/AAAA"
+                            placeholderTextColor="#A9A9A9"
+                            value={formData.dataNascimentoUsuario}
+                            onChangeText={(text) => updateField('dataNascimentoUsuario', text)}
+                        />
+                    </View>
+                </View>
+                <View style={tw`w-[48%]`}>
+                    <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Gênero</Text>
+                    <View style={tw`flex-row items-center rounded-xl p-[5] h-12 border-[#4ADC76] border-2`}>
+                        <Image className='mx-1' style={{width:16, height:20}} source={require('../../assets/cadastro/icon_genero.png')} />
+                        <View style={tw`w-[80%] h-[100%] justify-center `}>
+                            <RNPickerSelect
+                                onValueChange={(value) => updateField('generoUsuario', value)}
+                                items={[
+                                    { label: 'Masculino', value: 'masculino' },
+                                    { label: 'Feminino', value: 'feminino' },
+                                    { label: 'Não binário', value: 'nao-binario' },
+                                    { label: 'Outro', value: 'outro' },
+                                ]}
+                                style={pickerSelectStyles}
+                                value={formData.generoUsuario}
+                                placeholder={{ label: 'Selecione...', value: null }}
+                            />
+                        </View>
+                    </View>
+                </View>
+            </View>
+
+            <View style={tw`w-full mt-4`}>
+                <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Estado</Text>
+                <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
+                    <Image className='mx-3' style={{width:16, height:20}} source={require('../../assets/cadastro/icon_local.png')} />
+                    <TextInput
+                        className='outline-none flex-1 h-full text-[90%]'
+                        placeholder="Estado"
+                        placeholderTextColor="#A9A9A9"
+                        value={formData.estadoUsuario}
+                        onChangeText={(text) => updateField('estadoUsuario', text)}
+                    />
+                </View>
+            </View>
+            
+            <View style={tw`w-full mt-4`}>
+                <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Cidade</Text>
+                <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
+                    <Image className='mx-3' style={{width: 16, height:14}} source={require('../../assets/cadastro/icon_cidade.png')} />
+                    <TextInput
+                        className='outline-none flex-1 h-full text-[90%]'
+                        placeholder="Cidade"
+                        placeholderTextColor="#A9A9A9"
+                        value={formData.cidadeUsuario}
+                        onChangeText={(text) => updateField('cidadeUsuario', text)}
+                    />
+                </View>
+                
+            </View>
+        </View>
+    );
+
+    {/*cadastro 2*/}
+    const renderStep2 = () => (
+        <View style={tw`mb-8`}>
+            <View style={tw`w-full`}>
+                <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Categoria</Text>
+                <View style={tw`flex-row items-center rounded-xl p-5 h-12 border-[#4ADC76] border-2`}>
+                    <View style={tw`w-[100%] h-[100%] justify-center`}>
+                        <RNPickerSelect
+                            onValueChange={(value) => updateField('categoria', value)}
+                            items={[
+                                { label: 'Profissional', value: 'profissional' },
+                                { label: 'Amador', value: 'amador' },
+                                { label: 'Infantil', value: 'infantil' },
+                            ]}
+                            style={pickerSelectStyles}
+                            value={formData.categoria}
+                            placeholder={{ label: 'Selecione a categoria...', value: null }}
+                        />
+                    </View>
+                </View>
+            </View>
+            <View style={tw`w-full flex-row justify-between mt-4`}>
+                <View style={tw`w-[48%]`}>
+                    <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Temporadas</Text>
+                    <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
+                        <Image className='mx-3' style={{width:16, height:19}} source={require('../../assets/cadastro/icon_tempo.png')} />
+                        <TextInput
+                            style={tw`w-[80%] h-full text-[90%]`}
+                            placeholder="Anos"
+                            placeholderTextColor="#A9A9A9"
+                            value={formData.temporadasUsuario}
+                            className='outline-none'
+                            onChangeText={(text) => updateField('temporadasUsuario', text)}
+                            keyboardType="numeric"
+                        />
+                    </View>
+                </View>
+                <View style={tw`w-[48%]`}>
+                    <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Altura (cm)</Text>
+                    <View style={tw`flex-row items-center rounded-xl p-[5] h-12 border-[#4ADC76] border-2`}>
+                        <Image className='mx-3' style={{width:16, height:19}} source={require('../../assets/cadastro/icon_altura.png')} />
+                        <TextInput
+                            style={tw`w-[80%] h-[100%] justify-center `}
+                            className='outline-none'
+                            placeholder="cm"
+                            placeholderTextColor="#A9A9A9"
+                            value={formData.alturaCm}
+                            onChangeText={(text) => updateField('alturaCm', text)}
+                            keyboardType="numeric"
+                        />
+                    </View>
+                </View>
+            </View>
+            <View style={tw`w-full mt-4`}>
+                <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Esporte</Text>
+                <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
+                    <Image className='mx-3' style={{width:22, height:13}} source={require('../../assets/cadastro/icon_esporte.png')} />
+                    <View style={tw`w-[80%] h-[100%] justify-center `}>
+                        <RNPickerSelect
+                            onValueChange={(value) => {
+                                updateField('esporte', value);
+                                updateField('posicao', '');
+                            }}
+                            items={[
+                                { label: 'Futebol', value: 'futebol' },
+                                { label: 'Basquete', value: 'basquete' },
+                                { label: 'Vôlei', value: 'volei' },
+                                { label: 'Tênis', value: 'tenis' },
+                            ]}
+                            
+                            style={pickerSelectStyles}
+                            value={formData.esporte}
+                            placeholderTextColor="#A9A9A9"
+                            placeholder={{ label: 'Selecione o esporte...', value: null }}
+                        />
+                    </View>
+                </View>
+            </View>
+            {formData.esporte && (
+                <View style={tw`w-full mt-4`}>
+                    <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Posição</Text>
+                    <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
+                    <Image className='mx-3' style={{width:16, height:19}} source={require('../../assets/cadastro/icon_posicao.png')} />
+                            <View style={tw`w-[80%] h-[100%] justify-center`}>
+                            <RNPickerSelect
+                                onValueChange={(value) => updateField('posicao', value)}
+                                items={posicoesPorEsporte[formData.esporte] || []}
+                                style={pickerSelectStyles}
+                                value={formData.posicao}
+                                placeholderTextColor="#A9A9A9"
+                                placeholder={{ label: 'Selecione a posição...', value: null }}
+                            />
+                        </View>
+                    </View>
+                </View>
+            )}
+        </View>
+    );
+
+    const renderStep3 = () => (
+        <View style={tw`mb-8`}>
+            <View style={tw`w-full`}>
+                <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>E-mail</Text>
+                <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
+                    <Image className='mx-3' style={{width:16, height:12}} source={require('../../assets/cadastro/icon_email.png')} />
+                    <TextInput
+                        className='outline-none flex-1 h-full text-[90%]'
+                        placeholder="E-mail"
+                        placeholderTextColor="#A9A9A9"
+                        value={formData.emailUsuario}
+                        onChangeText={(text) => updateField('emailUsuario', text)}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                    />
+                </View>
+            </View>
+            <View style={tw`w-full mt-4`}>
+                <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Senha</Text>
+                <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
+                    <Image className='mx-3' style={{width:16, height:18}} source={require('../../assets/cadastro/icon_senha.png')} />
+                    <TextInput
+                        className='outline-none flex-1 h-full text-[90%]'
+                        placeholder="Senha"
+                        placeholderTextColor="#A9A9A9"
+                        value={formData.senhaUsuario}
+                        onChangeText={(text) => updateField('senhaUsuario', text)}
+                        secureTextEntry
+                    />
+                </View>
+            </View>
+            <View style={tw`w-full mt-4`}>
+                <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Confirme a Senha</Text>
+                <View style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}>
+                    <Image className='mx-3' style={{width:16, height:18}} source={require('../../assets/cadastro/icon_senha.png')} />
+                    <TextInput
+                        className='outline-none flex-1 h-full text-[90%]'
+                        placeholder="Confirme sua senha"
+                        placeholderTextColor="#A9A9A9"
+                        value={formData.confirmacaoSenhaUsuario}
+                        onChangeText={(text) => updateField('confirmacaoSenhaUsuario', text)}
+                        secureTextEntry
+                    />
+                </View>
+            </View>
+        </View>
+    );
+
+    const renderCurrentStep = () => {
+        switch (currentStep) {
+            case 0:
+                return renderStep1();
+            case 1:
+                return renderStep2();
+            case 2:
+                return renderStep3();
+            default:
+                return renderStep1();
+        }
+    };
+
+    return (
+        <View style={tw`flex-1 bg-gray-100`}>
+            {/* Este View substitui a imagem para que o código compile, mas num projeto real deve ser substituído pela sua imagem local. */}
+
+            <Text className=''>Venha conhecer um mundo de oportunidades</Text>
+            <Image className='absolute' style={{width:'100%', height:'40%'}} source={require('../../assets/cadastro/cadastro_imagem.png')} />
+
+            
+            <View style={tw`absolute h-[74%] bottom-0 w-full max-w-xl self-center bg-white p-5 rounded-tl-[30px] rounded-tr-[30px] shadow-lg`}>
+                <View style={tw`w-full items-center mb-2`}>
+                    <View style={tw`flex-row items-center w-full mb-2`}>
+                        <View style={tw`flex-1 h-2 bg-gray-200 rounded-full`}>
+                            <View style={[tw`h-full bg-[#4ADC76] rounded-full`, { width: getProgress(currentStep) }]} />
+                        </View>
+                        <Text style={tw`text-xs ml-2 text-gray-600`}>
+                            {getProgress(currentStep)}
+                        </Text>
+                    </View>
+                </View>
+
+                {renderCurrentStep()}
+
+                <View className='flex-row justify-between w-full '>
+                    <Pressable
+                        style={[tw`flex-row justify-between items-center w-[48%] p-[1.5%] h-12 bg-white border-2 border-[#4ADC76] rounded-full`, currentStep === 0 && tw`hidden`]}
+                        onPress={prevStep}
+                    >
+                         <View className='justify-center items-center w-[27%]  h-[100%] rounded-[100px] bg-[#4ADC76]'>
+                            <Image className='mx-3' style={{width:12, height:20}} source={require('../../assets/cadastro/icon_voltar.png')} />
+                        </View>
+                        <Text style={tw`mr-3 font-semibold text-lg text-[#4ADC76]`}>Anterior</Text>
+                    </Pressable>
+                    <Pressable
+                        className='flex-row justify-between w-[48%] p-[1.5%]  h-12 bg-[#4ADC76] rounded-full items-center'
+                        onPress={currentStep < 2 ? nextStep : handleSubmit}
+                    >
+                        <Text className='' style={tw`ml-3 font-semibold text-lg text-white`}>{currentStep < 2 ? 'Próximo' : 'Finalizar'}</Text>
+                        <View className='justify-center items-center w-[27%] h-[100%] rounded-[100px] bg-[#ffff]'>
+                            <Image className='mx-3' style={{width:12, height:20}} source={require('../../assets/cadastro/icon_proximo.png')} />
+                        </View>
+                    </Pressable>
+                </View>
+            </View>
+        </View>
+    );
+};
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+     color: '#A9A9A9',
+     height: '100%',
+    paddingLeft: 8,     
+    paddingVertical: 0,  
+    textAlignVertical: 'center',
+    outline:'none',
+  },
+  inputAndroid: {
+    fontSize: 16,
+    color: '#A9A9A9',
+    height: '100%',
+    paddingLeft: 8,   
+    paddingVertical: 0,
+    textAlignVertical: 'center',
+
+  },
+  placeholder: {
+    color: '#A9A9A9', // cinza claro
+  },
+});
+
+
+
+export default CadastroScreen;

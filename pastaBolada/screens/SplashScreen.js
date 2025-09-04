@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { View, Text, Image, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useFonts, Poppins_400Regular, Poppins_700Bold, Poppins_500Medium } from "@expo-google-fonts/poppins";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import usuario from "./../../services/usuario";
 import { useFonts, KonkhmerSleokchher_400Regular } from "@expo-google-fonts/konkhmer-sleokchher";
@@ -28,7 +29,9 @@ export default function SplashScreen() {
       } catch (error) {
         console.error('Erro ao validar token:', error); // arrumar isso
       }
-    }
+    } 
+
+    
 
     checkToken();
   }, []);
@@ -40,17 +43,16 @@ export default function SplashScreen() {
         resizeMode="cover"
       />
 
-      <View className="w-full h-[350px] justify-evenly items-center">
-        <Text style={{ fontFamily: "KonkhmerSleokchher_400Regular", fontSize: 40 }} className="w-[80%] text-white text-[48px] leading-[90%]">
+      <View className="w-full h-[350px] justify-end items-center">
+        <Text className="w-[90%] text-white leading-[90%]" style={{fontFamily:'Poppins_500Medium', fontSize:40,}}>
           Pratique o esporte como você nunca viu.
         </Text>
 
-        <Pressable className="mt-4 w-[80%] rounded-[40px] h-[50px] bg-white rounded-full flex-row items-center justify-between" onPress={() => navigation.navigate('AuthStack', { screen: 'Login' })}>
-          <Text style={{ fontFamily: "KonkhmerSleokchher_400Regular", fontSize: 20 }} className="ml-5 text-[20px] text-[#2BEF66]">LET'S GO</Text>
+        <Pressable className="mt-8 mb-8 w-[80%] rounded-[40px] h-[50px] bg-white flex-row items-center justify-between" onPress={() => navigation.navigate('AuthStack', { screen: 'Login' })}>
+          <Text className="ml-5 text-[20px] text-[#2BEF66]" style={{fontFamily:'Poppins_500Medium'}}>LET'S GO</Text>
 
           <View className="h-10 w-10 rounded-full bg-[#2BEF66] justify-center items-center mr-1">
-            <Text className="text-[25px] text-white justify-center mb-[2px]">&gt;
-            </Text>
+            <Image className='ml-1.5' resizeMode="contain" style={{width:20, height:20}} source={require('../../assets/Splash/icon_proximo.png')} />
           </View>
         </Pressable>
 
