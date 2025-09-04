@@ -5,25 +5,57 @@ import { useFonts, Poppins_400Regular, Poppins_700Bold, Poppins_500Medium } from
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import usuario from './../../services/usuario';
 
-
 export default function HomeScreen() {
   const navigation = useNavigation();
 
   const [emailUsuario, setEmailUsuario] = useState('');
   const [senhaUsuario, setSenhaUsuario] = useState('');
+  const [emailValido, setEmailValido] = useState(true);
+  const [senhaValida, setSenhaValida] = useState(true);
 
-   const [fontsLoaded] = useFonts({
+  const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_700Bold,
     Poppins_500Medium
   });
 
+  const validarEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
 
   async function handleLogin() {
+
+    let camposValidos = true;
+    
+    if (!emailUsuario.trim()) {
+      setEmailValido(false);
+      camposValidos = false;
+    } else if (!validarEmail(emailUsuario)) {
+      setEmailValido(false);
+      camposValidos = false;
+      Alert.alert('Email inválido', 'Por favor, insira um email válido.');
+      return;
+    } else {
+      setEmailValido(true);
+    }
+    
+    if (!senhaUsuario.trim()) {
+      setSenhaValida(false);
+      camposValidos = false;
+    } else {
+      setSenhaValida(true);
+    }
+    
+    if (!camposValidos) {
+      Alert.alert('Campos obrigatórios', 'Por favor, preencha todos os campos.');
+      return;
+    }
+    
     try {
       const response = await usuario.loginUser({ emailUsuario, senhaUsuario });
 
-      if (response?.data?.access_token) { // alguem isso aqui no chat ein
+      if (response?.data?.access_token) {
         await AsyncStorage.setItem('token', response.data.access_token);
         
         const responseDois = await usuario.perfilUser(response.data.access_token);
@@ -32,12 +64,11 @@ export default function HomeScreen() {
         await AsyncStorage.setItem('user', JSON.stringify(user));
         navigation.navigate('MainTabs');
       } else {
-        Alert.alert('Login inválido', 'E-mail ou senha incorretos.'); // fazer modal para possiveis erros
+        Alert.alert('Login inválido', 'E-mail ou senha incorretos.');
       }
     } catch (error) {
       console.error(error);
 
-      // Se tiver resposta do backend
       if (error.response?.status === 401) {
         Alert.alert('Erro de autenticação', 'E-mail ou senha incorretos.');
       } else {
@@ -66,25 +97,41 @@ export default function HomeScreen() {
         <View className='w-[90%] h-[25%] mt-[10%] '>
           {/* Email */}
           <Text className='text-[90%] text-[#98FFB7]' style={{fontFamily:'Poppins_500Medium'}}>E-mail</Text>
-          <View className='w-full mb-[10%] p-[3%] rounded-[8px] border-[3px] border-[#98FFB7] flex-row items-center'>
+          <View 
+            className={`w-full mb-[10%] p-[3%] rounded-[8px] border-[3px] flex-row items-center ${
+              emailValido ? 'border-[#98FFB7]' : 'border-red-500'
+            }`}
+          >
             <Image className='mr-[3%]' style={{width:'6%', height:'60%'}} source={require('../../assets/login/icon_email.png')} />
             <TextInput
               value={emailUsuario}
-              onChangeText={setEmailUsuario}
+              onChangeText={(text) => {
+                setEmailUsuario(text);
+                if (text.trim()) setEmailValido(true);
+              }}
               placeholder="Digite seu e-mail"
               placeholderTextColor="#ccc"
               className='w-[98%] h-[100%] text-white outline-none'
               style={{fontFamily:'Poppins_500Medium'}}
+              keyboardType="email-address"
+              autoCapitalize="none"
             />
           </View>
 
           {/* Senha */}
           <Text className='text-[90%] text-[#98FFB7]' style={{fontFamily:'Poppins_500Medium'}}>Senha</Text>
-          <View className='w-full mb-[10%] p-[3%] rounded-[8px] border-[3px] border-[#98FFB7] flex-row items-center'>
+          <View 
+            className={`w-full mb-[10%] p-[3%] rounded-[8px] border-[3px] flex-row items-center ${
+              senhaValida ? 'border-[#98FFB7]' : 'border-red-500'
+            }`}
+          >
             <Image className='mr-[3%]' style={{width:'5%', height:'70%'}} source={require('../../assets/login/icon_senha.png')} />
             <TextInput
               value={senhaUsuario}
-              onChangeText={setSenhaUsuario}
+              onChangeText={(text) => {
+                setSenhaUsuario(text);
+                if (text.trim()) setSenhaValida(true);
+              }}
               secureTextEntry={true}
               placeholder="Digite sua senha"
               placeholderTextColor="#ccc"
@@ -96,7 +143,10 @@ export default function HomeScreen() {
 
         {/* Botões */}
         <View className='w-[75%] h-[20%] gap-6 justify-center'>
-          <Pressable onPress={handleLogin} className='bg-[#4ADC76] h-[35%] rounded-[30px] items-center justify-between pl-[8%] flex-row'>
+          <Pressable 
+            onPress={handleLogin} 
+            className='bg-[#4ADC76] h-[35%] rounded-[30px] items-center justify-between pl-[8%] flex-row'
+          >
             <Text className='text-white text-[110%]' style={{fontFamily:'Poppins_500Medium'}}>Entrar</Text>
             <View className='w-[18%] h-[80%] bg-white m-[3%] rounded-full items-center justify-center'>
               <Image className='ml-[19%]' style={{width:'35%', height:'60%'}} source={require('../../assets/login/icon_seta.png')} />
