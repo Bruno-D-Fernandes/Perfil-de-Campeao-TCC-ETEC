@@ -1,21 +1,48 @@
-import { View, Text, Image, ScrollView, Pressable, ActivityIndicator } from "react-native";
-import { useState, useEffect } from "react";
+import { View, Text, Image, ScrollView, Pressable, ActivityIndicator, Modal, TextInput } from "react-native";
+import { useState, useEffect, use } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import tw from "twrnc";
 import usuario from "../../services/usuario" 
 import axios from "axios";
 
 export default function ProfileScreen() {
+  const [showModal, setShowModal] = useState(false);
+  const [openSettings, setOpenSettings] = useState({});
+  const [editData, setEditData] = useState({});
   const [activeTab, setActiveTab] = useState("info");
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const openEditModal = () => {
+    setEditData({
+      nomeCompletoUsuario: userData?.nomeCompletoUsuario || "",
+      emailUsuario: userData?.emailUsuario || "",
+      dataNascimentoUsuario: userData?.dataNascimentoUsuario || "",
+      generoUsuario: userData?.generoUsuario || "",
+      estadoUsuario: userData?.estadoUsuario || "",
+      cidadeUsuario: userData?.cidadeUsuario || "",
+      alturaCm: userData?.alturaCm || "",
+      temporadasUsuario: userData?.temporadasUsuario?.toString() || "",
+    });
+    setShowModal(true);
+  };
+
+  const saveInfo = async () => {
+    try {
+      await usuario.editUser(editData, userData.id);
+      setUserData({ ...userData, ...editData });
+      setShowModal(false);
+    } catch (err) {
+      console.error("Erro ao salvar:", err);
+    }
+  };
+
   const loadUserData = async () => {
     try {
       setLoading(true);
       const response = await usuario.splashUser();
-      setUserData(response.data); // resposta da API
+      setUserData(response.data);
       setError(null);
     } catch (err) {
       setError("Erro ao carregar dados do usuário");
@@ -73,7 +100,8 @@ export default function ProfileScreen() {
           {/* Botão config */}
           <Pressable
             style={tw`absolute right-4 top-13 bg-white p-2 rounded-full shadow`}
-            >
+            onPress={openEditModal}
+          >
             <Ionicons name="settings" size={22} color="green" />
           </Pressable>
         </View>
@@ -136,7 +164,7 @@ export default function ProfileScreen() {
                 </View>
               )}
 
-              {userData?.altura && (
+              {userData?.alturaCm && (
                 <View className="bg-green-100 w-[48%] rounded-xl p-4 mb-3">
                   <Text className="text-gray-600 text-sm">Altura</Text>
                   <Text className="text-green-600 font-bold">{userData.altura}</Text>
@@ -169,6 +197,68 @@ export default function ProfileScreen() {
           <Text className="text-center text-gray-500">Aqui ficaria o Feed...</Text>
         )}
       </ScrollView>
+      <Modal visible={showModal} animationType="slide">
+  <View className="flex-1 bg-white">
+    {/* Header */}
+    <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-200">
+      <Pressable onPress={() => setShowModal(false)}>
+        <Ionicons name="arrow-back" size={24} color="green" />
+      </Pressable>
+      <Text className="text-lg font-bold text-green-600">Editar perfil</Text>
+      <Pressable className="bg-green-500 px-3 py-1 rounded-full"
+       onPress={saveInfo}>
+        <Text className="text-white font-bold">Salvar</Text>
+      </Pressable>
+    </View>
+
+    {/* Foto de Perfil + Banner */}
+    <View className="items-center mt-6">
+      <View className="relative">
+        <Image
+          source={{ uri: editData.fotoPerfilUsuario || "https://picsum.photos/200" }}
+          className="w-28 h-28 rounded-full"
+        />
+        <Pressable className="absolute bottom-0 right-0 bg-green-500 p-2 rounded-full">
+          <Ionicons name="camera" size={16} color="white" />
+        </Pressable>
+      </View>
+    </View>
+
+    {/* Scroll com campos */}
+    <ScrollView className="mt-6 px-4">
+      <Text className="text-green-600 text-lg font-bold mb-3">Informações</Text>
+
+      {[
+        { label: "Nome Completo", key: "nomeCompletoUsuario" },
+        { label: "Email", key: "emailUsuario" },
+        { label: "Data de Nascimento", key: "dataNascimentoUsuario" },
+        { label: "Gênero", key: "generoUsuario" },
+        { label: "Estado", key: "estadoUsuario" },
+        { label: "Cidade", key: "cidadeUsuario" },
+        { label: "Altura (cm)", key: "alturaCm" },
+        { label: "Temporadas", key: "temporadasUsuario" },
+      ].map((field, index) => (
+        <View
+          key={index}
+          className="bg-gray-50 rounded-xl p-3 mb-3 flex-row justify-between items-center"
+        >
+          <View className="flex-1 mr-2">
+            <Text className="text-gray-500 text-sm">{field.label}</Text>
+            <TextInput
+              value={editData[field.key] || ""}
+              secureTextEntry={field.secure || false}
+              onChangeText={(text) =>
+                setEditData({ ...editData, [field.key]: text })
+              }
+              className="text-green-700 font-bold"
+            />
+          </View>
+          <Ionicons name="create-outline" size={20} color="green" />
+        </View>
+      ))}
+    </ScrollView>
+  </View>
+</Modal>
     </View>
   );
 }
