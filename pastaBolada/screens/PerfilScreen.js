@@ -1,16 +1,6 @@
-
-import { View, Text, Image, ScrollView, Pressable, ActivityIndicator, Modal, TextInput } from "react-native";
-import { useState, useEffect, use } from "react";
-
-import {
-  View,
-  Text,
-  Image,
-  ImageBackground,
-  ScrollView,
-  Pressable,
-  ActivityIndicator,
-  TouchableOpacity,
+import { 
+  View, Text, Image, ImageBackground, ScrollView, Pressable, 
+  ActivityIndicator, Modal, TextInput, TouchableOpacity 
 } from "react-native";
 import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
@@ -19,13 +9,11 @@ import usuario from "./../../services/usuario"; // sua API
 
 export default function ProfileScreen() {
   const [showModal, setShowModal] = useState(false);
-  const [openSettings, setOpenSettings] = useState({});
   const [editData, setEditData] = useState({});
   const [activeTab, setActiveTab] = useState("info");
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
 
   const openEditModal = () => {
     setEditData({
@@ -35,7 +23,7 @@ export default function ProfileScreen() {
       generoUsuario: userData?.generoUsuario || "",
       estadoUsuario: userData?.estadoUsuario || "",
       cidadeUsuario: userData?.cidadeUsuario || "",
-      alturaCm: userData?.alturaCm || "",
+      alturaCm: userData?.alturaCm?.toString() || "",
       temporadasUsuario: userData?.temporadasUsuario?.toString() || "",
     });
     setShowModal(true);
@@ -49,8 +37,8 @@ export default function ProfileScreen() {
     } catch (err) {
       console.error("Erro ao salvar:", err);
     }
+  };
 
-  // Função para calcular idade
   const calcularIdade = (dataNascimento) => {
     if (!dataNascimento) return null;
     const hoje = new Date();
@@ -61,7 +49,6 @@ export default function ProfileScreen() {
       idade--;
     }
     return idade;
-
   };
 
   const loadUserData = async () => {
@@ -115,11 +102,6 @@ export default function ProfileScreen() {
         }}
         className="w-full h-40"
       >
-        <TouchableOpacity
-          style={tw`absolute right-4 top-4 bg-white p-2 rounded-full shadow`}
-        >
-          <Ionicons name="settings" size={22} color="green" />
-        </TouchableOpacity>
       </ImageBackground>
 
       {/* Foto de Perfil + Nome */}
@@ -133,38 +115,21 @@ export default function ProfileScreen() {
           className="w-24 h-24 rounded-full border-4 border-white"
         />
 
-        <View className="items-center -mt-12">
-          {userData?.foto ? (
-            <Image
-              source={{ uri: userData.foto }}
-              className="w-24 h-24 rounded-full border-4 border-white"
-            />
-          ) : (
-            <View className="w-24 h-24 rounded-full border-4 border-white bg-green-100 items-center justify-center">
-              <Text className="text-3xl font-bold text-green-700">
-                {userData?.nome?.charAt(0) || "U"}
-              </Text>
-            </View>
-          )}
-
-          {/* Botão config */}
-          <Pressable
-            style={tw`absolute right-4 top-13 bg-white p-2 rounded-full shadow`}
-            onPress={openEditModal}
-          >
-            <Ionicons name="settings" size={22} color="green" />
-          </Pressable>
-        </View>
+        <Pressable
+          style={tw`absolute right-4 top-8 bg-white p-2 rounded-full shadow`}
+          onPress={openEditModal}
+        >
+          <Ionicons name="settings" size={22} color="green" />
+        </Pressable>
       </View>
 
-      {/* Nome e medalha */}
+      {/* Nome */}
       <View className="items-center mt-2">
         <Text className="text-2xl font-bold text-gray-800">
-          {userData?.nome || "Usuário"}
-
-        <Text className="text-xl font-bold text-gray-800 mt-2">
+          {userData?.nomeCompletoUsuario || "Usuário"}
+        </Text>
+        <Text className="text-xl font-bold text-gray-800 mt-1">
           {userData?.nomeUsuario || "Usuário"}
-
         </Text>
         <Ionicons name="medal-outline" size={20} color="gray" />
       </View>
@@ -172,180 +137,114 @@ export default function ProfileScreen() {
       {/* Tabs */}
       <View className="flex-row justify-center mt-4 border-b border-gray-200">
         <Pressable
-          className={`px-6 pb-2 ${
-            activeTab === "feed" ? "border-b-2 border-green-500" : ""
-          }`}
+          className={`px-6 pb-2 ${activeTab === "feed" ? "border-b-2 border-green-500" : ""}`}
           onPress={() => setActiveTab("feed")}
         >
-          <Text
-            className={`text-base ${
-              activeTab === "feed"
-                ? "text-green-600 font-bold"
-                : "text-gray-500"
-            }`}
-          >
+          <Text className={`text-base ${activeTab === "feed" ? "text-green-600 font-bold" : "text-gray-500"}`}>
             Feed
           </Text>
         </Pressable>
-
         <Pressable
-          className={`px-6 pb-2 ${
-            activeTab === "info" ? "border-b-2 border-green-500" : ""
-          }`}
+          className={`px-6 pb-2 ${activeTab === "info" ? "border-b-2 border-green-500" : ""}`}
           onPress={() => setActiveTab("info")}
         >
-          <Text
-            className={`text-base ${
-              activeTab === "info"
-                ? "text-green-600 font-bold"
-                : "text-gray-500"
-            }`}
-          >
+          <Text className={`text-base ${activeTab === "info" ? "text-green-600 font-bold" : "text-gray-500"}`}>
             Informações
           </Text>
         </Pressable>
       </View>
 
       {/* Conteúdo das Tabs */}
-      <ScrollView className="flex-1 px-4 py-4">
+      <ScrollView className="flex-1 px-4 py-4 bg-green-50">
         {activeTab === "info" ? (
           <View>
             {/* Grid de informações */}
             <View className="flex-row flex-wrap justify-between">
               {userData?.generoUsuario && (
-                <Pressable className="bg-green-100 w-[48%] rounded-xl p-4 mb-3">
+                <View className="bg-green-100 w-[48%] rounded-xl p-4 mb-3">
                   <Ionicons name="male-female-outline" size={18} color="green" />
                   <Text className="text-gray-600 text-sm">Gênero</Text>
-                  <Text className="text-green-600 font-bold">
-                    {userData.generoUsuario}
-                  </Text>
-                </Pressable>
+                  <Text className="text-green-600 font-bold">{userData.generoUsuario}</Text>
+                </View>
               )}
 
               {userData?.dataNascimentoUsuario && (
-                <Pressable className="bg-green-100 w-[48%] rounded-xl p-4 mb-3">
+                <View className="bg-green-100 w-[48%] rounded-xl p-4 mb-3">
                   <Ionicons name="calendar-outline" size={18} color="green" />
                   <Text className="text-gray-600 text-sm">Idade</Text>
-                  <Text className="text-green-600 font-bold">
-                    {calcularIdade(userData.dataNascimentoUsuario)} anos
-                  </Text>
-                </Pressable>
+                  <Text className="text-green-600 font-bold">{calcularIdade(userData.dataNascimentoUsuario)} anos</Text>
+                </View>
               )}
 
               {userData?.alturaCm && (
-
                 <View className="bg-green-100 w-[48%] rounded-xl p-4 mb-3">
-               <Pressable className="bg-green-100 w-[48%] rounded-xl p-4 mb-3">
                   <Ionicons name="resize-outline" size={18} color="green" />
                   <Text className="text-gray-600 text-sm">Altura</Text>
-                  <Text className="text-green-600 font-bold">
-                    {userData.alturaCm} cm
-                  </Text>
-                </Pressable>
+                  <Text className="text-green-600 font-bold">{userData.alturaCm} cm</Text>
+                </View>
               )}
 
               {userData?.pesoKg && (
-                <Pressable className="bg-green-100 w-[48%] rounded-xl p-4 mb-3">
+                <View className="bg-green-100 w-[48%] rounded-xl p-4 mb-3">
                   <Ionicons name="barbell-outline" size={18} color="green" />
                   <Text className="text-gray-600 text-sm">Peso</Text>
-                  <Text className="text-green-600 font-bold">
-                    {userData.pesoKg} kg
-                  </Text>
-                </Pressable>
+                  <Text className="text-green-600 font-bold">{userData.pesoKg} kg</Text>
+                </View>
               )}
             </View>
-
-            {/* Cards maiores */}
-            <Pressable className="bg-green-200 rounded-xl p-4 mb-3 flex-row items-center">
-              <Ionicons name="time-outline" size={20} color="green" />
-              <Text className="text-green-700 font-bold ml-2">Histórico</Text>
-            </Pressable>
-
-            <Pressable className="bg-green-200 rounded-xl p-4 mb-3 flex-row items-center">
-              <Ionicons name="star-outline" size={20} color="green" />
-              <Text className="text-green-700 font-bold ml-2">Habilidades</Text>
-            </Pressable>
-
-            <Pressable className="bg-green-200 rounded-xl p-4 mb-3 flex-row items-center">
-              <Ionicons name="stats-chart-outline" size={20} color="green" />
-              <Text className="text-green-700 font-bold ml-2">Estatísticas</Text>
-            </Pressable>
-
-            <Pressable className="bg-green-400 rounded-xl p-4 mb-3 flex-row items-center">
-              <Ionicons name="trophy-outline" size={20} color="white" />
-              <Text className="text-white font-bold ml-2">
-                Troféus e Medalhas
-              </Text>
-            </Pressable>
           </View>
         ) : (
-          <Text className="text-center text-gray-500">
-            Feed em construção...
-          </Text>
+          <Text className="text-center text-gray-500">Feed em construção...</Text>
         )}
       </ScrollView>
+
+      {/* Modal de edição */}
       <Modal visible={showModal} animationType="slide">
-  <View className="flex-1 bg-white">
-    {/* Header */}
-    <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-200">
-      <Pressable onPress={() => setShowModal(false)}>
-        <Ionicons name="arrow-back" size={24} color="green" />
-      </Pressable>
-      <Text className="text-lg font-bold text-green-600">Editar perfil</Text>
-      <Pressable className="bg-green-500 px-3 py-1 rounded-full"
-       onPress={saveInfo}>
-        <Text className="text-white font-bold">Salvar</Text>
-      </Pressable>
-    </View>
-
-    {/* Foto de Perfil + Banner */}
-    <View className="items-center mt-6">
-      <View className="relative">
-        <Image
-          source={{ uri: editData.fotoPerfilUsuario || "https://picsum.photos/200" }}
-          className="w-28 h-28 rounded-full"
-        />
-        <Pressable className="absolute bottom-0 right-0 bg-green-500 p-2 rounded-full">
-          <Ionicons name="camera" size={16} color="white" />
-        </Pressable>
-      </View>
-    </View>
-
-    {/* Scroll com campos */}
-    <ScrollView className="mt-6 px-4">
-      <Text className="text-green-600 text-lg font-bold mb-3">Informações</Text>
-
-      {[
-        { label: "Nome Completo", key: "nomeCompletoUsuario" },
-        { label: "Email", key: "emailUsuario" },
-        { label: "Data de Nascimento", key: "dataNascimentoUsuario" },
-        { label: "Gênero", key: "generoUsuario" },
-        { label: "Estado", key: "estadoUsuario" },
-        { label: "Cidade", key: "cidadeUsuario" },
-        { label: "Altura (cm)", key: "alturaCm" },
-        { label: "Temporadas", key: "temporadasUsuario" },
-      ].map((field, index) => (
-        <View
-          key={index}
-          className="bg-gray-50 rounded-xl p-3 mb-3 flex-row justify-between items-center"
-        >
-          <View className="flex-1 mr-2">
-            <Text className="text-gray-500 text-sm">{field.label}</Text>
-            <TextInput
-              value={editData[field.key] || ""}
-              secureTextEntry={field.secure || false}
-              onChangeText={(text) =>
-                setEditData({ ...editData, [field.key]: text })
-              }
-              className="text-green-700 font-bold"
-            />
+        <View className="flex-1 bg-white">
+          <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-200">
+            <Pressable onPress={() => setShowModal(false)}>
+              <Ionicons name="arrow-back" size={24} color="green" />
+            </Pressable>
+            <Text className="text-lg font-bold text-green-600">Editar perfil</Text>
+            <Pressable
+              className="bg-green-500 px-3 py-1 rounded-full"
+              onPress={saveInfo}
+            >
+              <Text className="text-white font-bold">Salvar</Text>
+            </Pressable>
           </View>
-          <Ionicons name="create-outline" size={20} color="green" />
+
+          <ScrollView className="mt-6 px-4">
+            {[
+              { label: "Nome Completo", key: "nomeCompletoUsuario" },
+              { label: "Email", key: "emailUsuario" },
+              { label: "Data de Nascimento", key: "dataNascimentoUsuario" },
+              { label: "Gênero", key: "generoUsuario" },
+              { label: "Estado", key: "estadoUsuario" },
+              { label: "Cidade", key: "cidadeUsuario" },
+              { label: "Altura (cm)", key: "alturaCm" },
+              { label: "Temporadas", key: "temporadasUsuario" },
+            ].map((field, index) => (
+              <View
+                key={index}
+                className="bg-gray-50 rounded-xl p-3 mb-3 flex-row justify-between items-center"
+              >
+                <View className="flex-1 mr-2">
+                  <Text className="text-gray-500 text-sm">{field.label}</Text>
+                  <TextInput
+                    value={editData[field.key] || ""}
+                    onChangeText={(text) =>
+                      setEditData({ ...editData, [field.key]: text })
+                    }
+                    className="text-green-700 font-bold"
+                  />
+                </View>
+                <Ionicons name="create-outline" size={20} color="green" />
+              </View>
+            ))}
+          </ScrollView>
         </View>
-      ))}
-    </ScrollView>
-  </View>
-</Modal>
+      </Modal>
     </View>
   );
 }
