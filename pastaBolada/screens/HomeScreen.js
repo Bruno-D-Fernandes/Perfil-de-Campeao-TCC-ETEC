@@ -1,10 +1,14 @@
-import { View, Text,Image, Pressable, TextInput } from 'react-native';
+import { View, Text, Image, Pressable, TextInput } from 'react-native';
+import { use, useEffect, useState } from 'react';
 import { useFonts, Poppins_400Regular, Poppins_700Bold, Poppins_500Medium } from "@expo-google-fonts/poppins";
 
 
 import Postagem from '../components/Postagem';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen() {
+  const [nameUser, setNameUser] = useState('Usuario');
+
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -12,7 +16,28 @@ export default function HomeScreen() {
     Poppins_500Medium
   });
 
-  const nameUser = 'Vinicius';
+  
+    const loadUserData = async () => {
+      try {
+        const response = await usuario.perfilUser();
+        console.log("Dados do usuário:", response);
+        await AsyncStorage.setItem('userData', JSON.stringify(response));
+      } catch (err) {
+        console.error("Erro:", err);
+      } 
+    };
+  
+    useEffect(() => {
+      const fetchUserData = async () => {
+        await loadUserData();
+        const userData = await AsyncStorage.getItem('user');
+        setNameUser(JSON.parse(userData)?.nomeCompletoUsuario.split(" ")[0] || 'Usuário');
+        console.log('Nome do usuário carregado:', nameUser)
+      };
+      fetchUserData();
+    }, []);
+  
+
 
   return (
 

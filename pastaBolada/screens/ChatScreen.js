@@ -1,10 +1,10 @@
-import { View, Text } from 'react-native';
+import { View, Text, SafeAreaView } from 'react-native';
 
 export default function ChatScreen() {
 
   return (
-    <View>
+    <SafeAreaView>
         <Text>Chat</Text>
         {/* <Button title="Ir para Detalhes" onPress={() => navigation.navigate('Detalhes')} /> */}
-    </View>
+  </SafeAreaView>
   )}

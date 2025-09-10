@@ -1,9 +1,38 @@
+
 import { useState } from "react";
-import { View, Text, Image, Pressable } from "react-native";
+import { View, Text, Image, Pressable, Alert } from "react-native";
 import { Modal, TextInput } from "react-native-web";
+import * as ImagePicker from 'expo-image-picker';
 
 export default function HomeScreen() {
-  [cellModal, setCellModal] = useState(false);
+  const [cellModal, setCellModal] = useState(false);
+  const [imagem, setImagem] = useState(null);
+
+  // Função para solicitar permissão da câmera
+  const solicitarPermissaoCamera = async () => {
+    const camera = await ImagePicker.requestCameraPermissionsAsync();
+    if (camera.status !== 'granted') {
+      Alert.alert('Permissão negada', 'É necessário permitir acesso à câmera.');
+      return false;
+    }
+    return true;
+  };
+
+  // Função para tirar foto usando a câmera
+  const tirarFoto = async () => {
+    const permissao = await solicitarPermissaoCamera();
+    if (!permissao) return;
+
+    const resultado = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!resultado.canceled) {
+      setImagem(resultado.assets[0].uri);
+    }
+  };
 
   const imageMap = {
     0: require("../../assets/icons-postagem/SetaIconPostagem.png"),
@@ -75,9 +104,9 @@ export default function HomeScreen() {
     );
   }
 
-  function Card({ nome, imagem }) {
+  function Card({ nome, imagem, onPress }) {
     return (
-      <Pressable className="bg-[#D9D9D9]/50 flex-row rounded-[12px] h-full w-full items-center p-2 my-[10px]">
+      <Pressable onPress={onPress} className="bg-[#D9D9D9]/50 flex-row rounded-[12px] h-full w-full items-center p-2 my-[10px]">
         <Image source={imageMap[imagem]} className="w-10 h-10" />
         <Text>{nome}</Text>
       </Pressable>
@@ -121,7 +150,7 @@ return (
           <Text className="font-semibold text-[24px] text-[#61D483] mb-[10px] mr-[10px]">Adicione Seu post:</Text>
           <View className="flex-row flex-wrap justify-between">
             <View className="w-[48%] h-[50px] rounded-[12px] my-[10px]">
-              <Card nome={"Mídia"} imagem={0} />
+              <Card nome={"Mídia"} imagem={0} onPress={tirarFoto} />
             </View>
             <View className="w-[48%] h-[50px] rounded-[12px] my-[10px]">
               <Card nome={"Localização"} imagem={1} />

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, Pressable, Switch, Modal, TouchableOpacity } from "react-native";
+import { Text, View, Pressable, Switch, Modal, TouchableOpacity, SafeAreaView } from "react-native";
 import { MaterialIcons, AntDesign } from '@expo/vector-icons';
 import usuario from "../../services/usuario";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -77,7 +77,7 @@ export default function ConfigScreen() {
   };
 
   return (
-    <View className="flex-1 p-4 bg-[#F0FFF4]">
+    <SafeAreaView className="flex-1 p-4 bg-[#F0FFF4]">
 
       {/* Seção de Conta */}
       <View className="mb-6">
@@ -153,6 +153,6 @@ export default function ConfigScreen() {
         </View>
       </Modal>
 
-    </View>
+  </SafeAreaView>
   );
 }

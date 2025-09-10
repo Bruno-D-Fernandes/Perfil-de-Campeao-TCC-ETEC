@@ -15,10 +15,15 @@ const splashUser = (data) => {
     return response;
 }; // manter esse metodo spash user para essa primeira entrega | tirar depois
 
-const perfilUser = (data) => {
-    const response = api.get('/perfil', data); // Sapoha não precisa passar o token no payload chapei, arruma ai Bruno do futuro
-    console.log('Perfil user usado');
-    return response;
+const perfilUser = async (data) => {
+    try {
+        const response = await api.get('/perfil', data); // Sapoha não precisa passar o token no payload chapei, arruma ai Bruno do futuro
+        console.log('Perfil user usado');
+        return response;
+    } catch (error) {
+        console.error('Erro ao buscar perfil do usuário:', error);
+        throw error;
+    }
 };
 
 

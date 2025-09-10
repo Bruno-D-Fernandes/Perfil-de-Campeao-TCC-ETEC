@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useFonts, Poppins_400Regular, Poppins_700Bold, Poppins_500Medium } from "@expo-google-fonts/poppins";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import usuario from "./../../services/usuario";
+import { SafeAreaView } from "react-native";
 
 export default function SplashScreen() {
   const navigation = useNavigation();
@@ -36,6 +37,7 @@ export default function SplashScreen() {
     checkToken();
   }, []);
   return (
+    <SafeAreaView style={{ flex: 1 }}>
     <View className="flex-1 justify-end items-end h-full flex-col items-center">
       <Image
         source={require("../../assets/Splash/imagem.png")}
@@ -58,5 +60,6 @@ export default function SplashScreen() {
 
       </View>
     </View>
+    </SafeAreaView>
   );
 }

@@ -1,35 +1,37 @@
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, Image } from 'react-native';
 import tw from 'twrnc';
 import RNPickerSelect from 'react-native-picker-select';
+import usuario from '../../services/usuario'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const posicoesPorEsporte = {
-    futebol: [
-        { label: 'Atacante', value: 'atacante' },
-        { label: 'Zagueiro', value: 'zagueiro' },
-        { label: 'Goleiro', value: 'goleiro' },
-        { label: 'Meio-campo', value: 'meio-campo' },
+    1: [ // Futebol
+        { label: 'Atacante', value: 1 },
+        { label: 'Zagueiro', value: 2 },
+        { label: 'Goleiro', value: 3 },
+        { label: 'Meio-campo', value: 4 },
     ],
-    basquete: [
-        { label: 'Armador', value: 'armador' },
-        { label: 'Ala-armador', value: 'ala-armador' },
-        { label: 'Ala', value: 'ala' },
-        { label: 'Ala-pivô', value: 'ala-pivo' },
-        { label: 'Pivô', value: 'pivo' },
+    2: [ // Basquete
+        { label: 'Armador', value: 5 },
+        { label: 'Ala-armador', value: 6 },
+        { label: 'Ala', value: 7 },
+        { label: 'Ala-pivô', value: 8 },
+        { label: 'Pivô', value: 9 },
     ],
-    volei: [
-        { label: 'Levantador', value: 'levantador' },
-        { label: 'Ponteiro', value: 'ponteiro' },
-        { label: 'Oposto', value: 'oposto' },
-        { label: 'Central', value: 'central' },
-        { label: 'Líbero', value: 'libero' },
+    3: [ // Vôlei
+        { label: 'Levantador', value: 10 },
+        { label: 'Ponteiro', value: 11 },
+        { label: 'Oposto', value: 12 },
+        { label: 'Central', value: 13 },
+        { label: 'Líbero', value: 14 },
     ],
-    tenis: [
-        { label: 'Simples', value: 'simples' },
-        { label: 'Duplas', value: 'duplas' },
+    4: [ // Tênis
+        { label: 'Simples', value: 15 },
+        { label: 'Duplas', value: 16 },
     ]
 };
-
 const getProgress = (step) => {
     switch (step) {
         case 0:
@@ -44,6 +46,7 @@ const getProgress = (step) => {
 };
 
 const CadastroScreen = () => {
+    const navigation = useNavigation();
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState({
         nomeCompletoUsuario: '',
@@ -80,8 +83,21 @@ const CadastroScreen = () => {
         }
     };
 
-    const handleSubmit = () => {
-        console.log('Dados do formulário:', formData);
+    const handleSubmit = async () => {
+        const data = formData.dataNascimentoUsuario.split('/');
+        const formattedDate = `${data[2]}-${data[1]}-${data[0]}`; 
+
+        formData.dataNascimentoUsuario = formattedDate;
+        console.log(formData);
+        
+        try {
+            const token = await usuario.createUser(formData);
+            await AsyncStorage.setItem('token', token.data.access_token);
+
+            navigation.navigate('MainTabs');
+        } catch (error) {
+            console.error('Erro ao criar usuário:', error);
+        }
     };
 
     const renderStep1 = () => (
@@ -176,9 +192,9 @@ const CadastroScreen = () => {
                         <RNPickerSelect
                             onValueChange={(value) => updateField('categoria', value)}
                             items={[
-                                { label: 'Profissional', value: 'profissional' },
-                                { label: 'Amador', value: 'amador' },
-                                { label: 'Infantil', value: 'infantil' },
+                                { label: 'Profissional', value: 2 },
+                                { label: 'Amador', value: 1 },
+                                { label: 'Semi-Profissional', value: 3 },
                             ]}
                             style={pickerSelectStyles}
                             value={formData.categoria}
@@ -230,10 +246,10 @@ const CadastroScreen = () => {
                                 updateField('posicao', '');
                             }}
                             items={[
-                                { label: 'Futebol', value: 'futebol' },
-                                { label: 'Basquete', value: 'basquete' },
-                                { label: 'Vôlei', value: 'volei' },
-                                { label: 'Tênis', value: 'tenis' },
+                                { label: 'Futebol', value: 1 },
+                                { label: 'Basquete', value: 2 },
+                                { label: 'Vôlei', value: 3 },
+                                { label: 'Tênis', value: 4 },
                             ]}
                             
                             style={pickerSelectStyles}
