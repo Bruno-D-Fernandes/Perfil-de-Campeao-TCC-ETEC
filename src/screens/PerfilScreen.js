@@ -1,11 +1,11 @@
 import { 
   View, Text, Image, ImageBackground, ScrollView, Pressable, 
-  ActivityIndicator, Modal, TextInput, TouchableOpacity 
+  ActivityIndicator, Modal, TextInput,  
 } from "react-native";
 import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import tw from "twrnc";
-import usuario from "./../../services/usuario"; // sua API
+import usuario from "./../../services/usuario";
 
 export default function ProfileScreen() {
   const [showModal, setShowModal] = useState(false);
@@ -24,7 +24,6 @@ export default function ProfileScreen() {
       estadoUsuario: userData?.estadoUsuario || "",
       cidadeUsuario: userData?.cidadeUsuario || "",
       alturaCm: userData?.alturaCm?.toString() || "",
-      temporadasUsuario: userData?.temporadasUsuario?.toString() || "",
     });
     setShowModal(true);
   };
@@ -223,7 +222,6 @@ export default function ProfileScreen() {
               { label: "Estado", key: "estadoUsuario" },
               { label: "Cidade", key: "cidadeUsuario" },
               { label: "Altura (cm)", key: "alturaCm" },
-              { label: "Temporadas", key: "temporadasUsuario" },
             ].map((field, index) => (
               <View
                 key={index}

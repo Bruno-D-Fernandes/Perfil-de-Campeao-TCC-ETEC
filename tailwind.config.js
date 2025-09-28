@@ -2,8 +2,8 @@
 module.exports = {
   content: [
     "./App.{js,jsx,ts,tsx}",
-    "./pastaBolada/components/**/*.{js,jsx,ts,tsx}", 
-    "./pastaBolada/screens/**/*.{js,jsx,ts,tsx}",
+    "./src/components/**/*.{js,jsx,ts,tsx}", 
+    "./src/screens/**/*.{js,jsx,ts,tsx}",
     "./global.css" 
   ],
   presets: [require("nativewind/preset")], 

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -10,23 +9,22 @@ import "./global.css"
 import Feather from '@expo/vector-icons/Feather';
 
 // Telas
-import HomeScreen from './pastaBolada/screens/HomeScreen';
-import OportunidadesScreen from './pastaBolada/screens/OportunidadesScreen';
-import PerfilScreen from './pastaBolada/screens/PerfilScreen';
-import ConfigScreen from './pastaBolada/screens/ConfigScreen';
-import ChatScreen from './pastaBolada/screens/ChatScreen';
-import NotificaScreen from './pastaBolada/screens/NotificaScreen';
-import PostagemScreen from './pastaBolada/screens/PostagemScreen';
-import SplashScreen from './pastaBolada/screens/SplashScreen'
-import LoginScreen from './pastaBolada/screens/LoginScreen';
-import CadastroScreen from './pastaBolada/screens/CadastroScreen';
+import HomeScreen from './src/screens/HomeScreen';
+import OportunidadesScreen from './src/screens/OportunidadesScreen';
+import PerfilScreen from './src/screens/PerfilScreen';
+import ConfigScreen from './src/screens/ConfigScreen';
+import ChatScreen from './src/screens/ChatScreen';
+import NotificaScreen from './src/screens/NotificaScreen';
+import PostagemScreen from './src/screens/PostagemScreen';
+import SplashScreen from './src/screens/SplashScreen'
+import LoginScreen from './src/screens/LoginScreen';
+import CadastroScreen from './src/screens/CadastroScreen';
 
 // Stack
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 // ---
-// Telas que têm a TabBar visível
 function MainTabs() {
   return (
     <Tab.Navigator
@@ -64,12 +62,12 @@ function MainTabs() {
         },
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Home" component={HomeScreen} /> {/* Provavelmente a home vai vira a atual aba de opotunidades --Bruno */}
       <Tab.Screen name="Oportunidades" component={OportunidadesScreen} />
       <Tab.Screen 
   name="CriarPost" 
   component={PostagemScreen}
-  options={({ navigation }) => ({ // ✅ CORREÇÃO: Recebe navigation como parâmetro
+  options={({ navigation }) => ({
     headerShown: true,
     tabBarStyle: { display: 'none' },
     headerStyle: {
@@ -91,7 +89,6 @@ function MainTabs() {
     headerLeft: () => (
       <Pressable 
         onPress={() => {
-          // ✅ CORREÇÃO: Usa o navigation do parâmetro, não o hook
           navigation.navigate('Home');
         }}
         style={{
@@ -110,7 +107,7 @@ function MainTabs() {
     headerRight: () => (
       <Pressable 
         onPress={() => {
-          // Adicione aqui a lógica para postar
+          // Lógica para postar
           console.log('Postar pressionado');
         }}
         style={{
@@ -142,10 +139,10 @@ function MainTabs() {
   );
 }
 
-function AuthStack() { // aqui vai a tela de login 
+function AuthStack() { 
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName="Cadastro"
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen
@@ -164,14 +161,6 @@ function AuthStack() { // aqui vai a tela de login
           tabBarShown: false
         }}
       />
-      <Stack.Screen 
-        name="MainApp"
-        component={MainTabs}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen name="Notificacoes" component={NotificaScreen} />
-      <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: true }} />
-      <Stack.Screen name="Postagem" component={PostagemScreen} />
     </Stack.Navigator>
   );
 }
