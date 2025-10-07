@@ -62,7 +62,7 @@ function MainTabs() {
         },
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} /> {/* Provavelmente a home vai vira a atual aba de opotunidades --Bruno */}
+      <Tab.Screen name="Home" component={HomeScreen} /> 
       <Tab.Screen name="Oportunidades" component={OportunidadesScreen} />
       <Tab.Screen 
   name="CriarPost" 
