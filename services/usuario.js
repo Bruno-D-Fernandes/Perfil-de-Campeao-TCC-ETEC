@@ -31,7 +31,6 @@ const oportunidadeData = (page = 1, perPage = 15) => {
 };
 
 
-
 const deleteUser = (id) => {
      return api.delete(`/destroy/${id}`);  // seria interessante colocar um tratamento de erro aqui | depois por
 }; // arrumar isso
@@ -46,4 +45,14 @@ const editUser = (data, id) => {
     return api.put(`/update/${id}`, data);
 };
 
-export default { createUser, loginUser, splashUser, deleteUser, editUser, logoutUser, perfilUser, oportunidadeData };
+export const inscreverOportunidade = async (idOportunidade) => {
+  try {
+    const response = await api.post(`/oportunidades/${idOportunidade}/inscrever`);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao se inscrever na oportunidade:', error);
+    throw error;
+  }
+};
+
+export default { createUser, loginUser, splashUser, deleteUser, editUser, logoutUser, perfilUser, oportunidadeData, inscreverOportunidade };

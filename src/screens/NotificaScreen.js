@@ -93,7 +93,7 @@ export default function Notifications() {
         />
       </View>
 
-      <View className="absolute bottom-6 left-6 right-6">
+        <View className="absolute bottom-6 left-6 right-6">
         <Pressable className="bg-[#49D372] py-3 rounded-2xl items-center justify-center">
           <Text className="text-white font-semibold">Ver todas as notificações</Text>
         </Pressable>
