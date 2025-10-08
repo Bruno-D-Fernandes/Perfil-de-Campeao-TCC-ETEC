@@ -135,6 +135,13 @@ function MainTabs() {
 />
       <Tab.Screen name="Perfil" component={PerfilScreen} />
       <Tab.Screen name="Config" component={ConfigScreen} />
+      <Tab.Screen
+      name='Nootificacao'
+      component={NotificaScreen}
+      options={{ 
+        headerShown: false,
+        tabBarShown: false
+        }}/>
     </Tab.Navigator>
   );
 }

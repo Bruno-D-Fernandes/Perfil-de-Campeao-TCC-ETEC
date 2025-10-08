@@ -1,5 +1,6 @@
 import { View, Text,Image, Pressable, TextInput } from 'react-native';
 import { useFonts, Poppins_400Regular, Poppins_700Bold, Poppins_500Medium } from "@expo-google-fonts/poppins";
+import Oportunidade from '../components/Oportunidade';
 
 export default function OportunidadesScreen() {
 
@@ -66,7 +67,7 @@ export default function OportunidadesScreen() {
    
    
          {/*FEED*/}
-         
+         <Oportunidade/>
   
    
            {/* <Button title="Ir para Detalhes" onPress={() => navigation.navigate('Detalhes')} /> */}
