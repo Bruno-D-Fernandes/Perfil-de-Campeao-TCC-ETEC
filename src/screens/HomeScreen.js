@@ -41,8 +41,6 @@ export default function HomeScreen() {
 
   return (
 
-
-
     <View className="bg-white flex-1 p-4">
 
       {/* HEADER */}

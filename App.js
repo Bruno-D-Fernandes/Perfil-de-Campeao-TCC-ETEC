@@ -9,7 +9,6 @@ import "./global.css"
 import Feather from '@expo/vector-icons/Feather';
 
 // Telas
-import HomeScreen from './src/screens/HomeScreen';
 import OportunidadesScreen from './src/screens/OportunidadesScreen';
 import PerfilScreen from './src/screens/PerfilScreen';
 import ConfigScreen from './src/screens/ConfigScreen';
@@ -17,6 +16,7 @@ import PostagemScreen from './src/screens/PostagemScreen';
 import SplashScreen from './src/screens/SplashScreen'
 import LoginScreen from './src/screens/LoginScreen';
 import CadastroScreen from './src/screens/CadastroScreen';
+import NotificaScreen from './src/screens/NotificaScreen';
 
 // Stack
 const Stack = createNativeStackNavigator();
@@ -50,7 +50,6 @@ function MainTabs() {
         tabBarIcon: ({ color, size }) => {
           let iconName;
 
-          if (route.name === 'Home') { iconName = 'home'; }
           if (route.name === 'Oportunidades') { iconName = 'briefcase'; }
           if (route.name === 'CriarPost') { iconName = 'plus-circle'; size = 36; } 
           if (route.name === 'Perfil') { iconName = 'user'; }
@@ -60,7 +59,6 @@ function MainTabs() {
         },
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} /> 
       <Tab.Screen name="Oportunidades" component={OportunidadesScreen} />
       <Tab.Screen 
   name="CriarPost" 

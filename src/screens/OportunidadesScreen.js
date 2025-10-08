@@ -3,9 +3,15 @@ import { useFonts, Poppins_400Regular, Poppins_700Bold, Poppins_500Medium } from
 import Oportunidade from '../components/Oportunidade';
 import { useEffect, useState } from 'react';
 import usuarioService from '../../services/usuario';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function OportunidadesScreen() {
-  const nameUser = 'Vinicius';
+  // const user = AsyncStorage.getItem('user');
+  // let nameUser = JSON.parse(user);
+  // nameUser = nameUser.nomeCompletoUsuario;
+  // console.log
+
+  const nameUser = "Pedro"
 
   const [page, setPage] = useState(1);
   const [perPage] = useState(10);
