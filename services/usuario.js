@@ -26,6 +26,11 @@ const perfilUser = async (data) => {
     }
 };
 
+const oportunidadeData = (page = 1, perPage = 15) => {
+    return api.get(`/oportunidades?page=${page}&per_page=${perPage}`);
+};
+
+
 
 const deleteUser = (id) => {
      return api.delete(`/destroy/${id}`);  // seria interessante colocar um tratamento de erro aqui | depois por
@@ -41,4 +46,4 @@ const editUser = (data, id) => {
     return api.put(`/update/${id}`, data);
 };
 
-export default { createUser, loginUser, splashUser, deleteUser, editUser, logoutUser, perfilUser };
+export default { createUser, loginUser, splashUser, deleteUser, editUser, logoutUser, perfilUser, oportunidadeData };
