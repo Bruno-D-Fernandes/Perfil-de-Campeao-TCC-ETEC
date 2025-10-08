@@ -13,8 +13,6 @@ import HomeScreen from './src/screens/HomeScreen';
 import OportunidadesScreen from './src/screens/OportunidadesScreen';
 import PerfilScreen from './src/screens/PerfilScreen';
 import ConfigScreen from './src/screens/ConfigScreen';
-import ChatScreen from './src/screens/ChatScreen';
-import NotificaScreen from './src/screens/NotificaScreen';
 import PostagemScreen from './src/screens/PostagemScreen';
 import SplashScreen from './src/screens/SplashScreen'
 import LoginScreen from './src/screens/LoginScreen';
@@ -142,7 +140,7 @@ function MainTabs() {
 function AuthStack() { 
   return (
     <Stack.Navigator
-      initialRouteName="Cadastro"
+      initialRouteName="Login"
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen
@@ -168,7 +166,7 @@ function AuthStack() {
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Splash">
+      <Stack.Navigator initialRouteName="AuthStack">
         <Stack.Screen 
           name="Splash" 
           component={SplashScreen} 
