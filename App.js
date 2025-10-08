@@ -133,6 +133,13 @@ function MainTabs() {
 />
       <Tab.Screen name="Perfil" component={PerfilScreen} />
       <Tab.Screen name="Config" component={ConfigScreen} />
+      <Tab.Screen
+      name='Nootificacao'
+      component={NotificaScreen}
+      options={{ 
+        headerShown: false,
+        tabBarShown: false
+        }}/>
     </Tab.Navigator>
   );
 }
@@ -140,7 +147,7 @@ function MainTabs() {
 function AuthStack() { 
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName="Cadastro"
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen
@@ -166,7 +173,7 @@ function AuthStack() {
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="AuthStack">
+      <Stack.Navigator initialRouteName="Splash">
         <Stack.Screen 
           name="Splash" 
           component={SplashScreen} 
