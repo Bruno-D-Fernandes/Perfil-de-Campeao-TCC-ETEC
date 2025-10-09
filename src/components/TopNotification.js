@@ -20,18 +20,16 @@ export default function TopNotification({ error }) {
     >
 
       {/* Ícone */}
-      <Icon name="info" size={30} color="red" /> {/* Trocar icone e fazer alguma estilização --Bruno */}
+      <Icon name="error" size={30} color="red" />
 
-      {/* Container do Texto */}
-      <View style={tw`ml-3`}>
+      <View style={tw`ml-3 flex-1`}>
         {/* Título "Erro" */}
         <Text style={tw` font-bold text-base`}>
           Erro
         </Text>
         
-        {/* Mensagem de erro dinâmica */}
         <Text style={tw`font-medium text-sm`}>
-          {error} {/* Arrumar a quebra de texto */}
+          {error}
         </Text>
       </View>
     </Animated.View>

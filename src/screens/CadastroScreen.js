@@ -146,6 +146,11 @@ export default function CadastroScreen() {
     });
   };
 
+  // Função para voltar à tela de login
+  const handleBackToLogin = () => {
+    navigation.goBack(); // ou navigation.navigate("Login")
+  };
+
   return (
     <View style={tw`flex-1 bg-gray-100`}>
       {/* Notificação de erro */}
@@ -219,10 +224,24 @@ export default function CadastroScreen() {
             </View>
           </Pressable>
 
+          {/* Botão de voltar modificado para incluir step 0 (step1) */}
           {currentStep > 0 && currentStep < 3 && (
             <Pressable
               style={tw`justify-center items-center w-[25%] h-full rounded-full bg-[#4ADC76]`}
               onPress={() => handleStep(-1)}
+            >
+              <Image
+                style={{ width: 12, height: 20 }}
+                source={require("../../assets/cadastro/icon_voltar.png")}
+              />
+            </Pressable>
+          )}
+
+          {/* Novo botão para voltar ao login quando estiver no step 0 (step1) */}
+          {currentStep === 0 && (
+            <Pressable
+              style={tw`justify-center items-center w-[25%] h-full rounded-full bg-green-400`}
+              onPress={handleBackToLogin}
             >
               <Image
                 style={{ width: 12, height: 20 }}

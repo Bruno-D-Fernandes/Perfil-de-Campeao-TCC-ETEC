@@ -1,6 +1,7 @@
-import { View, Text, TextInput, Image, StyleSheet } from "react-native";
+import { View, Text, TextInput, StyleSheet } from "react-native";
 import tw from "twrnc";
 import RNPickerSelect from "react-native-picker-select";
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 
 export default function Step2({ formData, updateField }) {
   return (
@@ -13,10 +14,7 @@ export default function Step2({ formData, updateField }) {
         <View
           style={tw`bg-green-400 border-2 border-green-400 justify-between rounded-2xl px-4 bg-white flex-row items-center h-12 w-full`}
         >
-          <Image
-            style={{ width: 16, height: 20, marginRight: 6 }}
-            source={require("../../../assets/cadastro/icon_genero.png")} // Trocar icone
-          />
+          <Icon name="hand-back-right" size={20} color="#61D483" style={{ marginRight: 6 }} />
           <RNPickerSelect
             onValueChange={(value) => updateField("maoDominante", value)}
             items={[
@@ -42,10 +40,7 @@ export default function Step2({ formData, updateField }) {
         <View
           style={tw`bg-green-400 border-2 border-green-400 justify-between rounded-2xl px-4 bg-white flex-row items-center h-12 w-full`}
         >
-          <Image
-            style={{ width: 16, height: 20, marginRight: 6 }}
-            source={require("../../../assets/cadastro/icon_genero.png")} // Trocar icone
-          />
+          <Icon name="foot-print" size={23} color="#61D483" style={{ marginRight: 6 }} />
           <RNPickerSelect
             onValueChange={(value) => updateField("peDominante", value)}
             items={[

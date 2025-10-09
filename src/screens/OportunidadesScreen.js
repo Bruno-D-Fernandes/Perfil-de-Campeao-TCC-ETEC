@@ -6,18 +6,30 @@ import usuarioService from '../../services/usuario';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function OportunidadesScreen() {
-  // const user = AsyncStorage.getItem('user');
-  // let nameUser = JSON.parse(user);
-  // nameUser = nameUser.nomeCompletoUsuario;
-  // console.log
-
-  const nameUser = "Pedro"
+  const [nameUser, setNameUser] = useState('');
 
   const [page, setPage] = useState(1);
   const [perPage] = useState(10);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      try {
+        const userString = await AsyncStorage.getItem('user');
+        if (userString) {
+          const userObj = JSON.parse(userString);
+          const nome = userObj?.nomeCompletoUsuario || '';
+          setNameUser(nome);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar nome do usuário:', error);
+      }
+    };
+
+    fetchUserName();
+  }, []);
 
   async function fetchOportunidades() {
     if (loading || !hasMore) return;

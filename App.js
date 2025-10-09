@@ -54,13 +54,15 @@ function MainTabs() {
           if (route.name === 'CriarPost') { iconName = 'plus-circle'; size = 36; } 
           if (route.name === 'Perfil') { iconName = 'user'; }
           if (route.name === 'Config') { iconName = 'settings'; }
+          if (route.name === 'Notificacao') { iconName = 'bell'; }
 
           return <Feather name={iconName} size={size} color={color} />;
         },
       })}
     >
       <Tab.Screen name="Oportunidades" component={OportunidadesScreen} />
-      <Tab.Screen 
+      <Tab.Screen name="Perfil" component={PerfilScreen} />
+            <Tab.Screen 
   name="CriarPost" 
   component={PostagemScreen}
   options={({ navigation }) => ({
@@ -85,7 +87,7 @@ function MainTabs() {
     headerLeft: () => (
       <Pressable 
         onPress={() => {
-          navigation.navigate('Home');
+          navigation.navigate('Oportunidades');
         }}
         style={{
           backgroundColor: '#4ADE80',
@@ -129,10 +131,9 @@ function MainTabs() {
     headerTitleAlign: 'center',
   })}
 />
-      <Tab.Screen name="Perfil" component={PerfilScreen} />
       <Tab.Screen name="Config" component={ConfigScreen} />
       <Tab.Screen
-      name='Nootificacao'
+      name='Notificacao'
       component={NotificaScreen}
       options={{ 
         headerShown: false,
