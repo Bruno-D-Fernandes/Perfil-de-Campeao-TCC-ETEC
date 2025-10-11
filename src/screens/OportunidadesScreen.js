@@ -6,38 +6,33 @@ import usuarioService from '../../services/usuario';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function OportunidadesScreen() {
-  const [nameUser, setNameUser] = useState('');
-
-  const [page, setPage] = useState(1);
-  const [perPage] = useState(10);
+  const [nameUser, setNameUser] = useState('Usuário'); // Inicializa com um valor padrão
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+  const perPage = 10;
 
-  useEffect(() => {
-    const fetchUserName = async () => {
-      try {
-        const userString = await AsyncStorage.getItem('user');
-        if (userString) {
-          const userObj = JSON.parse(userString);
-          const nome = userObj?.nomeCompletoUsuario || '';
-          setNameUser(nome);
-        }
-      } catch (error) {
-        console.error('Erro ao buscar nome do usuário:', error);
-      }
-    };
+  // Função para carregar dados do usuário da API e salvar no AsyncStorage
+  const fetchAndSetUserData = async () => {
+    try {
+      const response = await usuarioService.perfilUser(); // Assumindo que usuarioService.perfilUser é o correto
+      console.log("Dados do usuário da API:", response);
+      const userDataString = JSON.stringify(response);
+      await AsyncStorage.setItem('user', userDataString);
+      setNameUser(response?.nomeCompletoUsuario.split(" ")[0] || 'Usuário');
+    } catch (err) {
+      console.error("Erro ao buscar dados do usuário da API:", err);
+    }
+  };
 
-    fetchUserName();
-  }, []);
-
-  async function fetchOportunidades() {
+  // Função para buscar oportunidades
+  const fetchOportunidades = async () => {
     if (loading || !hasMore) return;
 
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await usuarioService.oportunidadeData(page, perPage);
-
       const newItems = response?.data?.data || response?.data || [];
 
       if (newItems.length === 0) {
@@ -51,11 +46,37 @@ export default function OportunidadesScreen() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchOportunidades();
-  }, []);
+    const initializeScreenData = async () => {
+      const storedUserData = await AsyncStorage.getItem('user');
+      if (storedUserData) {
+        try {
+          const parsedUserData = JSON.parse(storedUserData);
+          setNameUser(parsedUserData?.nomeCompletoUsuario.split(" ")[0] || 'Usuário');
+        } catch (parseError) {
+          console.error("Erro ao parsear userData do AsyncStorage:", parseError);
+        }
+      }
+      fetchAndSetUserData();
+      fetchOportunidades();
+    };
+
+    initializeScreenData();
+  }, []); 
+
+  useEffect(() => {
+    if (page > 1) { 
+      fetchOportunidades();
+    }
+  }, [page]); 
+
+  useFonts({
+    Poppins_400Regular,
+    Poppins_700Bold,
+    Poppins_500Medium,
+  });
 
   return (
     <View className="bg-white flex-1 p-4">
@@ -142,3 +163,4 @@ export default function OportunidadesScreen() {
     </View>
   );
 }
+

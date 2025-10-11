@@ -182,22 +182,6 @@ export default function ProfileScreen() {
       <View className="flex-row justify-center mt-4 border-b border-gray-200">
         <Pressable
           className={`px-6 pb-2 ${
-            activeTab === "feed" ? "border-b-2 border-green-500" : ""
-          }`}
-          onPress={() => setActiveTab("feed")}
-        >
-          <Text
-            className={`text-base ${
-              activeTab === "feed"
-                ? "text-[#61D483] font-bold"
-                : "text-[#61d484d6]"
-            }`}
-          >
-            Feed
-          </Text>
-        </Pressable>
-        <Pressable
-          className={`px-6 pb-2 ${
             activeTab === "info" ? "border-b-2 border-green-500" : ""
           }`}
           onPress={() => setActiveTab("info")}
