@@ -1,6 +1,7 @@
 import { View, Text, Image, Pressable, TextInput, FlatList, ActivityIndicator } from 'react-native';
 import { useFonts, Poppins_400Regular, Poppins_700Bold, Poppins_500Medium } from "@expo-google-fonts/poppins";
 import Oportunidade from '../components/Oportunidade';
+import oportunidadesService from '../../services/oportunidades';
 import { useEffect, useState } from 'react';
 import usuarioService from '../../services/usuario';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -36,7 +37,7 @@ export default function OportunidadesScreen() {
 
     try {
       setLoading(true);
-      const response = await usuarioService.oportunidadeData(page, perPage);
+      const response = await oportunidadesService.oportunidadeData(page, perPage);
 
       const newItems = response?.data?.data || response?.data || [];
 

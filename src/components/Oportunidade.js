@@ -1,5 +1,6 @@
 import { Text, View, Image, Pressable, Modal } from 'react-native';
 import React, { useMemo, useRef, useState, useCallback } from 'react';
+import BtnSeguir from './BtnSeguir';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   BottomSheetModal,
@@ -7,7 +8,7 @@ import {
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 
-import { inscreverOportunidade } from '../../services/usuario';
+import { inscreverOportunidade } from '../../services/oportunidades';
 
 export default function Oportunidade({ data }) {
   const {
@@ -28,10 +29,10 @@ export default function Oportunidade({ data }) {
   const nomeEsporte = esporte?.nomeEsporte || 'Esporte não informado';
 
   const [modalVisivel, setModalVisivel] = useState(false);
-  const [mensagem, setMensagem] = useState(''); // Mensagem de feedback
-  const [mensagemTipo, setMensagemTipo] = useState(''); // 'erro' ou 'sucesso'
+  const [mensagem, setMensagem] = useState(''); 
+  const [mensagemTipo, setMensagemTipo] = useState('');
   const sheetRef = useRef(null);
-  const snapPoints = useMemo(() => ['40%', '70%'], []);
+  const snapPoints = useMemo(() => ['60%', '90%'], []);
 
   const abrirDetalhes = useCallback(() => {
     setModalVisivel(true);
@@ -105,8 +106,19 @@ export default function Oportunidade({ data }) {
               <BottomSheetView style={{ padding: 20 }}>
                 <View className="w-full justify-center gap-4">
                   <View className="flex-row items-center gap-4">
-               
-                    <Text style={{ fontFamily: 'Poppins_500Medium' }} className=" text-lg">{clube.nomeClube}</Text>
+
+                  <Text
+                    className="text-xl"
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                    style={{
+                      fontFamily: 'Poppins_500Medium',
+                      maxWidth: 210,
+                    }}
+                  >
+                    {clube.nomeClube}
+                  </Text>
+                    <BtnSeguir  />
                   </View>
 
                   <View className="gap-1">

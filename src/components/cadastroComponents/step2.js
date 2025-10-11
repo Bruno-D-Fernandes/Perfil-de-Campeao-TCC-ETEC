@@ -66,6 +66,7 @@ export default function Step2({ formData, updateField }) {
             Peso
           </Text>
           <TextInput
+            outline="none"
             style={tw`bg-green-400 border-2 border-green-400 rounded-2xl px-4 bg-white flex-row items-center h-12`}
             placeholderTextColor="#A9A9A9"
             placeholder="kg"
@@ -81,6 +82,7 @@ export default function Step2({ formData, updateField }) {
             Altura
           </Text>
           <TextInput
+            outline="none"
             style={tw`bg-green-400 border-2 border-green-400 rounded-2xl px-4 bg-white flex-row items-center h-12`}
             placeholderTextColor="#A9A9A9"
             placeholder="Cm"

@@ -5,54 +5,42 @@ const createUser = (data) => {
 };
 
 const loginUser = (data) => {
-    const response = api.post('/login', data); // Sapoha não precisa passar o token no payload chapei, arruma ai Bruno do futuro
-
-    return response;
+  return api.post('/login', data);
 };
 
-const splashUser = (data) => {
-    const response = api.get('/perfil', data); // Sapoha não precisa passar o token no payload chapei, arruma ai Bruno do futuro
-    return response;
-}; // manter esse metodo spash user para essa primeira entrega | tirar depois
+const splashUser = () => {
+  return api.get('/perfil');
+}; // manter esse método temporariamente
 
-const perfilUser = async (data) => {
-    try {
-        const response = await api.get('/perfil', data); // Sapoha não precisa passar o token no payload chapei, arruma ai Bruno do futuro
-        console.log('Perfil user usado');
-        return response;
-    } catch (error) {
-        console.error('Erro ao buscar perfil do usuário:', error);
-        throw error;
-    }
-};
-
-const oportunidadeData = (page = 1, perPage = 15) => {
-    return api.get(`/oportunidades?page=${page}&per_page=${perPage}`);
-};
-
-
-const deleteUser = (id) => {
-     return api.delete(`/destroy/${id}`);  // seria interessante colocar um tratamento de erro aqui | depois por
-}; // arrumar isso
-
-const logoutUser = () => {
-    return api.post('/logout');
-};
-
-// Arrumar a parte de baixo 
-
-const editUser = (data, id) => {
-    return api.put(`/update/${id}`, data);
-};
-
-export const inscreverOportunidade = async (idOportunidade) => {
+const perfilUser = async () => {
   try {
-    const response = await api.post(`/oportunidades/${idOportunidade}/inscrever`);
-    return response.data;
+    const response = await api.get('/perfil');
+    console.log('Perfil user usado');
+    return response;
   } catch (error) {
-    console.error('Erro ao se inscrever na oportunidade:', error);
+    console.error('Erro ao buscar perfil do usuário:', error);
     throw error;
   }
 };
 
-export default { createUser, loginUser, splashUser, deleteUser, editUser, logoutUser, perfilUser, oportunidadeData, inscreverOportunidade };
+const editUser = (data, id) => {
+  return api.put(`/update/${id}`, data);
+};
+
+const deleteUser = (id) => {
+  return api.delete(`/destroy/${id}`);
+};
+
+const logoutUser = () => {
+  return api.post('/logout');
+};
+
+export default {
+  createUser,
+  loginUser,
+  splashUser,
+  perfilUser,
+  editUser,
+  deleteUser,
+  logoutUser,
+};

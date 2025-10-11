@@ -16,6 +16,7 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
             source={require("../../../assets/cadastro/icon_user.png")}
           />
           <TextInput
+            outline="none"
             style={{ flex: 1, height: "90%", fontSize: 14 }}
             placeholder="Seu nome completo"
             placeholderTextColor="#A9A9A9"
@@ -37,6 +38,7 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
               source={require("../../../assets/cadastro/icon_data.png")}
             />
             <TextInput
+              outline="none"
               style={{ flex: 1, height: "100%", fontSize: 14 }}
               placeholder="DD/MM/AAAA"
               placeholderTextColor="#A9A9A9"
