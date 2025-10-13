@@ -1,11 +1,15 @@
 import { View, Text, TextInput, StyleSheet } from "react-native";
 import tw from "twrnc";
-import RNPickerSelect from "react-native-picker-select";
+import { Picker } from '@react-native-picker/picker';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
+import Animated, { SlideOutLeft, SlideInRight } from "react-native-reanimated";
 
 export default function Step2({ formData, updateField }) {
   return (
-    <View style={tw`flex-1`}>
+    <Animated.View style={tw`flex-1`}
+          entering={SlideInRight}
+          exiting={SlideOutLeft}
+    >
       {/* Campo Mão Dominante */}
       <View style={tw`mb-6`}>
         <Text style={tw`text-green-400 text-sm font-semibold mb-2`}>
@@ -15,20 +19,17 @@ export default function Step2({ formData, updateField }) {
           style={tw`bg-green-400 border-2 border-green-400 justify-between rounded-2xl px-4 bg-white flex-row items-center h-12 w-full`}
         >
           <Icon name="hand-back-right" size={20} color="#61D483" style={{ marginRight: 6 }} />
-          <RNPickerSelect
-            onValueChange={(value) => updateField("maoDominante", value)}
-            items={[
-              { label: "Destro(a)", value: "destro" },
-              { label: "Canhoto(a)", value: "canhoto" },
-            ]}
-            style={pickerSelectStyles}
-            value={formData.maoDominante}
-            placeholder={{
-              label: "Selecione...",
-              value: null,
-            }}
-            useNativeAndroidPickerStyle={false}
-          />
+          <View style={{ flex: 1 }}>
+            <Picker
+              selectedValue={formData.maoDominante}
+              onValueChange={(value) => updateField('maoDominante', value)}
+                style={{ height: 60, width: '100%' }}
+            >
+              <Picker.Item label="Selecione..." value={null} />
+              <Picker.Item label="Destro(a)" value="Destro" />
+              <Picker.Item label="Canhoto(a)" value="Canhoto" />
+            </Picker>
+          </View>
         </View>
       </View>
 
@@ -41,20 +42,17 @@ export default function Step2({ formData, updateField }) {
           style={tw`bg-green-400 border-2 border-green-400 justify-between rounded-2xl px-4 bg-white flex-row items-center h-12 w-full`}
         >
           <Icon name="foot-print" size={23} color="#61D483" style={{ marginRight: 6 }} />
-          <RNPickerSelect
-            onValueChange={(value) => updateField("peDominante", value)}
-            items={[
-              { label: "Direito", value: "direito" },
-              { label: "Esquerdo", value: "esquerdo" },
-            ]}
-            style={pickerSelectStyles}
-            value={formData.peDominante}
-            placeholder={{
-              label: "Selecione...",
-              value: null,
-            }}
-            useNativeAndroidPickerStyle={false}
-          />
+          <View style={{ flex: 1 }}>
+            <Picker
+              selectedValue={formData.peDominante}
+              onValueChange={(value) => updateField('peDominante', value)}
+              style={{ height: 60, width: '100%' }}
+            >
+              <Picker.Item label="Selecione..." value={null} />
+              <Picker.Item label="Direito" value="Direito" />
+              <Picker.Item label="Esquerdo" value="Esquerdo" />
+            </Picker>
+          </View>
         </View>
       </View>
 
@@ -90,40 +88,6 @@ export default function Step2({ formData, updateField }) {
           />
         </View>
       </View>
-    </View>
+    </Animated.View>
   );
 }
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    color: "#333",
-    paddingRight: 30,
-  },
-  inputAndroid: {
-    fontSize: 16,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    color: "#333",
-    paddingRight: 30,
-  },
-  // inputWeb: { Desconmentar isso depois --Bruno
-  //   paddingLeft: "100%",
-  //   textAlign: "center",
-  // },
-  placeholder: {
-    color: "#A9A9A9",
-  },
-  iconContainer: {
-    top: 12,
-    right: 12,
-  },
-});

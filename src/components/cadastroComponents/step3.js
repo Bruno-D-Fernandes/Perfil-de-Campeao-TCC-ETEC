@@ -1,9 +1,13 @@
 import { View, Text, TextInput, Image } from "react-native";
 import tw from "twrnc";
+import Animated, { SlideOutLeft, SlideInRight } from "react-native-reanimated";
 
 export default function Step3({ formData, updateField }) {
   return (
-    <View style={tw`mb-8`}>
+    <Animated.View style={tw`flex-1`}
+          entering={SlideInRight}
+          exiting={SlideOutLeft}
+    >
       {/* Email */}
       <View style={tw`w-full`}>
         <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>E-mail</Text>
@@ -63,6 +67,6 @@ export default function Step3({ formData, updateField }) {
           />
         </View>
       </View>
-    </View>
+    </Animated.View>
   );
 }

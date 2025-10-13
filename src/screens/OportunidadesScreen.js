@@ -6,21 +6,26 @@ import usuarioService from '../../services/usuario';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function OportunidadesScreen() {
-  const [nameUser, setNameUser] = useState('Usuário'); // Inicializa com um valor padrão
+  const [nameUser, setNameUser] = useState('Usuário'); 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const perPage = 10;
 
-  // Função para carregar dados do usuário da API e salvar no AsyncStorage
   const fetchAndSetUserData = async () => {
     try {
-      const response = await usuarioService.perfilUser(); // Assumindo que usuarioService.perfilUser é o correto
+      const response = await usuarioService.perfilUser(); 
       console.log("Dados do usuário da API:", response);
-      const userDataString = JSON.stringify(response);
-      await AsyncStorage.setItem('user', userDataString);
-      setNameUser(response?.nomeCompletoUsuario.split(" ")[0] || 'Usuário');
+
+      const userObj = response?.data || response || null;
+      if (userObj) {
+        await AsyncStorage.setItem('user', JSON.stringify(userObj));
+        const firstName = userObj?.nomeCompletoUsuario
+          ? String(userObj.nomeCompletoUsuario).split(" ")[0]
+          : 'Usuário';
+        setNameUser(firstName || 'Usuário');
+      }
     } catch (err) {
       console.error("Erro ao buscar dados do usuário da API:", err);
     }
@@ -54,7 +59,7 @@ export default function OportunidadesScreen() {
       if (storedUserData) {
         try {
           const parsedUserData = JSON.parse(storedUserData);
-          setNameUser(parsedUserData?.nomeCompletoUsuario.split(" ")[0] || 'Usuário');
+          setNameUser(parsedUserData.nomeCompletoUsuario.split(" ")[0] || 'Usuário');
         } catch (parseError) {
           console.error("Erro ao parsear userData do AsyncStorage:", parseError);
         }
@@ -109,13 +114,13 @@ export default function OportunidadesScreen() {
 
         <View className="w-full mb-[8%] gap-5">
           <Text
-            className="text-[160%] font-medium"
+            className="text-[26px] font-medium"
             style={{ fontFamily: 'Poppins_500Medium' }}
           >
             Olá, {nameUser}
           </Text>
           <Text
-            className="text-[120%] font-medium text-[#2E7844]"
+            className="text-[19px] font-medium text-[#2E7844]"
             style={{ fontFamily: 'Poppins_500Medium' }}
           >
             Oportunidades

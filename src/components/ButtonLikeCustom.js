@@ -11,5 +11,3 @@ export default function ButtonLikeCustom({ title, onPress, type, icon, iconTipo 
 
 
 }
-
-// Arrumar esse lixo

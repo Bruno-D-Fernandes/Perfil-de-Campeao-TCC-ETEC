@@ -1,8 +1,11 @@
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Button, Pressable, Text } from 'react-native';
-
+import { Pressable, Text, useEffect, useState } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import usuario from './services/usuario';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import "./global.css"
 
 //icons nav
@@ -13,13 +16,13 @@ import OportunidadesScreen from './src/screens/OportunidadesScreen';
 import PerfilScreen from './src/screens/PerfilScreen';
 import ConfigScreen from './src/screens/ConfigScreen';
 import PostagemScreen from './src/screens/PostagemScreen';
-import SplashScreen from './src/screens/SplashScreen'
+import SplashScreen from './src/screens/SplashScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import CadastroScreen from './src/screens/CadastroScreen';
 import NotificaScreen from './src/screens/NotificaScreen';
 import PortfolioScreen from './src/screens/PortfolioScreen';
 
-// Stack
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -151,7 +154,7 @@ function MainTabs() {
 function AuthStack() {
   return (
     <Stack.Navigator
-      initialRouteName="Cadastro"
+      initialRouteName="Login"
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen
@@ -174,13 +177,44 @@ function AuthStack() {
   );
 }
 
+function InitialSplashScreen({ navigation }) {
+  useEffect(() => {
+    async function checkToken() {
+      try {
+        const token = await AsyncStorage.getItem('token');
+
+        if (token) {
+          const response = await usuario.splashUser();
+          const user = response.data;
+
+          await AsyncStorage.setItem('user', JSON.stringify(user));
+          navigation.replace('MainTabs');
+        } else {
+          navigation.replace('AuthStack');
+        }
+      } catch (error) {
+        console.error('Erro ao validar token:', error.message);
+        AsyncStorage.removeItem('token');
+        AsyncStorage.removeItem('user');
+        navigation.replace('AuthStack');
+      }
+    }
+
+    checkToken();
+  }, []);
+
+  return <SplashScreen />;
+}
+
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Splash">
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Splash">
         <Stack.Screen
           name="Splash"
-          component={SplashScreen}
+          component={InitialSplashScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -198,7 +232,9 @@ export default function App() {
           component={ConfigScreen}
           options={{ headerShown: true }}
         />
-      </Stack.Navigator>
-    </NavigationContainer>
+          </Stack.Navigator>
+        </NavigationContainer>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }

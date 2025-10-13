@@ -74,8 +74,8 @@ export default function HomeScreen() {
       </View>
 
         <View className="w-[100%] mb-[8%] gap-5"> 
-          <Text className="text-[160%] font-medium" style={{fontFamily:'Poppins_500Medium',}}>Olá, {nameUser}</Text>
-          <Text className="text-[120%] font-medium color-[#2E7844]" style={{fontFamily:'Poppins_500Medium',}}>Postagem</Text>
+          <Text className="text-[26px] font-medium" style={{fontFamily:'Poppins_500Medium',}}>Olá, {nameUser}</Text>
+          <Text className="text-[19px] font-medium color-[#2E7844]" style={{fontFamily:'Poppins_500Medium',}}>Postagem</Text>
         </View>
 
         <View className='w-[100%] h-[18%] flex-row gap-2'>

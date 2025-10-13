@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Pressable, StyleSheet, Image } from "react-native";
+import {
+  View, Text, Pressable, StyleSheet, Image, Platform, StatusBar
+} from "react-native";
 import tw from "twrnc";
 import usuario from "../../services/usuario";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -11,6 +13,7 @@ import Animated, {
   Easing,
   interpolate,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from 'react-native-safe-area-context'; // Importar useSafeAreaInsets
 
 import Step1 from "../components/cadastroComponents/step1";
 import Step2 from "../components/cadastroComponents/step2";
@@ -20,6 +23,7 @@ import TopNotification from "../components/TopNotification";
 
 export default function CadastroScreen() {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets(); // Hook para obter os insets da área segura
 
   const [error, setError] = useState("");
   const [viewError, setViewError] = useState(false);
@@ -47,6 +51,8 @@ export default function CadastroScreen() {
   });
 
   const [currentStep, setCurrentStep] = useState(0);
+  // track whether navigation is forward (next) or backward (previous)
+  const [isForward, setIsForward] = useState(true);
   const [formData, setFormData] = useState({
     nomeCompletoUsuario: "",
     dataNascimentoUsuario: "",
@@ -116,14 +122,15 @@ export default function CadastroScreen() {
             formData={formData}
             updateField={updateField}
             pickerSelectStyles={pickerSelectStyles}
+          isForward={isForward}
           />
         );
       case 1:
-        return <Step2 formData={formData} updateField={updateField} />;
+        return <Step2 formData={formData} updateField={updateField} isForward={isForward} />;
       case 2:
-        return <Step3 formData={formData} updateField={updateField} />;
+        return <Step3 formData={formData} updateField={updateField} isForward={isForward} />;
       case 3:
-        return <Step4 />;
+        return <Step4 isForward={isForward} />;
       default:
         return null;
     }
@@ -133,6 +140,8 @@ export default function CadastroScreen() {
     const novoStep = currentStep + num;
     if (novoStep < 0 || novoStep > 3) return;
 
+    // set navigation direction before changing the step
+    setIsForward(num > 0);
     setCurrentStep(novoStep);
 
     let targetProgress = 0;
@@ -148,21 +157,31 @@ export default function CadastroScreen() {
 
   // Função para voltar à tela de login
   const handleBackToLogin = () => {
-    navigation.goBack(); // ou navigation.navigate("Login")
+    navigation.replace("AuthStack", {screen: "Login"}); 
   };
 
   return (
     <View style={tw`flex-1 bg-gray-100`}>
       {/* Notificação de erro */}
-
       {viewError && <TopNotification error={error}/>}
 
+      {/* Imagem de fundo com overflow superior */}
       <Image
-        style={{ width: "100%", height: "40%", position: "absolute" }}
+        style={[
+          { width: "100%", height: "40%", position: "absolute", top: 0 },
+          // Ajuste para Android se a imagem começar abaixo da status bar, garantindo overflow superior
+          Platform.OS === 'android' && { marginTop: -StatusBar.currentHeight }
+        ]}
         source={require("../../assets/cadastro/cadastro_imagem.png")}
+        resizeMode="cover"
       />
+
+      {/* Conteúdo principal (formulário e botões) */}
       <View
-        style={tw`absolute h-[74%] bottom-0 w-full max-w-xl self-center bg-white p-5 rounded-tl-[30px] rounded-tr-[30px] shadow-lg`}
+        style={[
+          tw`absolute bottom-0 w-full max-w-xl self-center bg-white p-5 rounded-tl-[30px] rounded-tr-[30px] shadow-lg h-[74%]`,
+          { paddingBottom: insets.bottom + 20 }
+        ]}
       >
         <View style={[tw`w-full h-10 justify-center`]}>
           <View
@@ -227,7 +246,7 @@ export default function CadastroScreen() {
           {/* Botão de voltar modificado para incluir step 0 (step1) */}
           {currentStep > 0 && currentStep < 3 && (
             <Pressable
-              style={tw`justify-center items-center w-[25%] h-full rounded-full bg-[#4ADC76]`}
+              style={tw`justify-center items-center w-[25%]  rounded-full bg-[#4ADC76]`}
               onPress={() => handleStep(-1)}
             >
               <Image
@@ -240,7 +259,7 @@ export default function CadastroScreen() {
           {/* Novo botão para voltar ao login quando estiver no step 0 (step1) */}
           {currentStep === 0 && (
             <Pressable
-              style={tw`justify-center items-center w-[25%] h-full rounded-full bg-green-400`}
+              style={tw`justify-center items-center w-[25%]  rounded-full bg-green-400`}
               onPress={handleBackToLogin}
             >
               <Image
@@ -250,6 +269,7 @@ export default function CadastroScreen() {
             </Pressable>
           )}
         </View>
+        
       </View>
     </View>
   );
@@ -284,3 +304,4 @@ const pickerSelectStyles = StyleSheet.create({
     right: 12,
   },
 });
+

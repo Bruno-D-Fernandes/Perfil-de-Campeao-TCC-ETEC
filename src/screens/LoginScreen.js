@@ -1,17 +1,18 @@
 import { useNavigation } from "@react-navigation/native";
 import { useState, useEffect } from "react";
-import {
-  View, Text, TextInput, Pressable, Image, ImageBackground,
-} from "react-native";
+import { View, Text, TextInput, Pressable, Image, ImageBackground} from "react-native";
 import {
   useFonts,
   Poppins_400Regular,
   Poppins_700Bold,
   Poppins_500Medium,
 } from "@expo-google-fonts/poppins";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import usuario from "./../../services/usuario";
 import TopNotification from "../components/TopNotification";
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -38,7 +39,7 @@ export default function HomeScreen() {
     };
 
     let camposValidos = true;
-    
+
     if (!emailUsuario.trim()) {
       setEmailValido(false);
       camposValidos = false;
@@ -50,14 +51,14 @@ export default function HomeScreen() {
     } else {
       setEmailValido(true);
     }
-    
+
     if (!senhaUsuario.trim()) {
       setSenhaValida(false);
       camposValidos = false;
     } else {
       setSenhaValida(true);
     }
-    
+
     if (!camposValidos) {
       setError('Campos obrigatórios', 'Por favor, preencha todos os campos.');
       return setViewError(true);
@@ -105,17 +106,17 @@ export default function HomeScreen() {
       resizeMode="cover"
     >
       {viewError && <TopNotification error={error} />}
-
+      <SafeAreaView style={{ flex: 1 }}>
       <View className="flex-1 justify-center items-center p-[2%] gap-4">
         <View className="w-[90%] h-[23%] ">
           <Text
-            className="text-[180%] w-[50%] font-bold text-white leading-tight"
+            className="text-[29px] w-[50%] font-bold text-white leading-tight"
             style={{ fontFamily: "Poppins_500Medium" }}
           >
             Se <Text className="text-[#98FFB7]">você </Text>acredita...
           </Text>
           <Text
-            className="text-[180%] w-[80%] font-bold text-white leading-tight"
+            className="text-[29px] w-[80%] font-bold text-white leading-tight"
             style={{ fontFamily: "Poppins_500Medium" }}
           >
             O <Text className="text-[#98FFB7]">mundo</Text> também vai
@@ -126,15 +127,14 @@ export default function HomeScreen() {
         <View className="w-[90%] h-[25%] mt-[10%] ">
           {/* Email */}
           <Text
-            className="text-[90%] text-[#98FFB7]"
+            className="text-[14px] text-[#98FFB7]"
             style={{ fontFamily: "Poppins_500Medium" }}
           >
             E-mail
           </Text>
           <View
-            className={`w-full mb-[10%] p-[3%] rounded-[8px] border-[3px] flex-row items-center ${
-              emailValido ? "border-[#98FFB7]" : "border-red-500"
-            }`}
+            className={`w-full mb-[10%] p-[3%] rounded-[8px] border-[3px] flex-row items-center ${emailValido ? "border-[#98FFB7]" : "border-red-500"
+              }`}
           >
             <Image
               className="mr-[3%]"
@@ -158,15 +158,14 @@ export default function HomeScreen() {
 
           {/* Senha */}
           <Text
-            className="text-[90%] text-[#98FFB7]"
+            className="text-[14px] text-[#98FFB7]"
             style={{ fontFamily: "Poppins_500Medium" }}
           >
             Senha
           </Text>
           <View
-            className={`w-full mb-[10%] p-[3%] rounded-[8px] border-[3px] flex-row items-center ${
-              senhaValida ? "border-[#98FFB7]" : "border-red-500"
-            }`}
+            className={`w-full mb-[10%] p-[3%] rounded-[8px] border-[3px] flex-row items-center ${senhaValida ? "border-[#98FFB7]" : "border-red-500"
+              }`}
           >
             <Image
               className="mr-[3%]"
@@ -195,7 +194,7 @@ export default function HomeScreen() {
             className="bg-[#4ADC76] h-[35%] rounded-[30px] items-center justify-between pl-[8%] flex-row"
           >
             <Text
-              className="text-white text-[110%]"
+              className="text-white text-[18px]"
               style={{ fontFamily: "Poppins_500Medium" }}
             >
               Entrar
@@ -210,7 +209,7 @@ export default function HomeScreen() {
           </Pressable>
 
           <Pressable
-            onPress={() => navigation.navigate("Cadastro")}
+            onPress={() => navigation.replace("Cadastro")}
             className="w-full items-center"
           >
             <Text
@@ -222,6 +221,7 @@ export default function HomeScreen() {
           </Pressable>
         </View>
       </View>
+      </SafeAreaView>
     </ImageBackground>
   );
 }

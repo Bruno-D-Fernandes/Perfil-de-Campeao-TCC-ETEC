@@ -1,11 +1,15 @@
 import React from "react";
 import { View, Text, TextInput, Image } from "react-native";
-import RNPickerSelect from "react-native-picker-select";
+import Animated, { SlideOutLeft, SlideInRight } from "react-native-reanimated";
+import { Picker } from '@react-native-picker/picker';
 import tw from "twrnc";
 
 export default function Step1({ formData, updateField, pickerSelectStyles }) {
   return (
-    <View style={tw`mb-8`}>
+    <Animated.View style={tw`flex-1`}
+          entering={SlideInRight}
+          exiting={SlideOutLeft}
+    >
       <View style={tw`w-full`}>
         <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Nome</Text>
         <View
@@ -48,7 +52,6 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
           </View>
         </View>
         <View style={tw`w-[48%]`}>
-          {" "}
           {/* Não tenho certeza se isso está certo */}
           <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>
             Gênero
@@ -61,18 +64,17 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
               source={require("../../../assets/cadastro/icon_genero.png")}
             />
             <View style={tw`flex-1 h-full justify-center`}>
-              <RNPickerSelect
-                onValueChange={(value) => updateField("generoUsuario", value)}
-                items={[
-                  { label: "Masculino", value: "masculino" },
-                  { label: "Feminino", value: "feminino" },
-                  { label: "Não binário", value: "nao-binario" },
-                  { label: "Outro", value: "outro" },
-                ]}
-                style={pickerSelectStyles}
-                value={formData.generoUsuario}
-                placeholder={{ label: "Selecione...", value: null }}
-              />
+              <Picker
+                selectedValue={formData.generoUsuario}
+                onValueChange={(value) => updateField('generoUsuario', value)}
+                style={{ height: 60, width: '100%' }}
+              >
+                <Picker.Item label="Selecione..." value={null} />
+                <Picker.Item label="Masculino" value="masculino" />
+                <Picker.Item label="Feminino" value="feminino" />
+                <Picker.Item label="Não binário" value="nao-binario" />
+                <Picker.Item label="Outro" value="outro" />
+              </Picker>
             </View>
           </View>
         </View>
@@ -117,6 +119,6 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
           />
         </View>
       </View>
-    </View>
+    </Animated.View>
   );
 }

@@ -14,21 +14,35 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.PerfildeCampeao"
+      "bundleIdentifier": "com.anonymous.PerfildeCampeao",
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
+      "buildType": "apk",
+      "usesCleartextTraffic": true ,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.PerfildeCampeao"
+      "package": "com.anonymous.PerfildeCampeao",
+      "runtimeVersion": "1.0.0"
     },
     "web": {
       "bundler": "metro"
     },
     "plugins": [
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "69169672-50af-4987-8bbb-137aa8834d9c"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/69169672-50af-4987-8bbb-137aa8834d9c"
+    }
   }
 }

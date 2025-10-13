@@ -10,14 +10,18 @@ const loginUser = (data) => {
     return response;
 };
 
-const splashUser = (data) => {
-    const response = api.get('/perfil', data); // Sapoha não precisa passar o token no payload chapei, arruma ai Bruno do futuro
+const splashUser = () => {
+    const response = api.get('/perfil'); // Sapoha não precisa passar o token no payload chapei, arruma ai Bruno do futuro
     return response;
 }; // manter esse metodo spash user para essa primeira entrega | tirar depois
 
 const perfilUser = async (data) => {
     try {
-        const response = await api.get('/perfil', data); // Sapoha não precisa passar o token no payload chapei, arruma ai Bruno do futuro
+        const response = await api.get('/perfil', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data', 
+      },
+    }); // Sapoha não precisa passar o token no payload chapei, arruma ai Bruno do futuro
         console.log('Perfil user usado');
         return response;
     } catch (error) {
@@ -42,7 +46,11 @@ const logoutUser = () => {
 // Arrumar a parte de baixo 
 
 const editUser = (data, id) => {
-    return api.put(`/update/${id}`, data);
+    return api.post(`update/${id}`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // <- ISSO É IMPORTANTE!
+      },
+    });
 };
 
 export const inscreverOportunidade = async (idOportunidade) => {

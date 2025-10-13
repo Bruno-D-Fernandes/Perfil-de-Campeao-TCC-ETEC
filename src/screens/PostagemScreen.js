@@ -44,7 +44,7 @@ export default function HomeScreen() {
     // {imagem, nome} colocar parametro depois
     return (
       <View className="w-full h-[63px] flex-row justify-start gap-[14px] items-center my-4 ml-5">
-        {" "}
+        
         {/*Parte do Perfil*/}
         <Image
           source={require('../../assets/post/perfilFoto.png')}
@@ -65,7 +65,7 @@ export default function HomeScreen() {
               setCellModal(true);
             }}
           >
-            {" "}
+            
             {/*Arrumar o onClick()*/}
             <Image
               source={require("../../assets/icons-postagem/imagemIConPostagem.png")}
@@ -74,7 +74,7 @@ export default function HomeScreen() {
           </Pressable>
 
           <Pressable>
-            {" "}
+            
             {/*Arrumar o onClick()*/}
             <Image
               source={require("../../assets/icons-postagem/localizacaoIconPostagem.png")}
@@ -83,7 +83,7 @@ export default function HomeScreen() {
           </Pressable>
 
           <Pressable>
-            {" "}
+            
             {/*Arrumar o onClick()*/}
             <Image
               source={require("../../assets/icons-postagem/hashtagIconPostagem.png")}
@@ -93,7 +93,7 @@ export default function HomeScreen() {
         </View>
 
         <Pressable className="justify-center items-center">
-          {" "}
+          
           {/*Arrumar o onClick()*/}
           <Image
             source={require("../../assets/icons-postagem/SetaIconPostagem.png")}
@@ -145,7 +145,7 @@ return (
           className="w-[95%] h-[45%] bg-white border-[2px] border-[#61D483] rounded-tl-[36px] rounded-tr-[36px] p-4 items-center border-b-0"
         >
           <View className="h-[2px] w-[80px] bg-[#61D483] m-[20px] mb-[40px]">
-            {" "}
+            
           </View>
           <Text className="font-semibold text-[24px] text-[#61D483] mb-[10px] mr-[10px]">Adicione Seu post:</Text>
           <View className="flex-row flex-wrap justify-between">
