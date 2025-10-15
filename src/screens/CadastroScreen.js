@@ -87,14 +87,15 @@ export default function CadastroScreen() {
       setCurrentStep(3);
       progress.value = withTiming(100, { duration: 500 });
     } catch (error) {
-      setError(
-        error.response && error.response.data && error.response.data.error
-          ? error.response.data.error
-          : "Ocorreu um erro inesperado. Tente novamente."
-      );
+      console.log("Erro completo:", error.response?.data);
 
-      setViewError(true);
-      console.error("Erro ao criar usuário:", error.response.data.error);
+  setError(
+    error.response?.data?.message ||
+    JSON.stringify(error.response?.data?.errors) ||
+    "Ocorreu um erro inesperado. Tente novamente."
+  );
+
+  setViewError(true);
     }
   };
 
