@@ -1,13 +1,55 @@
-import { View, Text, TextInput, Image } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TextInput, Image, Animated } from "react-native";
 import tw from "twrnc";
-import Animated, { SlideOutLeft, SlideInRight } from "react-native-reanimated";
 
-export default function Step3({ formData, updateField }) {
+export default function Step3({ formData, updateField, passwordStrength, setPasswordStrength  }) {
+  const animatedWidth = useState(new Animated.Value(0))[0];
+
+  useEffect(() => {
+    const password = formData.senhaUsuario || '';
+    let strength = 0;
+
+    if (password.length >= 8) {
+      strength += 1;
+    }
+    if (/[A-Z]/.test(password)) {
+      strength += 1;
+    }
+    if (/[a-z]/.test(password)) {
+      strength += 1;
+    }
+    if (/[0-9]/.test(password)) {
+      strength += 1;
+    }
+    if (/[^A-Za-z0-9]/.test(password)) {
+      strength += 1;
+    }
+
+    setPasswordStrength(strength);
+
+    Animated.timing(animatedWidth, {
+      toValue: (strength / 5) * 100, // 5 é o número máximo de critérios
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  }, [formData.senhaUsuario]);
+
+  const getStrengthColor = () => {
+    if (passwordStrength === 0) return "#A9A9A9";
+    if (passwordStrength <= 2) return "#FF6B6B"; // Fraca (vermelho)
+    if (passwordStrength <= 4) return "#FFD166"; // Média (amarelo)
+    return "#4ADC76"; // Forte (verde)
+  };
+
+  const getStrengthText = () => {
+    if (passwordStrength === 0) return "";
+    if (passwordStrength <= 2) return "Fraca";
+    if (passwordStrength <= 4) return "Média";
+    return "Forte";
+  };
+
   return (
-    <Animated.View style={tw`flex-1`}
-          entering={SlideInRight}
-          exiting={SlideOutLeft}
-    >
+    <View style={tw`flex-1`}>
       {/* Email */}
       <View style={tw`w-full`}>
         <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>E-mail</Text>
@@ -45,6 +87,24 @@ export default function Step3({ formData, updateField }) {
             secureTextEntry
           />
         </View>
+        {formData.senhaUsuario.length > 0 && (
+          <View style={tw`mt-2`}>
+            <Text style={[tw`text-xs mb-1`, { color: getStrengthColor() }]}>
+              Força da Senha: {getStrengthText()}
+            </Text>
+            <View style={tw`h-2 rounded-full bg-gray-300`}>
+              <Animated.View
+                style={[
+                  tw`h-full rounded-full`,
+                  { width: animatedWidth.interpolate({
+                    inputRange: [0, 100],
+                    outputRange: ['0%', '100%'],
+                  }), backgroundColor: getStrengthColor() },
+                ]}
+              />
+            </View>
+          </View>
+        )}
       </View>
 
       {/* Confirmação de Senha */}
@@ -67,6 +127,6 @@ export default function Step3({ formData, updateField }) {
           />
         </View>
       </View>
-    </Animated.View>
+    </View>
   );
 }

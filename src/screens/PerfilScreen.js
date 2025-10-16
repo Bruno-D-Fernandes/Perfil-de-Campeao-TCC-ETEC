@@ -2,12 +2,25 @@ import {
   View, Text, Image, ImageBackground, ScrollView, Pressable,
   ActivityIndicator, Modal, TextInput, Alert, Platform,
 } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo, use } from "react";
 import * as ImagePicker from 'expo-image-picker';
 import tw from "twrnc";
 import usuario from "./../../services/usuario";
 import TopNotification from "../components/TopNotification";
 import InfoCard from "../components/InfoCard";
+import { Picker } from "@react-native-picker/picker";
+import Animated, {SlideInRight, SlideOutRight} from "react-native-reanimated";
+import ModalPerfilINSANO from "../components/ModalPerfilINSANO";
+import BottomSheetCriaPerfil from "../components/BottomSheetCriaPerfil";
+import { loadPerfilAll } from './../../services/perfil'
+
+
+/*
+
+  Se tivesse tempo refatoraria isso, mas agora ta já é tarde demais --Bruno
+  vou nem comentar sobre os componentes 
+
+*/
 
 export default function ProfileScreen() {
   const [showModal, setShowModal] = useState(false);
@@ -17,7 +30,51 @@ export default function ProfileScreen() {
   const [error, setError] = useState("");
   const [viewError, setViewError] = useState(false);
 
-  // 1. Estados separados para cada imagem (perfil e banner)
+  // Multiplos perfis
+  // Multiplos perfis
+  // Multiplos perfis
+  // Multiplos perfis
+  // Multiplos perfis
+
+
+
+  const [mapOptions] = useState(new Map([
+    ['create', 0],
+    ['update', 1],
+    ['delete', 2],
+  ]));
+
+  const [optionProfile, setOptionProfile] = useState(false);
+  const [modalEsportes, setModalEsportes] = useState(false);
+  const sheetRef = useRef('null');
+
+  const abrirSheet = () => {
+    setTimeout(() => {
+      sheetRef.current?.present();
+    }, 150);
+  };
+
+  const fecharSheet = () => {
+    sheetRef.current?.dismiss();
+  };
+
+
+  const [bottomSheet, setBottomSheet] = useState('');
+  const [option, setOption] = useState();
+
+
+  const perfilOptions = () => { 
+    setOptionProfile(!optionProfile);
+  }
+
+  const [controllSheet, setControllSheet] = useState(false); 
+  const ControllTypeModal = (crud) =>{
+      setControllSheet(crud);
+      setModalEsportes(true)
+    }
+// _
+
+
   const [fotoPerfil, setFotoPerfil] = useState(null); // Armazena o asset da nova foto de perfil
   const [fotoBanner, setFotoBanner] = useState(null); // Armazena o asset da nova foto de banner
 
@@ -46,7 +103,6 @@ export default function ProfileScreen() {
       maoDominante: userData?.maoDominante || "",
       peDominante: userData?.peDominante || "",
     });
-    // Reseta as imagens temporárias ao abrir o modal para não manter seleções antigas
     setFotoPerfil(null);
     setFotoBanner(null);
     setShowModal(true);
@@ -63,7 +119,6 @@ export default function ProfileScreen() {
     return true;
   };
 
-  // 2. Função genérica para escolher imagem, que atualiza o estado correto
   const escolherImagem = async (tipoImagem) => {
     const temPermissao = await solicitarPermissoes();
     if (!temPermissao) return;
@@ -92,7 +147,6 @@ export default function ProfileScreen() {
     try {
       const formData = new FormData();
 
-      // Adiciona os dados de texto ao FormData
       const dataToSend = { ...editData };
       if (dataToSend.dataNascimentoUsuario) {
         dataToSend.dataNascimentoUsuario = formatDateToISO(dataToSend.dataNascimentoUsuario);
@@ -106,12 +160,10 @@ export default function ProfileScreen() {
 
       formData.append('_method', 'PUT');
 
-      // Função auxiliar para adicionar imagem ao FormData
       const appendImageToForm = async (imageAsset, fieldName) => {
         if (!imageAsset) return;
 
         const fileName = imageAsset.uri.split('/').pop();
-        // Fallback para tipo de arquivo
         const fileType = imageAsset.type ? `image/${imageAsset.type.split('/').pop()}` : (fileName.includes('.png') ? 'image/png' : 'image/jpeg');
 
         if (Platform.OS === 'web') {
@@ -127,13 +179,11 @@ export default function ProfileScreen() {
         }
       };
 
-      // 3. Adiciona AMBAS as imagens ao FormData se tiverem sido selecionadas
       await appendImageToForm(fotoPerfil, 'fotoPerfilUsuario');
       await appendImageToForm(fotoBanner, 'fotoBannerUsuario');
 
       await usuario.editUser(formData, userData.id);
 
-      // Atualiza os dados do usuário na tela após o sucesso
       await loadUserData();
       setShowModal(false);
       Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
@@ -167,14 +217,69 @@ export default function ProfileScreen() {
     } catch (err) {
       setError("Erro ao carregar dados do usuário");
       console.error("Erro ao carregar dados:", err);
-    } finally {
-      setLoading(false);
+    } 
+    finally{
+    setLoading(false);
+      }
+  };
+  const [selectedEsporteId, setSelectedEsporteId] = useState(1);
+  const [perfis, setPerfis] = useState([]);
+  const [perfisSorted, setPerfisSorted] = useState([])
+
+
+  const sortDataPerfil = async () =>{
+    console.log('aqui', perfisSorted)
+      try {
+      const response = perfis;
+      const perfisArray = Array.isArray(response?.perfis) ? response.perfis : [];
+
+      const sorted = perfisArray
+        .slice()
+        .sort((a, b) => {
+          const na = (a?.esporte?.nomeEsporte ?? '').toLowerCase();
+          const nb = (b?.esporte?.nomeEsporte ?? '').toLowerCase();
+          return na.localeCompare(nb, 'pt-BR');
+        });
+      setPerfisSorted(sorted);
+    } catch (err) {
+      console.error('Erro ao carregar perfis:', err);
+      setPerfisSorted([]);
+    }
+  }
+
+  const loadPerfisData = async () => {
+    try {
+      const response = await loadPerfilAll();
+      setPerfis(response);
+    } catch (err) {
+      console.error('Erro ao carregar perfis:', err);
+      setPerfis([]);
     }
   };
 
   useEffect(() => {
-    loadUserData();
+    loadPerfisData();
+    loadUserData();    
+    console.log('perfis:', perfis)
   }, []);
+
+
+  useEffect(() => {
+    if(perfis) sortDataPerfil()
+  }, [perfis]);
+
+const itensEsportesUnicos = useMemo(() => {
+  const arr = Array.isArray(perfisSorted) ? perfisSorted : [];
+  const seen = new Set();
+  return arr.reduce((acc, p) => {
+    const e = p?.esporte;
+    if (e?.id && !seen.has(e.id)) {
+      seen.add(e.id);
+      acc.push(e);
+    }
+    return acc;
+  }, []);
+}, [perfisSorted]);
 
   if (loading) {
     return (
@@ -223,38 +328,131 @@ export default function ProfileScreen() {
 
             <View style={tw`flex-row justify-around w-full mt-4 px-8`}>
               <View style={tw`items-center`}>
-                <Text style={tw`text-lg font-bold text-[#4ADC76]`}>120</Text>
+                <Text style={tw`text-lg font-bold text-[#4ADC76]`}>0</Text>
                 <Text style={tw`text-sm text-gray-500`}>Seguidores</Text>
               </View>
               <View style={tw`items-center`}>
-                <Text style={tw`text-lg font-bold text-[#4ADC76]`}>350</Text>
+                <Text style={tw`text-lg font-bold text-[#4ADC76]`}>0</Text>
                 <Text style={tw`text-sm text-gray-500`}>Seguindo</Text>
               </View>
             </View>
           </View>
         </View>
 
+
+
         <View style={tw`w-full mt-1`}>
-          <Text style={tw`text-lg font-bold text-gray-700 mb-3 px-2`}>Informações</Text>
-          <View style={tw`flex-row flex-wrap justify-between`}>
+          <View style={tw`flex-row flex-wrap justify-between px-2 pt-3`}>
             {infoCardsData.map((item, index) => (
               <InfoCard key={index} {...item} />
             ))}
           </View>
 
-          <View style={tw`flex-row bg-red-200 flex-wrap justify-between pb-10 rounded-lg mt-6`}>
-            <View style={tw`w-full h-10 flex-row bg-blue-200 mb-4`}>
-              <Pressable className={tw`w-50 bg-green-400`}> <Text>Mais perfil </Text></Pressable>
-              <Pressable> Mais perfil </Pressable>
+        {/* MÚLTIPLOS PERFIS */}
+        {/* MÚLTIPLOS PERFIS */}
+        {/* MÚLTIPLOS PERFIS */}
+        {/* MÚLTIPLOS PERFIS */}
+        {/* MÚLTIPLOS PERFIS */}
+        {/* MÚLTIPLOS PERFIS */}
+
+          <View style={tw`flex-row flex-wrap pb-10 rounded-lg mt-6`}>
+
+
+            {modalEsportes && (
+              <ModalPerfilINSANO
+                crud={controllSheet}
+                visible={modalEsportes}
+                onClose={() => setModalEsportes(false)}
+                abrirSheet={abrirSheet}
+                fecharSheet={fecharSheet}
+                controllSheet={ControllTypeModal}
+                perfis={perfisSorted}
+                />
+            )}
+
+            {console.log('Itens', itensEsportesUnicos || '')}
+            <View style={tw`flex-row justify-end w-full relative bottom-2 h-13`}>
+              {optionProfile && (
+                <Animated.View
+                  entering={SlideInRight.duration(500)}
+                  exiting={SlideOutRight.duration(500)}
+                  style={tw`flex-row`}
+                >
+                  <Pressable onPress={() => ControllTypeModal('create')}>
+                    <Animated.View style={tw`w-16 h-13 mr-1 bg-white rounded-2`}>
+                      <Text style={tw`text-center m-auto`}>Mais</Text>
+                    </Animated.View>
+                  </Pressable>
+                  
+                <Pressable onPress={() => ControllTypeModal('update')}>
+                    <Animated.View style={tw`w-16 h-13 mr-1 bg-white rounded-2`} >
+                      <Text>Editar</Text>
+                    </Animated.View>
+                  </Pressable>
+                
+                </Animated.View>
+              )}
             </View>
-
-
-            {infoCardsData.map((item, index) => (
-              <InfoCard key={index} {...item} />
+            
+            {console.log((selectedEsporteId - 1) || '')}
+            <View style={tw`w-85 justify-end rounded-t-5`}>
+            <Picker 
+            style={tw`w-full px-4 h-12 border-none bg-white rounded-t-5`}
+              selectedValue={selectedEsporteId}
+              onValueChange={(itemValue) => {
+                if (itemValue == null) {
+                  setSelectedEsporteId(1);
+                  return;
+                }
+                const num = typeof (itemValue === 'number') ? itemValue : parseInt(itemValue, 10);
+                setSelectedEsporteId(num);
+              }}
+            >
+        {itensEsportesUnicos.map((esp, index) => (
+              <Picker.Item
+                key={esp.id} 
+                label={esp.nomeEsporte ?? 'Sem nome'}
+                value={index}
+              />
             ))}
+            </Picker>
+          </View>
+
+            <Pressable onPress={perfilOptions}>
+              <Animated.View style={tw`w-16 h-11 justify-end ml-1 bg-white rounded-2`} />                
+            </Pressable>
+
+          <View style={tw`w-full px-4 pt-4 flex-row rounded-tr-4 bg-white flex-wrap justify-between pb-30`}>
+            <View> 
+              <Text>{perfisSorted[(parseInt(selectedEsporteId))]?.esporte.nomeEsporte}</Text>  
+            </View>  
+            
+            <Text>{perfisSorted[parseInt(selectedEsporteId)]?.categoria.nomeCategoria}</Text>
+            {perfisSorted[parseInt(selectedEsporteId)]?.posicoes.map(p => <Text>{p.nomePosicao}</Text>)}
+            
+            {perfisSorted[parseInt(selectedEsporteId)]?.caracteristicas.map(p => (
+              <View key={p.id}> 
+                <Text>{p.caracteristica}</Text>
+                <Text>{p.valor} {p.unidade_medida}</Text>
+              </View>
+            ))}
+            
+
+          </View>
+
+
           </View>
         </View>
       </ScrollView>
+
+        {controllSheet === 'delete' && <BottomSheetCriaPerfil ref={sheetRef} onDismiss={() => console.log('sheet dismiss')} />}
+
+
+          {/* MODAL DE EDIÇÃO DE PERFIL PRINCIPAL*/}
+          {/* MODAL DE EDIÇÃO DE PERFIL PRINCIPAL*/}
+          {/* MODAL DE EDIÇÃO DE PERFIL PRINCIPAL*/}
+          {/* MODAL DE EDIÇÃO DE PERFIL PRINCIPAL*/}
+          {/* MODAL DE EDIÇÃO DE PERFIL PRINCIPAL*/}
 
       <Modal visible={showModal} animationType="slide" onRequestClose={() => setShowModal(false)}>
         <View style={tw`flex-1 bg-white`}>

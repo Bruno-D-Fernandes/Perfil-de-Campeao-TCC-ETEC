@@ -8,6 +8,7 @@ import usuario from './services/usuario';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import "./global.css"
 
+
 //icons nav
 import Feather from '@expo/vector-icons/Feather';
 
@@ -21,6 +22,7 @@ import LoginScreen from './src/screens/LoginScreen';
 import CadastroScreen from './src/screens/CadastroScreen';
 import NotificaScreen from './src/screens/NotificaScreen';
 import PortfolioScreen from './src/screens/PortfolioScreen';
+import CriaEditaPerfil from './src/screens/CriaEditaPerfil';
 
 
 const Stack = createNativeStackNavigator();
@@ -207,6 +209,7 @@ function InitialSplashScreen({ navigation }) {
 }
 
 export default function App() {
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
@@ -230,6 +233,11 @@ export default function App() {
         <Stack.Screen
           name="Config"
           component={ConfigScreen}
+          options={{ headerShown: true }}
+        />
+        <Stack.Screen
+          name="CriaEditaPerfil"
+          component={CriaEditaPerfil}
           options={{ headerShown: true }}
         />
           </Stack.Navigator>

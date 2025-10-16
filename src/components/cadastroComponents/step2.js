@@ -2,14 +2,10 @@ import { View, Text, TextInput, StyleSheet } from "react-native";
 import tw from "twrnc";
 import { Picker } from '@react-native-picker/picker';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
-import Animated, { SlideOutLeft, SlideInRight } from "react-native-reanimated";
 
 export default function Step2({ formData, updateField }) {
   return (
-    <Animated.View style={tw`flex-1`}
-          entering={SlideInRight}
-          exiting={SlideOutLeft}
-    >
+    <View style={tw`flex-1`}>
       {/* Campo Mão Dominante */}
       <View style={tw`mb-6`}>
         <Text style={tw`text-green-400 text-sm font-semibold mb-2`}>
@@ -23,7 +19,7 @@ export default function Step2({ formData, updateField }) {
             <Picker
               selectedValue={formData.maoDominante}
               onValueChange={(value) => updateField('maoDominante', value)}
-                style={{ height: 60, width: '100%' }}
+                style={{ height: 30, width: '100%', borderRadius: 10}}
             >
               <Picker.Item label="Selecione..." value={null} />
               <Picker.Item label="Destro(a)" value="Destro" />
@@ -46,7 +42,7 @@ export default function Step2({ formData, updateField }) {
             <Picker
               selectedValue={formData.peDominante}
               onValueChange={(value) => updateField('peDominante', value)}
-              style={{ height: 60, width: '100%' }}
+              style={{ height: 30, width: '100%', borderRadius: 10}}
             >
               <Picker.Item label="Selecione..." value={null} />
               <Picker.Item label="Direito" value="Direito" />
@@ -88,6 +84,6 @@ export default function Step2({ formData, updateField }) {
           />
         </View>
       </View>
-    </Animated.View>
+    </View>
   );
 }
