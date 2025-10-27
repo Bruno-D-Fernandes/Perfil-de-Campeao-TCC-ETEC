@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Image } from "react-native";
-import Animated, { SlideOutLeft, SlideInRight, SlideInLeft } from "react-native-reanimated";
-import { Picker } from '@react-native-picker/picker';
+import Animated, {
+  SlideOutLeft,
+  SlideInRight,
+  SlideInLeft,
+} from "react-native-reanimated";
+import { Picker } from "@react-native-picker/picker";
 import tw from "twrnc";
-import formatDate from "../formatDate";
-
+import formatDate from "../../utils/formatDate";
 
 export default function Step1({ formData, updateField, esquerda }) {
   return (
@@ -40,7 +43,7 @@ export default function Step1({ formData, updateField, esquerda }) {
               source={require("../../../assets/cadastro/icon_data.png")}
             />
             <TextInput
-              style={{  height: "80%", fontSize: 14, width:'75%' }}
+              style={{ height: "80%", fontSize: 14, width: "75%" }}
               placeholder="DD/MM/AAAA"
               placeholderTextColor="#A9A9A9"
               value={formData.dataNascimentoUsuario}
@@ -65,8 +68,13 @@ export default function Step1({ formData, updateField, esquerda }) {
             <View style={tw`flex-1 h-full justify-center`}>
               <Picker
                 selectedValue={formData.generoUsuario}
-                onValueChange={(value) => updateField('generoUsuario', value)}
-                style={{ height: 60, width: '100%', backgroundColor:'white', borderRadius: 10  }}
+                onValueChange={(value) => updateField("generoUsuario", value)}
+                style={{
+                  height: 60,
+                  width: "100%",
+                  backgroundColor: "white",
+                  borderRadius: 10,
+                }}
               >
                 <Picker.Item label="Selecione..." value={null} />
                 <Picker.Item label="Masculino" value="masculino" />
