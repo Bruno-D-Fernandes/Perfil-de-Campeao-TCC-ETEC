@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import {
-  View, Text, Pressable, StyleSheet, Image, Platform, StatusBar
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  Image,
+  Platform,
+  StatusBar,
 } from "react-native";
 import tw from "twrnc";
 import usuario from "../../services/usuario";
@@ -13,7 +19,7 @@ import Animated, {
   Easing,
   interpolate,
 } from "react-native-reanimated";
-import { useSafeAreaInsets } from 'react-native-safe-area-context'; // Importar useSafeAreaInsets
+import { useSafeAreaInsets } from "react-native-safe-area-context"; // Importar useSafeAreaInsets
 
 import Step1 from "../components/cadastroComponents/step1";
 import Step2 from "../components/cadastroComponents/step2";
@@ -73,11 +79,10 @@ export default function CadastroScreen() {
   };
 
   const handleSubmit = async () => {
-
-    if(formData.confirmacaoSenhaUsuario != formData.senhaUsuario){
-      setError("Senhas não coincidem")
-      return setViewError(true)
-    } 
+    if (formData.confirmacaoSenhaUsuario != formData.senhaUsuario) {
+      setError("Senhas não coincidem");
+      return setViewError(true);
+    }
 
     try {
       const data = formData.dataNascimentoUsuario.split("/");
@@ -104,12 +109,11 @@ export default function CadastroScreen() {
     }
   };
 
-  
   useEffect(() => {
     if (viewError) {
       const timer = setTimeout(() => {
         setViewError(false);
-      }, 3000); 
+      }, 3000);
       return () => clearTimeout(timer);
     }
   }, [viewError]);
@@ -122,13 +126,25 @@ export default function CadastroScreen() {
             formData={formData}
             updateField={updateField}
             pickerSelectStyles={pickerSelectStyles}
-          isForward={isForward}
+            isForward={isForward}
           />
         );
       case 1:
-        return <Step2 formData={formData} updateField={updateField} isForward={isForward} />;
+        return (
+          <Step2
+            formData={formData}
+            updateField={updateField}
+            isForward={isForward}
+          />
+        );
       case 2:
-        return <Step3 formData={formData} updateField={updateField} isForward={isForward} />;
+        return (
+          <Step3
+            formData={formData}
+            updateField={updateField}
+            isForward={isForward}
+          />
+        );
       case 3:
         return <Step4 isForward={isForward} />;
       default:
@@ -157,20 +173,20 @@ export default function CadastroScreen() {
 
   // Função para voltar à tela de login
   const handleBackToLogin = () => {
-    navigation.replace("AuthStack", {screen: "Login"}); 
+    navigation.replace("AuthStack", { screen: "Login" });
   };
 
   return (
     <View style={tw`flex-1 bg-gray-100`}>
       {/* Notificação de erro */}
-      {viewError && <TopNotification error={error}/>}
+      {viewError && <TopNotification error={error} />}
 
       {/* Imagem de fundo com overflow superior */}
       <Image
         style={[
           { width: "100%", height: "40%", position: "absolute", top: 0 },
           // Ajuste para Android se a imagem começar abaixo da status bar, garantindo overflow superior
-          Platform.OS === 'android' && { marginTop: -StatusBar.currentHeight }
+          Platform.OS === "android" && { marginTop: -StatusBar.currentHeight },
         ]}
         source={require("../../assets/cadastro/cadastro_imagem.png")}
         resizeMode="cover"
@@ -180,7 +196,7 @@ export default function CadastroScreen() {
       <View
         style={[
           tw`absolute bottom-0 w-full max-w-xl self-center bg-white p-5 rounded-tl-[30px] rounded-tr-[30px] shadow-lg h-[74%]`,
-          { paddingBottom: insets.bottom + 20 }
+          { paddingBottom: insets.bottom + 20 },
         ]}
       >
         <View style={[tw`w-full h-10 justify-center`]}>
@@ -217,9 +233,9 @@ export default function CadastroScreen() {
         {renderCurrentStep()}
 
         {/* Botões */}
-        <View style={tw`flex-row-reverse justify-between w-full`}>
+        <View className="flex-row-reverse justify-between w-full">
           <Pressable
-            style={tw`flex-row justify-between w-[48%] h-12 bg-[#4ADC76] rounded-full items-center`}
+            style={tw`flex-row justify-between w-40 h-12 bg-[#4ADC76] rounded-full items-center`}
             onPress={() => {
               if (currentStep === 3) {
                 navigation.navigate("MainTabs");
@@ -234,10 +250,10 @@ export default function CadastroScreen() {
               {currentStep < 3 ? "Próximo" : "Finalizar"}
             </Text>
             <View
-              style={tw`justify-center items-center w-[27%] h-full rounded-full bg-white`}
+              style={tw`mr-2 justify-center items-center w-[22%] h-[75%] rounded-full bg-white`}
             >
               <Image
-                style={{ width: 12, height: 20 }}
+                style={{ width: 12, height: 20, marginLeft: 3 }}
                 source={require("../../assets/cadastro/icon_proximo.png")}
               />
             </View>
@@ -246,7 +262,7 @@ export default function CadastroScreen() {
           {/* Botão de voltar modificado para incluir step 0 (step1) */}
           {currentStep > 0 && currentStep < 3 && (
             <Pressable
-              style={tw`justify-center items-center w-[25%]  rounded-full bg-[#4ADC76]`}
+              style={tw`justify-center items-center w-12 h-12 rounded-full bg-[#4ADC76]`}
               onPress={() => handleStep(-1)}
             >
               <Image
@@ -259,17 +275,16 @@ export default function CadastroScreen() {
           {/* Novo botão para voltar ao login quando estiver no step 0 (step1) */}
           {currentStep === 0 && (
             <Pressable
-              style={tw`justify-center items-center w-[25%]  rounded-full bg-green-400`}
+              style={tw`justify-center items-center w-12 h-12 rounded-full bg-green-400`}
               onPress={handleBackToLogin}
             >
               <Image
-                style={{ width: 12, height: 20 }}
+                style={{ width: 12, height: 20, marginRight: 4 }}
                 source={require("../../assets/cadastro/icon_voltar.png")}
               />
             </Pressable>
           )}
         </View>
-        
       </View>
     </View>
   );
@@ -304,4 +319,3 @@ const pickerSelectStyles = StyleSheet.create({
     right: 12,
   },
 });
-

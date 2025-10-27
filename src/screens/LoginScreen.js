@@ -138,7 +138,7 @@ export default function HomeScreen() {
           >
             <Image
               className="mr-[3%]"
-              style={{ width: "6%", height: "60%" }}
+              style={{ width: 16, height: 12 }}
               source={require("../../assets/login/icon_email.png")}
             />
             <TextInput
@@ -169,7 +169,7 @@ export default function HomeScreen() {
           >
             <Image
               className="mr-[3%]"
-              style={{ width: "5%", height: "70%" }}
+              style={{ width: 16 , height: 16}}
               source={require("../../assets/login/icon_senha.png")}
             />
             <TextInput
@@ -188,10 +188,10 @@ export default function HomeScreen() {
         </View>
 
         {/* Botões */}
-        <View className="w-[75%] h-[20%] gap-6 justify-center">
+        <View className="w-[75%] h-[20%] gap-6 items-center justify-center">
           <Pressable
             onPress={handleLogin}
-            className="bg-[#4ADC76] h-[35%] rounded-[30px] items-center justify-between pl-[8%] flex-row"
+            className="bg-[#4ADC76] w-64 h-12 bg rounded-[30px] items-center justify-between pl-[8%] flex-row"
           >
             <Text
               className="text-white text-[18px]"
@@ -199,10 +199,10 @@ export default function HomeScreen() {
             >
               Entrar
             </Text>
-            <View className="w-[18%] h-[80%] bg-white m-[3%] rounded-full items-center justify-center">
+            <View className="w-[16%] h-[80%] bg-white m-[3%] rounded-full items-center justify-center">
               <Image
                 className="ml-[19%]"
-                style={{ width: "35%", height: "60%" }}
+                style={{ width: 12, height: 20, marginRight:3, }}
                 source={require("../../assets/login/icon_seta.png")}
               />
             </View>
