@@ -198,9 +198,9 @@ export default function CadastroScreen() {
         {renderCurrentStep()}
 
         {/* Botões */}
-        <View style={tw`flex-row-reverse justify-between w-full`}>
+        <View className='flex-row-reverse justify-between w-full'>
           <Pressable
-            style={tw`flex-row justify-between w-[48%] h-12 bg-[#4ADC76] rounded-full items-center`}
+            style={tw`flex-row justify-between w-40 h-12 bg-[#4ADC76] rounded-full items-center`}
             onPress={() => {
               if (currentStep === 3) {
                 navigation.navigate("MainTabs");
@@ -215,19 +215,19 @@ export default function CadastroScreen() {
               {currentStep < 3 ? "Próximo" : "Finalizar"}
             </Text>
             <View
-              style={tw`justify-center items-center w-[27%] h-full rounded-full bg-white`}
+              style={tw`mr-2 justify-center items-center w-[22%] h-[75%] rounded-full bg-white`}
             >
               <Image
-                style={{ width: 12, height: 20 }}
+                style={{  width: 12, height: 20, marginLeft:3, }}
                 source={require("../../assets/cadastro/icon_proximo.png")}
               />
             </View>
           </Pressable>
 
-          {/* Botão de voltar modificado para incluir step 0 (step1) */}
+          {/* Botão de voltar modificado para incluir step 0 (step1) */}  
           {currentStep > 0 && currentStep < 3 && (
             <Pressable
-              style={tw`justify-center items-center w-[25%] h-full rounded-full bg-[#4ADC76]`}
+              style={tw`justify-center items-center w-12 h-12 rounded-full bg-[#4ADC76]`}
               onPress={() => handleStep(-1)}
             >
               <Image
@@ -240,11 +240,11 @@ export default function CadastroScreen() {
           {/* Novo botão para voltar ao login quando estiver no step 0 (step1) */}
           {currentStep === 0 && (
             <Pressable
-              style={tw`justify-center items-center w-[25%] h-full rounded-full bg-green-400`}
+              style={tw`justify-center items-center w-12 h-12 rounded-full bg-green-400`}
               onPress={handleBackToLogin}
             >
               <Image
-                style={{ width: 12, height: 20 }}
+                style={{ width: 12, height: 20, marginRight:4, }}
                 source={require("../../assets/cadastro/icon_voltar.png")}
               />
             </Pressable>
