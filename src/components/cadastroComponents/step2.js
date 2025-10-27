@@ -18,11 +18,7 @@ export default function Step2({ formData, updateField }) {
   });
 
   return (
-    <Animated.View
-      style={tw`flex-1`}
-      entering={SlideInRight}
-      exiting={SlideOutLeft}
-    >
+    <View style={tw`flex-1`}>
       {/* Campo Mão Dominante */}
       <View style={tw`mb-6`}>
         <Text
@@ -46,7 +42,7 @@ export default function Step2({ formData, updateField }) {
             <Picker
               selectedValue={formData.maoDominante}
               onValueChange={(value) => updateField("maoDominante", value)}
-              style={{ height: 20, width: "100%", borderRadius: 15 }}
+              style={{ height: 20, width: "100%", borderRadius: 10 }}
             >
               <Picker.Item label="Selecione..." value={null} />
               <Picker.Item label="Destro(a)" value="Destro" />
@@ -79,7 +75,7 @@ export default function Step2({ formData, updateField }) {
             <Picker
               selectedValue={formData.peDominante}
               onValueChange={(value) => updateField("peDominante", value)}
-              style={{ height: 20, width: "100%", borderRadius: 15 }}
+              style={{ height: 20, width: "100%", borderRadius: 10 }}
             >
               <Picker.Item label="Selecione..." value={null} />
               <Picker.Item label="Direito" value="Direito" />
@@ -137,6 +133,6 @@ export default function Step2({ formData, updateField }) {
           />
         </View>
       </View>
-    </Animated.View>
+    </View>
   );
 }

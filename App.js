@@ -1,27 +1,27 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Pressable, Text, useEffect, useState } from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import usuario from './services/usuario';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import "./global.css"
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Pressable, Text, useEffect, useState } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import usuario from "./services/usuario";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import "./global.css";
 
 //icons nav
-import Feather from '@expo/vector-icons/Feather';
+import Feather from "@expo/vector-icons/Feather";
 
 // Telas
-import OportunidadesScreen from './src/screens/OportunidadesScreen';
-import PerfilScreen from './src/screens/PerfilScreen';
-import ConfigScreen from './src/screens/ConfigScreen';
-import PostagemScreen from './src/screens/PostagemScreen';
-import SplashScreen from './src/screens/SplashScreen';
-import LoginScreen from './src/screens/LoginScreen';
-import CadastroScreen from './src/screens/CadastroScreen';
-import NotificaScreen from './src/screens/NotificaScreen';
-import PortfolioScreen from './src/screens/PortfolioScreen';
-
+import OportunidadesScreen from "./src/screens/OportunidadesScreen";
+import PerfilScreen from "./src/screens/PerfilScreen";
+import ConfigScreen from "./src/screens/ConfigScreen";
+import PostagemScreen from "./src/screens/PostagemScreen";
+import SplashScreen from "./src/screens/SplashScreen";
+import LoginScreen from "./src/screens/LoginScreen";
+import CadastroScreen from "./src/screens/CadastroScreen";
+import NotificaScreen from "./src/screens/NotificaScreen";
+import PortfolioScreen from "./src/screens/PortfolioScreen";
+import PerfilCrudScreen from "./src/screens/PerfilCrudScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,33 +34,45 @@ function MainTabs() {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          height: '8%',
-          width: '95%',
-          marginLeft: '2.5%',
-          marginRight: '2.5%',
-          position: 'absolute',
-          bottom: '2%',
+          height: "8%",
+          width: "95%",
+          marginLeft: "2.5%",
+          marginRight: "2.5%",
+          position: "absolute",
+          bottom: "2%",
           borderRadius: 60,
-          padding: '4%',
-          justifyContent: 'center',
-          backgroundColor: '#ffff',
-          shadowColor: '#000',
+          padding: "4%",
+          justifyContent: "center",
+          backgroundColor: "#ffff",
+          shadowColor: "#000",
           shadowOffset: { width: 1, height: 0.1 },
           shadowOpacity: 0.1,
           shadowRadius: 15,
         },
-        tabBarActiveTintColor: '#4CAF50',
-        tabBarInactiveTintColor: '#888',
+        tabBarActiveTintColor: "#4CAF50",
+        tabBarInactiveTintColor: "#888",
         tabBarIcon: ({ color, size }) => {
           let iconName;
 
-          if (route.name === 'Oportunidades') { iconName = 'briefcase'; }
-          if (route.name === 'CriarPost') { iconName = 'plus-circle'; size = 36; }
-          if (route.name === 'Perfil') { iconName = 'user'; }
-          if (route.name === 'Config') { iconName = 'settings'; }
-          if (route.name === 'Notificacao') { iconName = 'bell'; }
-          if (route.name === 'Portfolio') { iconName = 'book'; }
-
+          if (route.name === "Oportunidades") {
+            iconName = "briefcase";
+          }
+          if (route.name === "CriarPost") {
+            iconName = "plus-circle";
+            size = 36;
+          }
+          if (route.name === "Perfil") {
+            iconName = "user";
+          }
+          if (route.name === "Config") {
+            iconName = "settings";
+          }
+          if (route.name === "Notificacao") {
+            iconName = "bell";
+          }
+          if (route.name === "Portfolio") {
+            iconName = "book";
+          }
 
           return <Feather name={iconName} size={size} color={color} />;
         },
@@ -74,20 +86,22 @@ function MainTabs() {
         component={PostagemScreen}
         options={({ navigation }) => ({
           headerShown: true,
-          tabBarStyle: { display: 'none' },
+          tabBarStyle: { display: "none" },
           headerStyle: {
-            backgroundColor: '#ffffff',
+            backgroundColor: "#ffffff",
             elevation: 0,
             shadowOpacity: 0,
             borderBottomWidth: 0,
           },
           headerTitle: () => (
-            <Text style={{
-              fontSize: 18,
-              fontWeight: '600',
-              color: '#4ADE80',
-              textAlign: 'center',
-            }}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "600",
+                color: "#4ADE80",
+                textAlign: "center",
+              }}
+            >
               Novo post
             </Text>
           ),
@@ -97,12 +111,12 @@ function MainTabs() {
                 navigation.goBack();
               }}
               style={{
-                backgroundColor: '#4ADE80',
+                backgroundColor: "#4ADE80",
                 borderRadius: 20,
                 width: 40,
                 height: 40,
-                justifyContent: 'center',
-                alignItems: 'center',
+                justifyContent: "center",
+                alignItems: "center",
                 marginLeft: 15,
               }}
             >
@@ -113,40 +127,48 @@ function MainTabs() {
             <Pressable
               onPress={() => {
                 // Lógica para postar
-                console.log('Postar pressionado');
+                console.log("Postar pressionado");
               }}
               style={{
-                backgroundColor: '#4ADE80',
+                backgroundColor: "#4ADE80",
                 borderRadius: 20,
                 paddingHorizontal: 15,
                 paddingVertical: 8,
-                flexDirection: 'row',
-                alignItems: 'center',
+                flexDirection: "row",
+                alignItems: "center",
                 marginRight: 15,
               }}
             >
-              <Text style={{
-                color: '#ffffff',
-                fontSize: 16,
-                fontWeight: '600',
-              }}>
+              <Text
+                style={{
+                  color: "#ffffff",
+                  fontSize: 16,
+                  fontWeight: "600",
+                }}
+              >
                 Postar
               </Text>
-              <Feather name="arrow-right" size={16} color="#ffffff" style={{ marginLeft: 5 }} />
+              <Feather
+                name="arrow-right"
+                size={16}
+                color="#ffffff"
+                style={{ marginLeft: 5 }}
+              />
             </Pressable>
           ),
-          headerTitleAlign: 'center',
+          headerTitleAlign: "center",
         })}
       />
       <Tab.Screen name="Perfil" component={PerfilScreen} />
 
       <Tab.Screen
-        name='Notificacao'
+        name="Notificacao"
         component={NotificaScreen}
         options={{
           headerShown: false,
-          tabBarShown: false
-        }} />
+          tabBarShown: false,
+        }}
+      />
     </Tab.Navigator>
   );
 }
@@ -158,11 +180,11 @@ function AuthStack() {
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen
-        name='Login'
+        name="Login"
         component={LoginScreen}
         options={{
           headerShown: false,
-          tabBarShown: false
+          tabBarShown: false,
         }}
       />
       <Stack.Screen
@@ -170,7 +192,7 @@ function AuthStack() {
         component={CadastroScreen}
         options={{
           headerShown: false,
-          tabBarShown: false
+          tabBarShown: false,
         }}
       />
     </Stack.Navigator>
@@ -181,22 +203,22 @@ function InitialSplashScreen({ navigation }) {
   useEffect(() => {
     async function checkToken() {
       try {
-        const token = await AsyncStorage.getItem('token');
+        const token = await AsyncStorage.getItem("token");
 
         if (token) {
           const response = await usuario.splashUser();
           const user = response.data;
 
-          await AsyncStorage.setItem('user', JSON.stringify(user));
-          navigation.replace('MainTabs');
+          await AsyncStorage.setItem("user", JSON.stringify(user));
+          navigation.replace("MainTabs");
         } else {
-          navigation.replace('AuthStack');
+          navigation.replace("AuthStack");
         }
       } catch (error) {
-        console.error('Erro ao validar token:', error.message);
-        AsyncStorage.removeItem('token');
-        AsyncStorage.removeItem('user');
-        navigation.replace('AuthStack');
+        console.error("Erro ao validar token:", error.message);
+        AsyncStorage.removeItem("token");
+        AsyncStorage.removeItem("user");
+        navigation.replace("AuthStack");
       }
     }
 
@@ -212,26 +234,31 @@ export default function App() {
       <BottomSheetModalProvider>
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Splash">
-        <Stack.Screen
-          name="Splash"
-          component={InitialSplashScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="AuthStack"
-          component={AuthStack}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="MainTabs"
-          component={MainTabs}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Config"
-          component={ConfigScreen}
-          options={{ headerShown: true }}
-        />
+            <Stack.Screen
+              name="Splash"
+              component={InitialSplashScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="AuthStack"
+              component={AuthStack}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="MainTabs"
+              component={MainTabs}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Config"
+              component={ConfigScreen}
+              options={{ headerShown: true }}
+            />
+            <Stack.Screen
+              name="PerfilCrudScreen"
+              component={PerfilCrudScreen}
+              options={{ headerShown: true }}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </BottomSheetModalProvider>

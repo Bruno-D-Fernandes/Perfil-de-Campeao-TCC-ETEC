@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -18,8 +18,14 @@ import Animated, {
   withTiming,
   Easing,
   interpolate,
+  FadeIn, // Usado para o Step 4
+  SlideInRight,
+  SlideInLeft,
+  SlideOutLeft,
+  SlideOutRight,
+  FadeOut,
 } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context"; // Importar useSafeAreaInsets
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Step1 from "../components/cadastroComponents/step1";
 import Step2 from "../components/cadastroComponents/step2";
@@ -29,7 +35,7 @@ import TopNotification from "../components/TopNotification";
 
 export default function CadastroScreen() {
   const navigation = useNavigation();
-  const insets = useSafeAreaInsets(); // Hook para obter os insets da área segura
+  const insets = useSafeAreaInsets();
 
   const [error, setError] = useState("");
   const [viewError, setViewError] = useState(false);
@@ -37,11 +43,11 @@ export default function CadastroScreen() {
   const [barWidth, setBarWidth] = useState(0);
   const progress = useSharedValue(0);
 
-  const progressStyle = useAnimatedStyle(() => {
-    return {
-      width: `${progress.value}%`,
-    };
-  });
+  const [passwordStrength, setPasswordStrength] = useState(0);
+
+  const progressStyle = useAnimatedStyle(() => ({
+    width: `${progress.value}%`,
+  }));
 
   const iconStyle = useAnimatedStyle(() => {
     const position = interpolate(
@@ -50,15 +56,14 @@ export default function CadastroScreen() {
       [0, barWidth],
       "clamp"
     );
-
     return {
       transform: [{ translateX: position }],
     };
   });
 
   const [currentStep, setCurrentStep] = useState(0);
-  // track whether navigation is forward (next) or backward (previous)
-  const [isForward, setIsForward] = useState(true);
+  const direction = useRef(1);
+
   const [formData, setFormData] = useState({
     nomeCompletoUsuario: "",
     dataNascimentoUsuario: "",
@@ -79,9 +84,16 @@ export default function CadastroScreen() {
   };
 
   const handleSubmit = async () => {
-    if (formData.confirmacaoSenhaUsuario != formData.senhaUsuario) {
+    if (passwordStrength < 2) {
+      setError("A senha é muito fraca. Por favor, tente uma mais complexa.");
+      setViewError(true);
+      return;
+    }
+
+    if (formData.confirmacaoSenhaUsuario !== formData.senhaUsuario) {
       setError("Senhas não coincidem");
-      return setViewError(true);
+      setViewError(true);
+      return;
     }
 
     try {
@@ -89,75 +101,91 @@ export default function CadastroScreen() {
       if (data.length === 3) {
         formData.dataNascimentoUsuario = `${data[2]}-${data[1]}-${data[0]}`;
       }
-
-      console.log(formData);
-
+      console.log("Enviando para API:", formData);
       const token = await usuario.createUser(formData);
       await AsyncStorage.setItem("token", token.data.access_token);
 
       setCurrentStep(3);
       progress.value = withTiming(100, { duration: 500 });
     } catch (error) {
-      setError(
-        error.response && error.response.data && error.response.data.error
-          ? error.response.data.error
-          : "Ocorreu um erro inesperado. Tente novamente."
-      );
-
+      setError(error.response?.data?.error || "Ocorreu um erro inesperado.");
       setViewError(true);
-      console.error("Erro ao criar usuário:", error.response.data.error);
+      console.error(
+        "Erro ao criar usuário:",
+        error.response?.data?.error || error
+      );
     }
   };
 
   useEffect(() => {
     if (viewError) {
-      const timer = setTimeout(() => {
-        setViewError(false);
-      }, 3000);
+      const timer = setTimeout(() => setViewError(false), 3000);
       return () => clearTimeout(timer);
     }
   }, [viewError]);
 
   const renderCurrentStep = () => {
-    switch (currentStep) {
-      case 0:
-        return (
-          <Step1
-            formData={formData}
-            updateField={updateField}
-            pickerSelectStyles={pickerSelectStyles}
-            isForward={isForward}
-          />
-        );
-      case 1:
-        return (
-          <Step2
-            formData={formData}
-            updateField={updateField}
-            isForward={isForward}
-          />
-        );
-      case 2:
-        return (
-          <Step3
-            formData={formData}
-            updateField={updateField}
-            isForward={isForward}
-          />
-        );
-      case 3:
-        return <Step4 isForward={isForward} />;
-      default:
-        return null;
-    }
+    const enteringAnimation =
+      direction.current > 0 ? SlideInRight : SlideInLeft;
+    const exitingAnimation =
+      direction.current > 0 ? SlideOutLeft : SlideOutRight;
+
+    return (
+      <View style={tw`flex-1 overflow-hidden`}>
+        {currentStep === 0 && (
+          <Animated.View
+            key="step0"
+            style={tw`flex-1`}
+            // entering={FadeIn.duration(200)}
+            // exiting={FadeOut.duration(200)}
+          >
+            <Step1 formData={formData} updateField={updateField} />
+          </Animated.View>
+        )}
+        {currentStep === 1 && (
+          <Animated.View
+            key="step1"
+            style={tw`flex-1`}
+            // entering={FadeIn.duration(200)}
+            // exiting={FadeOut.duration(200)}
+          >
+            <Step2 formData={formData} updateField={updateField} />
+          </Animated.View>
+        )}
+        {currentStep === 2 && (
+          <Animated.View
+            key="step2"
+            style={tw`flex-1`}
+            // entering={FadeIn.duration(200)}
+            // exiting={FadeOut.duration(200)}
+          >
+            <Step3
+              formData={formData}
+              updateField={updateField}
+              passwordStrength={passwordStrength}
+              setPasswordStrength={setPasswordStrength}
+            />
+          </Animated.View>
+        )}
+        {currentStep === 3 && (
+          <Animated.View
+            key="step3"
+            style={tw`flex-1`}
+            entering={FadeIn.duration(500)} // Step de sucesso pode usar FadeIn
+          >
+            <Step4 />
+          </Animated.View>
+        )}
+      </View>
+    );
   };
 
   const handleStep = (num) => {
     const novoStep = currentStep + num;
     if (novoStep < 0 || novoStep > 3) return;
 
-    // set navigation direction before changing the step
-    setIsForward(num > 0);
+    direction.current = num > 0 ? 1 : -1;
+
     setCurrentStep(novoStep);
 
     let targetProgress = 0;
@@ -171,7 +199,6 @@ export default function CadastroScreen() {
     });
   };
 
-  // Função para voltar à tela de login
   const handleBackToLogin = () => {
     navigation.replace("AuthStack", { screen: "Login" });
   };
@@ -181,37 +208,29 @@ export default function CadastroScreen() {
       {/* Notificação de erro */}
       {viewError && <TopNotification error={error} />}
 
-      {/* Imagem de fundo com overflow superior */}
       <Image
         style={[
           { width: "100%", height: "40%", position: "absolute", top: 0 },
-          // Ajuste para Android se a imagem começar abaixo da status bar, garantindo overflow superior
           Platform.OS === "android" && { marginTop: -StatusBar.currentHeight },
         ]}
         source={require("../../assets/cadastro/cadastro_imagem.png")}
         resizeMode="cover"
       />
 
-      {/* Conteúdo principal (formulário e botões) */}
       <View
         style={[
           tw`absolute bottom-0 w-full max-w-xl self-center bg-white p-5 rounded-tl-[30px] rounded-tr-[30px] shadow-lg h-[74%]`,
           { paddingBottom: insets.bottom + 20 },
         ]}
       >
-        <View style={[tw`w-full h-10 justify-center`]}>
+        <View style={tw`w-full h-10 justify-center`}>
           <View
-            style={[tw`w-full h-[10px] bg-gray-400 rounded-full`]}
-            onLayout={(event) => {
-              const { width } = event.nativeEvent.layout;
-              setBarWidth(width);
-            }}
+            style={tw`w-full h-[10px] bg-gray-400 rounded-full`}
+            onLayout={(event) => setBarWidth(event.nativeEvent.layout.width)}
           >
-            {/* barra verde animada */}
             <Animated.View
               style={[tw`h-full bg-[#4ADC76] rounded-full`, progressStyle]}
             />
-
             <Animated.Image
               style={[
                 {
@@ -229,7 +248,6 @@ export default function CadastroScreen() {
           </View>
         </View>
 
-        {/* Form atual */}
         {renderCurrentStep()}
 
         {/* Botões */}
@@ -238,16 +256,20 @@ export default function CadastroScreen() {
             style={tw`flex-row justify-between w-40 h-12 bg-[#4ADC76] rounded-full items-center`}
             onPress={() => {
               if (currentStep === 3) {
-                navigation.navigate("MainTabs");
-              } else if (currentStep < 2) {
-                handleStep(1);
-              } else {
+                navigation.replace("MainTabs");
+              } else if (currentStep === 2) {
                 handleSubmit();
+              } else {
+                handleStep(1);
               }
             }}
           >
             <Text style={tw`ml-3 font-semibold text-lg text-white`}>
-              {currentStep < 3 ? "Próximo" : "Finalizar"}
+              {currentStep === 2
+                ? "Finalizar"
+                : currentStep === 3
+                ? "Concluir"
+                : "Próximo"}
             </Text>
             <View
               style={tw`mr-2 justify-center items-center w-[22%] h-[75%] rounded-full bg-white`}
@@ -259,7 +281,6 @@ export default function CadastroScreen() {
             </View>
           </Pressable>
 
-          {/* Botão de voltar modificado para incluir step 0 (step1) */}
           {currentStep > 0 && currentStep < 3 && (
             <Pressable
               style={tw`justify-center items-center w-12 h-12 rounded-full bg-[#4ADC76]`}
@@ -272,7 +293,6 @@ export default function CadastroScreen() {
             </Pressable>
           )}
 
-          {/* Novo botão para voltar ao login quando estiver no step 0 (step1) */}
           {currentStep === 0 && (
             <Pressable
               style={tw`justify-center items-center w-12 h-12 rounded-full bg-green-400`}
@@ -289,33 +309,3 @@ export default function CadastroScreen() {
     </View>
   );
 }
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    color: "#333",
-    paddingRight: 30,
-  },
-  inputAndroid: {
-    fontSize: 16,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    color: "#333",
-    paddingRight: 30,
-  },
-  placeholder: {
-    color: "#A9A9A9",
-  },
-  iconContainer: {
-    top: 12,
-    right: 12,
-  },
-});

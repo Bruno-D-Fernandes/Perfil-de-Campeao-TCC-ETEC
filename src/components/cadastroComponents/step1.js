@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, Image } from "react-native";
-import Animated, { SlideOutLeft, SlideInRight } from "react-native-reanimated";
+import Animated, {
+  SlideOutLeft,
+  SlideInRight,
+  SlideInLeft,
+} from "react-native-reanimated";
 import { Picker } from "@react-native-picker/picker";
 import tw from "twrnc";
+import formatDate from "../../utils/formatDate";
+
 import {
   useFonts,
   Poppins_400Regular,
@@ -18,11 +24,7 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
   });
 
   return (
-    <Animated.View
-      style={tw`flex-1`}
-      entering={SlideInRight}
-      exiting={SlideOutLeft}
-    >
+    <View style={tw`flex-1`}>
       <View style={tw`w-full`}>
         <Text style={tw`text-[#4ADC76] text-sm mb-2`}>Nome</Text>
         <View
@@ -77,7 +79,7 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
               placeholderTextColor="#A9A9A9"
               value={formData.dataNascimentoUsuario}
               onChangeText={(text) =>
-                updateField("dataNascimentoUsuario", text)
+                updateField("dataNascimentoUsuario", formatDate(text))
               }
             />
           </View>
@@ -103,7 +105,12 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
               <Picker
                 selectedValue={formData.generoUsuario}
                 onValueChange={(value) => updateField("generoUsuario", value)}
-                style={{ height: 60, width: "100%", borderRadius: 15 }}
+                style={{
+                  height: 60,
+                  width: "100%",
+                  backgroundColor: "white",
+                  borderRadius: 10,
+                }}
               >
                 <Picker.Item label="Selecione..." value={null} />
                 <Picker.Item label="Masculino" value="masculino" />
@@ -175,6 +182,6 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
           />
         </View>
       </View>
-    </Animated.View>
+    </View>
   );
 }
