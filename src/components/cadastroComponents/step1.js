@@ -2,21 +2,28 @@ import React from "react";
 import { View, Text, TextInput, Image } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import tw from "twrnc";
+import { useFonts, Poppins_400Regular, Poppins_700Bold, Poppins_500Medium } from "@expo-google-fonts/poppins";
 
 export default function Step1({ formData, updateField, pickerSelectStyles }) {
+   const [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_700Bold,
+    Poppins_500Medium
+  });
+
   return (
     <View style={tw`mb-8`}>
       <View style={tw`w-full`}>
-        <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>Nome</Text>
+        <Text style={tw`text-[#4ADC76] text-sm mb-2`}>Nome</Text>
         <View
-          style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}
+          style={[tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`, {fontFamily:'Poppins_500Medium'}]}
         >
           <Image
             style={{ width: 16, height: 19, marginHorizontal: 12 }}
             source={require("../../../assets/cadastro/icon_user.png")}
           />
           <TextInput
-            style={{ flex: 1, height: "90%", fontSize: 14 }}
+            style={{ flex: 1, height: "90%", fontSize: 14 , fontFamily:'Poppins_500Medium'}}
             placeholder="Seu nome completo"
             placeholderTextColor="#A9A9A9"
             value={formData.nomeCompletoUsuario}
@@ -26,7 +33,7 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
       </View>
       <View style={tw`w-full flex-row justify-between mt-4`}>
         <View style={tw`w-[48%]`}>
-          <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>
+          <Text style={[tw`text-[#4ADC76] text-sm mb-2`, {fontFamily:'Poppins_500Medium'}]}>
             Ano de nasc.
           </Text>
           <View
@@ -37,7 +44,7 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
               source={require("../../../assets/cadastro/icon_data.png")}
             />
             <TextInput
-              style={{ flex: 1, height: "100%", fontSize: 14 }}
+              style={{ flex: 1, height: "100%", fontSize: 14, fontFamily:'Poppins_500Medium' }}
               placeholder="DD/MM/AAAA"
               placeholderTextColor="#A9A9A9"
               value={formData.dataNascimentoUsuario}
@@ -50,7 +57,7 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
         <View style={tw`w-[48%]`}>
           {" "}
           {/* Não tenho certeza se isso está certo */}
-          <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>
+          <Text style={[tw`text-[#4ADC76] text-sm  mb-2`, {fontFamily:'Poppins_500Medium'}]}>
             Gênero
           </Text>
           <View
@@ -78,7 +85,7 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
         </View>
       </View>
       <View style={tw`w-full mt-4`}>
-        <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>
+        <Text style={[tw`text-[#4ADC76] text-sm  mb-2`, {fontFamily:'Poppins_500Medium'}]}>
           Estado
         </Text>
         <View
@@ -89,7 +96,7 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
             source={require("../../../assets/cadastro/icon_local.png")}
           />
           <TextInput
-            style={{ flex: 1, height: "100%", fontSize: 14 }}
+            style={{ flex: 1, height: "100%", fontSize: 14, fontFamily:'Poppins_500Medium' }}
             placeholder="Estado"
             placeholderTextColor="#A9A9A9"
             value={formData.estadoUsuario}
@@ -98,7 +105,7 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
         </View>
       </View>
       <View style={tw`w-full mt-4`}>
-        <Text style={tw`text-[#4ADC76] text-sm font-semibold mb-2`}>
+        <Text style={[tw`text-[#4ADC76] text-sm  mb-2`, {fontFamily:'Poppins_500Medium'}]}>
           Cidade
         </Text>
         <View
@@ -109,7 +116,7 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
             source={require("../../../assets/cadastro/icon_cidade.png")}
           />
           <TextInput
-            style={{ flex: 1, height: "100%", fontSize: 14 }}
+            style={{ flex: 1, height: "100%", fontSize: 14, fontFamily:'Poppins_500Medium' }}
             placeholder="Cidade"
             placeholderTextColor="#A9A9A9"
             value={formData.cidadeUsuario}
