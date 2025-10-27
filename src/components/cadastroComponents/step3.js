@@ -7,7 +7,6 @@ import {
   Poppins_700Bold,
   Poppins_500Medium,
 } from "@expo-google-fonts/poppins";
-import Animated, { SlideOutLeft, SlideInRight } from "react-native-reanimated";
 
 export default function Step3({
   formData,
@@ -20,6 +19,7 @@ export default function Step3({
     Poppins_700Bold,
     Poppins_500Medium,
   });
+
   const animatedWidth = useState(new Animated.Value(0))[0];
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function Step3({
     setPasswordStrength(strength);
 
     Animated.timing(animatedWidth, {
-      toValue: (strength / 5) * 100, // 5 é o número máximo de critérios
+      toValue: (strength / 5) * 100,
       duration: 300,
       useNativeDriver: false,
     }).start();
@@ -53,9 +53,9 @@ export default function Step3({
 
   const getStrengthColor = () => {
     if (passwordStrength === 0) return "#A9A9A9";
-    if (passwordStrength <= 2) return "#FF6B6B"; // Fraca (vermelho)
-    if (passwordStrength <= 4) return "#FFD166"; // Média (amarelo)
-    return "#4ADC76"; // Forte (verde)
+    if (passwordStrength <= 2) return "#FF6B6B";
+    if (passwordStrength <= 4) return "#FFD166";
+    return "#4ADC76";
   };
 
   const getStrengthText = () => {
