@@ -1,15 +1,15 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Pressable, Text, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import usuario from "./services/usuario";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import "./global.css";
+import { Pressable, Text } from "react-native"; // ADICIONE ESTA LINHA
 
-//icons nav
-import Feather from "@expo/vector-icons/Feather";
+import { Feather } from "@expo/vector-icons";
 
 // Telas
 import OportunidadesScreen from "./src/screens/OportunidadesScreen";
@@ -57,7 +57,7 @@ function MainTabs() {
           if (route.name === "Oportunidades") {
             iconName = "briefcase";
           }
-          if (route.name === "CriarPost") {
+          if (route.name === "Postagem") {
             iconName = "plus-circle";
             size = 36;
           }
@@ -82,7 +82,7 @@ function MainTabs() {
       <Tab.Screen name="Portfolio" component={PortfolioScreen} />
 
       <Tab.Screen
-        name="CriarPost"
+        name="Postagem"
         component={PostagemScreen}
         options={({ navigation }) => ({
           headerShown: true,
@@ -159,6 +159,7 @@ function MainTabs() {
           headerTitleAlign: "center",
         })}
       />
+
       <Tab.Screen name="Perfil" component={PerfilScreen} />
 
       <Tab.Screen
