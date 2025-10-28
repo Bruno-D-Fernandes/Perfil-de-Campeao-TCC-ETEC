@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, ActivityIndicator } from 'react-native';
-import { Notificacoes } from '../../services/notificacoes'; 
-import Notificacao from '../components/Notificacao';
+import React, { useEffect, useState, useCallback } from "react";
+import { View, Text, FlatList, ActivityIndicator } from "react-native";
+import { Notificacoes } from "../../services/notificacoes";
+import Notificacao from "../components/Notificacao";
 
 export default function NotificationsScreen() {
   const [data, setData] = useState([]);
@@ -10,13 +10,12 @@ export default function NotificationsScreen() {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
-  // 🧩 Atualizado para lidar com APIs Laravel
   const parseItems = (payload) => {
     if (!payload) return [];
     if (Array.isArray(payload)) return payload;
     if (Array.isArray(payload?.data)) return payload.data;
     if (Array.isArray(payload?.items)) return payload.items;
-    if (Array.isArray(payload?.todas?.data)) return payload.todas.data; 
+    if (Array.isArray(payload?.todas?.data)) return payload.todas.data;
     return [];
   };
 
@@ -27,7 +26,7 @@ export default function NotificationsScreen() {
       try {
         setLoading(true);
         const result = await Notificacoes(initial ? 1 : page, perPage);
-        console.log('🔔 Retorno da API:', result);
+        console.log("Retorno da API:", result);
 
         const newItems = parseItems(result);
 
@@ -41,7 +40,10 @@ export default function NotificationsScreen() {
           if (newItems.length < perPage) setHasMore(false);
         }
       } catch (err) {
-        console.error('Erro ao buscar notificações:', err?.response?.data || err?.message);
+        console.error(
+          "Erro ao buscar notificações:",
+          err?.response?.data || err?.message
+        );
       } finally {
         setLoading(false);
       }
@@ -49,7 +51,6 @@ export default function NotificationsScreen() {
     [loading, hasMore, page]
   );
 
-  // 🚀 Chama na montagem
   useEffect(() => {
     fetchNotificacoes(true);
   }, []);
@@ -68,12 +69,18 @@ export default function NotificationsScreen() {
         onEndReachedThreshold={0.2}
         ListEmptyComponent={
           !loading ? (
-            <Text className="text-gray-500 mt-6">Nenhuma notificação encontrada.</Text>
+            <Text className="text-gray-500 mt-6">
+              Nenhuma notificação encontrada.
+            </Text>
           ) : null
         }
         ListFooterComponent={
           loading ? (
-            <ActivityIndicator size="large" color="#2E7844" style={{ marginVertical: 16 }} />
+            <ActivityIndicator
+              size="large"
+              color="#2E7844"
+              style={{ marginVertical: 16 }}
+            />
           ) : null
         }
       />

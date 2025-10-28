@@ -179,8 +179,8 @@ export default function ProfileScreen() {
         const fileType = imageAsset.type
           ? `image/${imageAsset.type.split("/").pop()}`
           : fileName.includes(".png")
-          ? "image/png"
-          : "image/jpeg";
+            ? "image/png"
+            : "image/jpeg";
 
         if (Platform.OS === "web") {
           const response = await fetch(imageAsset.uri);
@@ -347,17 +347,6 @@ export default function ProfileScreen() {
             <Text style={tw`text-2xl font-bold text-gray-600 capitalize`}>
               {userData?.nomeCompletoUsuario}
             </Text>
-
-            <View style={tw`flex-row justify-around w-full mt-4 px-8`}>
-              <View style={tw`items-center`}>
-                <Text style={tw`text-lg font-bold text-[#4ADC76]`}>0</Text>
-                <Text style={tw`text-sm text-gray-500`}>Seguidores</Text>
-              </View>
-              <View style={tw`items-center`}>
-                <Text style={tw`text-lg font-bold text-[#4ADC76]`}>0</Text>
-                <Text style={tw`text-sm text-gray-500`}>Seguindo</Text>
-              </View>
-            </View>
           </View>
         </View>
 

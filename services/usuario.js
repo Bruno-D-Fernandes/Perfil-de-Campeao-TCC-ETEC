@@ -63,4 +63,5 @@ export default {
   editUser,
   deleteUser,
   logoutUser,
+  oportunidadeData,
 };

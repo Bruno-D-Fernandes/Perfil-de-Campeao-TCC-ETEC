@@ -21,7 +21,6 @@ export default function PrtifolioScreen() {
   const [postagens, setPostagens] = useState([]);
   const [loading, setLoading] = useState(true);
 
-
   const icon1 = useSharedValue(40); // Lixeira
   const icon2 = useSharedValue(40); // Edição
   const icon3 = useSharedValue(40); // Postagem
@@ -32,7 +31,7 @@ export default function PrtifolioScreen() {
     right: 15,
     height: iconHeight.value,
     width: iconHeight.value,
-    zIndex:1,
+    zIndex: 1,
   }));
 
   const styleIcon2 = useAnimatedStyle(() => ({
@@ -40,7 +39,7 @@ export default function PrtifolioScreen() {
     right: icon2.value - 20,
     height: iconHeight.value,
     width: iconHeight.value,
-    zIndex:1,
+    zIndex: 1,
   }));
 
   const styleIcon3 = useAnimatedStyle(() => ({
@@ -48,7 +47,7 @@ export default function PrtifolioScreen() {
     bottom: 80,
     height: iconHeight.value,
     width: iconHeight.value,
-    zIndex:1,
+    zIndex: 1,
   }));
 
   const popIn = () => {
@@ -70,11 +69,11 @@ export default function PrtifolioScreen() {
   useEffect(() => {
     const fetchUserPosts = async () => {
       try {
-        const userId = 1; 
+        const userId = 1;
         const data = await postagemService.getPostagensPorUsuario(userId);
         setPostagens(data);
       } catch (error) {
-        console.error("❌ Erro ao buscar postagens do usuário:", error);
+        console.error("Erro ao buscar postagens do usuário:", error);
       } finally {
         setLoading(false);
       }
@@ -99,7 +98,7 @@ export default function PrtifolioScreen() {
         style={styleIcon1}
         className="bg-gray-400 absolute rounded-full justify-center items-center"
       >
-        <Pressable onPress={() => console.log("🗑️ Deletar postagem")}>
+        <Pressable onPress={() => console.log(" Deletar postagem")}>
           <Icon name="trash" size={25} color="#FFF" />
         </Pressable>
       </Animated.View>
@@ -108,7 +107,7 @@ export default function PrtifolioScreen() {
         style={styleIcon2}
         className="bg-gray-400 absolute rounded-full justify-center items-center"
       >
-        <Pressable onPress={() => console.log("✏️ Editar postagem")}>
+        <Pressable onPress={() => console.log(" Editar postagem")}>
           <Icon name="edit" size={25} color="#FFF" />
         </Pressable>
       </Animated.View>
@@ -116,16 +115,16 @@ export default function PrtifolioScreen() {
       <Animated.View
         style={styleIcon3}
         className="bg-gray-400 absolute rounded-full justify-center items-center"
-        
       >
-        <Pressable onPress={() => console.log("➕ Nova postagem")}>
+        <Pressable onPress={() => console.log(" Nova postagem")}>
           <Icon name="plus" size={25} color="#FFF" />
         </Pressable>
       </Animated.View>
 
       {/* BOTÃO PRINCIPAL */}
       <Pressable
-        className="bg-gray-400 w-14 h-14 absolute bottom-10 mb-10 right-5 rounded-full justify-center items-center" style={{zIndex:1,}}
+        className="bg-gray-400 w-14 h-14 absolute bottom-10 mb-10 right-5 rounded-full justify-center items-center"
+        style={{ zIndex: 1 }}
         onPress={() => (pop ? popOut() : popIn())}
       >
         <Icon name="plus" size={25} color="#FFF" />
@@ -156,7 +155,6 @@ export default function PrtifolioScreen() {
                   className="w-full h-48 mt-2 rounded-lg"
                   resizeMode="cover"
                 />
-
               ) : (
                 <View className="w-full h-48 mt-2 bg-gray-300 rounded-lg justify-center items-center">
                   <Text className="text-gray-500">Sem imagem</Text>
