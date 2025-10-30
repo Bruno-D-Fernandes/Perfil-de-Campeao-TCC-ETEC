@@ -116,12 +116,12 @@ export default function PerfilCrudScreen() {
 
   useEffect(() => {
     const carregarDados = async () => {
-      await handleCreateForm(esporte.item.esporte.id);
+      await handleCreateForm(esporte.item.id);
 
-      if (crud === "update" && perfis && esporte?.item?.esporte.id) {
+      if (crud === "update" && perfis && esporte?.item?.id) {
         const perfil = Object.values(perfis)
           .flat()
-          .find((p) => p.esporte_id === esporte.item.esporte.id);
+          .find((p) => p.esporte_id === esporte.item.id);
 
         if (perfil) {
           setSelectedCategoria(perfil.categoria_id);
@@ -145,7 +145,7 @@ export default function PerfilCrudScreen() {
   return (
     <ScrollView style={tw`flex-1 p-4`}>
       <Text style={tw`text-3xl font-bold mb-6`}>
-        Criar perfil para {esporte?.item?.esporte.nomeEsporte}
+        Criar perfil para {esporte?.item?.nomeEsporte}
       </Text>
 
       {/* Categoria Picker */}
