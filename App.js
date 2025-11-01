@@ -204,7 +204,7 @@ function InitialSplashScreen({ navigation }) {
     async function checkToken() {
       try {
 
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        await new Promise((resolve) => setTimeout(resolve, 1400));
 
 
         const token = await AsyncStorage.getItem("token");

@@ -22,9 +22,11 @@ import Animated, { SlideInRight, SlideOutRight } from "react-native-reanimated";
 import ModalPerfilEsporte from "../components/perfilComponents/ModalPerfilEsporte";
 import BottomSheetCriaPerfil from "../components/BottomSheetCriaPerfil";
 import { loadPerfilAll } from "./../../services/perfil";
+import { useFonts, Poppins_400Regular, Poppins_700Bold, Poppins_500Medium } from "@expo-google-fonts/poppins";
 
 export default function ProfileScreen() {
   const [showModal, setShowModal] = useState(false);
+  const [showModalAtualizar, setShowModalAtualizar] = useState(false);
   const [editData, setEditData] = useState({});
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -38,12 +40,31 @@ export default function ProfileScreen() {
   const [perfis, setPerfis] = useState([]);
   const [fotoPerfil, setFotoPerfil] = useState(null);
   const [fotoBanner, setFotoBanner] = useState(null);
+    const [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_700Bold,
+    Poppins_500Medium
+    });
+  const [campoAtual, setCampoAtual] = useState(null);
+  const [valorCampo, setValorCampo] = useState("");
+
 
   // Multiplos perfis
   // Multiplos perfis
   // Multiplos perfis
   // Multiplos perfis
   // Multiplos perfis
+
+ const abrirModalAtualizacao = (key, label) => {
+  setCampoAtual({ key, label });
+  setValorCampo(editData[key] || "");
+  setShowModalAtualizar(true);
+};
+
+
+  const fecharModalAtualizacao = () => {
+    setShowModalAtualizar(false)
+  }
 
   const abrirSheet = () => {
     setTimeout(() => {
@@ -567,7 +588,7 @@ export default function ProfileScreen() {
 
             {/* Seção de Informações */}
             <View style={tw`mt-24 px-4`}>
-              <Text style={tw`font-bold text-xl text-[#61D483] mb-4`}>
+              <Text style={[tw`text-xl text-[#61D483] mb-4`,  { fontFamily: "Poppins_500Medium" }]}>
                 Informações Pessoais
               </Text>
               {[
@@ -589,32 +610,112 @@ export default function ProfileScreen() {
                 { label: "Mão Dominante", key: "maoDominante" },
                 { label: "Pé Dominante", key: "peDominante" },
               ].map((field) => (
-                <View key={field.key} style={tw`mb-3`}>
-                  <Text style={tw`text-gray-500 text-sm mb-1`}>
-                    {field.label}
-                  </Text>
-                  <TextInput
-                    value={editData[field.key] || ""}
-                    onChangeText={(text) =>
-                      setEditData({ ...editData, [field.key]: text })
-                    }
-                    placeholder={
-                      field.isDate
-                        ? "DD/MM/AAAA"
-                        : `Digite seu ${field.label.toLowerCase()}`
-                    }
-                    keyboardType={
-                      field.keyboardType ||
-                      (field.isDate ? "numeric" : "default")
-                    }
-                    style={tw`bg-gray-100 rounded-lg p-3 text-base text-gray-800`}
-                  />
-                </View>
+                <Pressable   onPress={() => abrirModalAtualizacao(field.key, field.label)} key={field.key} style={tw`mb-4 p-3 gap-2 items-center justify-between flex-row border border-gray-200 rounded-lg`}>
+                  
+                  <View style={tw`flex-row gap-2`}>
+                      <Text style={[tw`text-gray-500 text-sm `, { fontFamily: "Poppins_500Medium", color: "#61D483" }]}>
+                        {field.label}
+                      </Text>
+                      <Text
+                        value={editData[field.key] || ""}
+                        onChangeText={(text) =>
+                          setEditData({ ...editData, [field.key]: text })
+                        }
+                        placeholder={
+                          field.isDate
+                            ? "DD/MM/AAAA"
+                            : `Digite seu ${field.label.toLowerCase()}`
+                        }
+                        keyboardType={
+                          field.keyboardType ||
+                          (field.isDate ? "numeric" : "default")
+                        }
+                        style={[tw``,  { fontFamily: "Poppins_500Medium" }]}
+                      >{editData[field.key] || ""}</Text>
+                  </View>
+                      <Image
+                      source={require("../../assets/icons/icon_editar.png")}
+                      style={{ width: 10, height: 16 }}
+                    />
+
+                </Pressable>
               ))}
             </View>
           </ScrollView>
         </View>
       </Modal>
+
+ <Modal
+  visible={showModalAtualizar}
+  animationType="fade"
+  transparent
+  onRequestClose={fecharModalAtualizacao}
+>
+  <View style={tw`flex-1 justify-center items-center bg-black/40`}>
+    <View style={tw`bg-white w-10/12 rounded-[30px] p-5 relative`}>
+      
+      {/* Botão de fechar */}
+      <View
+        style={[tw``, {fontFamily: "Poppins_500Medium"}]}
+      >
+        <Text style={tw`text-lg font-bold text-[#61D483] mb-5`}>
+          Alterar {campoAtual?.label?.toLowerCase()}
+        </Text>
+      </View>
+
+
+      {/* Campo antigo */}
+      <Text style={[tw`text-[#61D483] mb-1`, { fontFamily: "Poppins_500Medium", }]}>Antigo {campoAtual?.label?.toLowerCase()}:</Text>
+      <TextInput
+        value={editData[campoAtual?.key] || ""}
+        editable={false}
+        style={tw`border border-gray-300 w-full rounded-lg p-3 mb-4 bg-gray-100 text-gray-600 outline-none`}
+      />
+
+      {/* Campo novo */}
+      <Text style={tw`text-gray-500 mb-1`}>Novo {campoAtual?.label?.toLowerCase()}:</Text>
+      <TextInput
+        value={valorCampo}
+        onChangeText={setValorCampo}
+        placeholder={`Digite o novo ${campoAtual?.label?.toLowerCase()}`}
+        keyboardType={
+          campoAtual?.key === "alturaCm" || campoAtual?.key === "pesoKg"
+            ? "numeric"
+            : "default"
+        }
+        style={tw`border-2 border-[#61D483] w-full rounded-lg p-3 mb-5 text-gray-700`}
+      />
+
+      {/* Botões */}
+      <View style={tw`flex-row justify-between mt-2`}>
+        <Pressable
+          onPress={fecharModalAtualizacao}
+          style={tw`border border-[#61D483] p-2 items-center justify-center rounded-[12px] w-[45%]`}
+        >
+          <Text style={[tw`text-[#61D483]`, { fontFamily: "Poppins_500Medium" }]}>
+            Cancelar
+          </Text>
+        </Pressable>
+
+        <Pressable
+          onPress={() => {
+            setEditData({ ...editData, [campoAtual.key]: valorCampo });
+            setShowModalAtualizar(false);
+          }}
+          style={tw`bg-[#61D483] items-center justify-center rounded-[12px] w-[45%]`}
+        >
+          <Text style={[tw`text-white`, { fontFamily: "Poppins_500Medium" }]}>
+            Salvar
+          </Text>
+        </Pressable>
+      </View>
+    </View>
+  </View>
+</Modal>
+
+
+
+
     </View>
   );
 }
