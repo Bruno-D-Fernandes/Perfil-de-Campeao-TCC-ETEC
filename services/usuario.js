@@ -46,7 +46,7 @@ export const inscreverOportunidade = async (idOportunidade) => {
 const editUser = async (formData, id) => {
   try {
     // Adiciona log pra verificar o conteúdo enviado
-    console.log("🚀 Enviando atualização:", [...formData.entries()]);
+    console.log("Enviando atualização:", [...formData.entries()]);
 
     const response = await api.post(`/update/${id}`, formData, {
       headers: {
@@ -54,10 +54,10 @@ const editUser = async (formData, id) => {
       },
     });
 
-    console.log("✅ Atualização OK:", response.data);
+    console.log("Atualização OK:", response.data);
     return response.data;
   } catch (error) {
-    console.error("❌ Erro ao atualizar usuário:", error.response?.data || error);
+    console.error("Erro ao atualizar usuário:", error.response?.data || error);
     throw error;
   }
 };
