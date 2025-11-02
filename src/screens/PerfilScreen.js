@@ -20,6 +20,7 @@ import InfoCard from "../components/InfoCard";
 import { Picker } from "@react-native-picker/picker";
 import Animated, { SlideInRight, SlideOutRight } from "react-native-reanimated";
 import ModalPerfilEsporte from "../components/perfilComponents/ModalPerfilEsporte";
+import ModalEditarPerfil from "../components/perfilComponents/ModalEditarPerfil";
 import BottomSheetCriaPerfil from "../components/BottomSheetCriaPerfil";
 import { loadPerfilAll } from "./../../services/perfil";
 import { useFonts, Poppins_400Regular, Poppins_700Bold, Poppins_500Medium } from "@expo-google-fonts/poppins";
@@ -178,7 +179,6 @@ export default function ProfileScreen() {
     try {
       const formData = new FormData();
 
-      // 🔧 Corrige datas e remove campos vazios
       const dataToSend = { ...editData };
       if (dataToSend.dataNascimentoUsuario?.includes("/")) {
         dataToSend.dataNascimentoUsuario = formatDateToISO(
@@ -192,10 +192,8 @@ export default function ProfileScreen() {
         }
       });
 
-      // Laravel exige o _method PUT quando o endpoint é de update
       formData.append("_method", "PUT");
 
-      // 🔧 Anexa as imagens (se houver)
       const appendImageToForm = async (imageAsset, fieldName) => {
         if (!imageAsset) return;
         const fileName = imageAsset.uri.split("/").pop();
@@ -219,7 +217,6 @@ export default function ProfileScreen() {
       await appendImageToForm(fotoPerfil, "fotoPerfilUsuario");
       await appendImageToForm(fotoBanner, "fotoBannerUsuario");
 
-      // 🔧 Aqui garantimos que o back-end receba multipart corretamente
       await usuario.editUser(formData, userData.id, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -235,7 +232,6 @@ export default function ProfileScreen() {
     }
   };
 
-  // Carrega dados do usuário e logo abaixo dois useEffect relacionados
 
   const loadUserData = async () => {
     try {
@@ -264,7 +260,6 @@ export default function ProfileScreen() {
     loadUserData();
   }, []);
 
-  // Tela de loading
 
   if (loading) {
     return (
@@ -508,145 +503,22 @@ export default function ProfileScreen() {
       {/* MODAL DE EDIÇÃO DE PERFIL PRINCIPAL*/}
       {/* MODAL DE EDIÇÃO DE PERFIL PRINCIPAL*/}
 
-      <Modal
-        visible={showModal}
-        animationType="slide"
-        onRequestClose={() => setShowModal(false)}
-      >
-        <View style={tw`flex-1 bg-white`}>
-          <View
-            style={tw`flex-row items-center justify-between px-4 py-3 border-b border-gray-200`}
-          >
-            <Pressable style={tw`p-2`} onPress={() => setShowModal(false)}>
-              <Image
-                style={{ width: 12, height: 20 }}
-                source={require("../../assets/cadastro/icon_voltar.png")}
-              />
-            </Pressable>
-            <Text style={tw`text-2xl font-bold text-[#61D483]`}>
-              Editar Perfil
-            </Text>
-            <Pressable
-              style={tw`bg-[#61D483] rounded-full p-2 px-4`}
-              onPress={saveInfo}
-            >
-              <Text style={tw`font-semibold text-base text-white`}>Salvar</Text>
-            </Pressable>
-          </View>
+     <ModalEditarPerfil
+  visible={showModal}
+  onClose={() => setShowModal(false)}
+  saveInfo={saveInfo}
+  editData={editData}
+  setEditData={setEditData}
+  fotoPerfil={fotoPerfil}
+  setFotoPerfil={setFotoPerfil}
+  fotoBanner={fotoBanner}
+  setFotoBanner={setFotoBanner}
+  fotoPerfilUrl={fotoPerfilUrl}
+  fotoBannerUrl={fotoBannerUrl}
+  escolherImagem={escolherImagem}
+  fontsLoaded={fontsLoaded}
+/>
 
-          <ScrollView>
-            {/* Seção de Imagens */}
-            <View style={tw`items-center mt-4 relative`}>
-              <Pressable
-                onPress={() => escolherImagem("banner")}
-                style={tw`w-full h-40 bg-gray-200 justify-center items-center`}
-              >
-                <ImageBackground
-                  source={
-                    fotoBannerUrl
-                      ? { uri: fotoBannerUrl }
-                      : require("../../assets/perfil/banner.png")
-                  }
-                  style={tw`w-full h-full justify-center items-center`}
-                >
-                  <View style={tw`bg-black/40 p-2 rounded-full`}>
-                    <Image
-                      source={require("../../assets/perfil/camera_icone.png")}
-                      style={{ width: 25, height: 20, tintColor: "white" }}
-                    />
-                  </View>
-                </ImageBackground>
-              </Pressable>
-
-              <View style={tw`absolute -bottom-16 items-center`}>
-                <Pressable
-                  onPress={() => escolherImagem("perfil")}
-                  style={tw`relative`}
-                >
-                  <Image
-                    source={
-                      fotoPerfilUrl
-                        ? { uri: fotoPerfilUrl }
-                        : require("../../assets/perfil/fotoPerfil.png")
-                    }
-                    style={{
-                      width: 130,
-                      height: 130,
-                      borderRadius: 65,
-                      borderWidth: 4,
-                      borderColor: "white",
-                    }}
-                  />
-                  <View
-                    style={tw`absolute bottom-1 right-1 bg-[#61D483] p-2 rounded-full`}
-                  >
-                    <Image
-                      source={require("../../assets/perfil/camera_icone.png")}
-                      style={{ width: 20, height: 15, tintColor: "white" }}
-                    />
-                  </View>
-                </Pressable>
-              </View>
-            </View>
-
-            {/* Seção de Informações */}
-            <View style={tw`mt-24 px-4`}>
-              <Text style={[tw`text-xl text-[#61D483] mb-4`,  { fontFamily: "Poppins_500Medium" }]}>
-                Informações Pessoais
-              </Text>
-              {[
-                { label: "Nome", key: "nomeCompletoUsuario" },
-                {
-                  label: "Nascimento",
-                  key: "dataNascimentoUsuario",
-                  isDate: true,
-                },
-                { label: "Gênero", key: "generoUsuario" },
-                { label: "Estado", key: "estadoUsuario" },
-                { label: "Cidade", key: "cidadeUsuario" },
-                {
-                  label: "Altura (cm)",
-                  key: "alturaCm",
-                  keyboardType: "numeric",
-                },
-                { label: "Peso (kg)", key: "pesoKg", keyboardType: "numeric" },
-                { label: "Mão Dominante", key: "maoDominante" },
-                { label: "Pé Dominante", key: "peDominante" },
-              ].map((field) => (
-                <Pressable   onPress={() => abrirModalAtualizacao(field.key, field.label)} key={field.key} style={tw`mb-4 p-3 gap-2 items-center justify-between flex-row border border-gray-200 rounded-lg`}>
-                  
-                  <View style={tw`flex-row gap-2`}>
-                      <Text style={[tw`text-gray-500 text-sm `, { fontFamily: "Poppins_500Medium", color: "#61D483" }]}>
-                        {field.label}
-                      </Text>
-                      <Text
-                        value={editData[field.key] || ""}
-                        onChangeText={(text) =>
-                          setEditData({ ...editData, [field.key]: text })
-                        }
-                        placeholder={
-                          field.isDate
-                            ? "DD/MM/AAAA"
-                            : `Digite seu ${field.label.toLowerCase()}`
-                        }
-                        keyboardType={
-                          field.keyboardType ||
-                          (field.isDate ? "numeric" : "default")
-                        }
-                        style={[tw``,  { fontFamily: "Poppins_500Medium" }]}
-                      >{editData[field.key] || ""}</Text>
-                  </View>
-                      <Image
-                      source={require("../../assets/icons/icon_editar.png")}
-                      style={{ width: 10, height: 16 }}
-                    />
-
-                </Pressable>
-              ))}
-            </View>
-          </ScrollView>
-        </View>
-      </Modal>
 
  <Modal
   visible={showModalAtualizar}

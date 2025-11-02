@@ -45,7 +45,7 @@ export const inscreverOportunidade = async (idOportunidade) => {
 
 const editUser = async (formData, id) => {
   try {
-    // Adiciona log pra verificar o conteúdo enviado
+
     console.log("Enviando atualização:", [...formData.entries()]);
 
     const response = await api.post(`/update/${id}`, formData, {
