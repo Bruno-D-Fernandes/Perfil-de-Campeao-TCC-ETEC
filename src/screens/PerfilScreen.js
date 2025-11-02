@@ -169,39 +169,39 @@ export default function ProfileScreen() {
     }
   };
 
-  const saveInfo = async () => {
+    const saveInfo = async () => {
     if (!userData?.id) {
-      console.error("ID do usuário não disponível.");
+      Alert.alert("Erro", "ID do usuário não disponível.");
       return;
     }
 
     try {
       const formData = new FormData();
 
+      // 🔧 Corrige datas e remove campos vazios
       const dataToSend = { ...editData };
-      if (dataToSend.dataNascimentoUsuario) {
+      if (dataToSend.dataNascimentoUsuario?.includes("/")) {
         dataToSend.dataNascimentoUsuario = formatDateToISO(
           dataToSend.dataNascimentoUsuario
         );
       }
 
-      for (const key in dataToSend) {
-        if (dataToSend[key] !== null && dataToSend[key] !== undefined) {
-          formData.append(key, String(dataToSend[key]));
+      Object.entries(dataToSend).forEach(([key, value]) => {
+        if (value !== "" && value !== null && value !== undefined) {
+          formData.append(key, String(value));
         }
-      }
+      });
 
+      // Laravel exige o _method PUT quando o endpoint é de update
       formData.append("_method", "PUT");
 
+      // 🔧 Anexa as imagens (se houver)
       const appendImageToForm = async (imageAsset, fieldName) => {
         if (!imageAsset) return;
-
         const fileName = imageAsset.uri.split("/").pop();
-        const fileType = imageAsset.type
-          ? `image/${imageAsset.type.split("/").pop()}`
-          : fileName.includes(".png")
-          ? "image/png"
-          : "image/jpeg";
+        const fileType =
+          imageAsset.type ||
+          (fileName.endsWith(".png") ? "image/png" : "image/jpeg");
 
         if (Platform.OS === "web") {
           const response = await fetch(imageAsset.uri);
@@ -219,14 +219,17 @@ export default function ProfileScreen() {
       await appendImageToForm(fotoPerfil, "fotoPerfilUsuario");
       await appendImageToForm(fotoBanner, "fotoBannerUsuario");
 
-      await usuario.editUser(formData, userData.id);
+      // 🔧 Aqui garantimos que o back-end receba multipart corretamente
+      await usuario.editUser(formData, userData.id, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       await loadUserData();
       setShowModal(false);
       Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
     } catch (err) {
-      console.error("Erro ao salvar:", err.response ? err.response.data : err);
-      setError(err.response?.data?.error || "Erro ao atualizar perfil.");
+      console.error("Erro ao salvar perfil:", err.response?.data || err);
+      setError(err.response?.data?.message || "Erro ao atualizar perfil.");
       setViewError(true);
       setTimeout(() => setViewError(false), 3000);
     }
@@ -699,9 +702,12 @@ export default function ProfileScreen() {
 
         <Pressable
           onPress={() => {
-            setEditData({ ...editData, [campoAtual.key]: valorCampo });
+            const novoValor = valorCampo.trim();
+            setEditData((prev) => ({ ...prev, [campoAtual.key]: novoValor }));
+            setValorCampo("");
             setShowModalAtualizar(false);
           }}
+
           style={tw`bg-[#61D483] items-center justify-center rounded-[12px] w-[45%]`}
         >
           <Text style={[tw`text-white`, { fontFamily: "Poppins_500Medium" }]}>
