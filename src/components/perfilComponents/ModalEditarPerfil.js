@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,11 +7,9 @@ import {
   Pressable,
   ImageBackground,
   Modal,
-  Platform,
-  Alert,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 import tw from "twrnc";
+import ModalAtualizarCampo from "./ModalAtualizarCampo";
 
 export default function ModalEditarPerfil({
   visible,
@@ -30,6 +28,26 @@ export default function ModalEditarPerfil({
 }) {
   if (!fontsLoaded) return null;
 
+  const [showModalAtualizar, setShowModalAtualizar] = useState(false);
+  const [campoAtual, setCampoAtual] = useState(null);
+  const [valorCampo, setValorCampo] = useState("");
+
+  // ✅ Função para abrir o modal de atualização
+  const abrirModalAtualizacao = (key, label, valorAntigo) => {
+    setCampoAtual({ key, label, valorAntigo });
+    setValorCampo(valorAntigo || "");
+    setShowModalAtualizar(true);
+  };
+
+  const salvarCampo = () => {
+    if (!campoAtual) return;
+    const novoValor = valorCampo.trim();
+    setEditData((prev) => ({ ...prev, [campoAtual.key]: novoValor }));
+    setValorCampo("");
+    setCampoAtual(null);
+    setShowModalAtualizar(false);
+  };
+
   const campos = [
     { label: "Nome", key: "nomeCompletoUsuario" },
     { label: "Nascimento", key: "dataNascimentoUsuario", isDate: true },
@@ -46,9 +64,7 @@ export default function ModalEditarPerfil({
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
       <View style={tw`flex-1 bg-white`}>
         {/* HEADER */}
-        <View
-          style={tw`flex-row items-center justify-between px-4 py-3 border-b border-gray-200`}
-        >
+        <View style={tw`flex-row items-center justify-between px-4 py-3 border-b border-gray-200`}>
           <Pressable style={tw`p-2`} onPress={onClose}>
             <Image
               style={{ width: 12, height: 20 }}
@@ -56,9 +72,7 @@ export default function ModalEditarPerfil({
             />
           </Pressable>
 
-          <Text style={tw`text-2xl font-bold text-[#61D483]`}>
-            Editar Perfil
-          </Text>
+          <Text style={tw`text-2xl font-bold text-[#61D483]`}>Editar Perfil</Text>
 
           <Pressable
             style={tw`bg-[#61D483] rounded-full p-2 px-4`}
@@ -70,7 +84,7 @@ export default function ModalEditarPerfil({
 
         {/* BODY */}
         <ScrollView>
-          {/* Seção de Imagens */}
+          {/* Imagens */}
           <View style={tw`items-center mt-4 relative`}>
             {/* Banner */}
             <Pressable
@@ -123,7 +137,7 @@ export default function ModalEditarPerfil({
             </View>
           </View>
 
-          {/* Seção de Informações */}
+          {/* Informações Pessoais */}
           <View style={tw`mt-24 px-4`}>
             <Text
               style={[
@@ -135,8 +149,15 @@ export default function ModalEditarPerfil({
             </Text>
 
             {campos.map((field) => (
-              <View
+              <Pressable
                 key={field.key}
+                onPress={() =>
+                  abrirModalAtualizacao(
+                    field.key,
+                    field.label,
+                    editData[field.key]
+                  )
+                }
                 style={tw`mb-4 p-3 gap-2 items-center justify-between flex-row border border-gray-200 rounded-lg`}
               >
                 <View style={tw`flex-row gap-2`}>
@@ -148,9 +169,7 @@ export default function ModalEditarPerfil({
                   >
                     {field.label}:
                   </Text>
-                  <Text
-                    style={[tw``, { fontFamily: "Poppins_500Medium" }]}
-                  >
+                  <Text style={[tw``, { fontFamily: "Poppins_500Medium" }]}>
                     {editData[field.key] || ""}
                   </Text>
                 </View>
@@ -159,13 +178,20 @@ export default function ModalEditarPerfil({
                   source={require("../../../assets/icons/icon_editar.png")}
                   style={{ width: 10, height: 16 }}
                 />
-              </View>
+              </Pressable>
             ))}
           </View>
         </ScrollView>
       </View>
-    </Modal>
 
-    
+      <ModalAtualizarCampo
+        visible={showModalAtualizar}
+        onClose={() => setShowModalAtualizar(false)}
+        campoAtual={campoAtual}
+        valorCampo={valorCampo}
+        setValorCampo={setValorCampo}
+        onSave={salvarCampo}
+      />
+    </Modal>
   );
 }

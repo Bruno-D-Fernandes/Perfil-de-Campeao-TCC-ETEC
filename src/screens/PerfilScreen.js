@@ -393,8 +393,6 @@ export default function ProfileScreen() {
           {/* MÚLTIPLOS PERFIS */}
           {/* MÚLTIPLOS PERFIS */}
 
-          {/* Esse modal aqui é onde o usuario tem as opções de esporte, todos os esportes possíveis de criação e edição | ModalPerfilCRUD na pasta componentes/perfilComponents */}
-          <View style={tw`flex-row flex-wrap pb-10 rounded-lg mt-6`}>
             {modalEsportes && (
               <ModalPerfilEsporte
                 crud={controllSheet}
@@ -406,6 +404,10 @@ export default function ProfileScreen() {
                 perfis={perfis}
               />
             )}
+
+            
+          {/* Esse modal aqui é onde o usuario tem as opções de esporte, todos os esportes possíveis de criação e edição | ModalPerfilCRUD na pasta componentes/perfilComponents */}
+          <View style={tw`flex-row flex-wrap pb-10 rounded-lg mt-6`}>
 
             <View
               style={tw`flex-row justify-end w-full relative bottom-2 h-13`}
@@ -503,94 +505,21 @@ export default function ProfileScreen() {
       {/* MODAL DE EDIÇÃO DE PERFIL PRINCIPAL*/}
       {/* MODAL DE EDIÇÃO DE PERFIL PRINCIPAL*/}
 
-     <ModalEditarPerfil
-  visible={showModal}
-  onClose={() => setShowModal(false)}
-  saveInfo={saveInfo}
-  editData={editData}
-  setEditData={setEditData}
-  fotoPerfil={fotoPerfil}
-  setFotoPerfil={setFotoPerfil}
-  fotoBanner={fotoBanner}
-  setFotoBanner={setFotoBanner}
-  fotoPerfilUrl={fotoPerfilUrl}
-  fotoBannerUrl={fotoBannerUrl}
-  escolherImagem={escolherImagem}
-  fontsLoaded={fontsLoaded}
-/>
-
-
- <Modal
-  visible={showModalAtualizar}
-  animationType="fade"
-  transparent
-  onRequestClose={fecharModalAtualizacao}
->
-  <View style={tw`flex-1 justify-center items-center bg-black/40`}>
-    <View style={tw`bg-white w-10/12 rounded-[30px] p-5 relative`}>
-      
-      {/* Botão de fechar */}
-      <View
-        style={[tw``, {fontFamily: "Poppins_500Medium"}]}
-      >
-        <Text style={tw`text-lg font-bold text-[#61D483] mb-5`}>
-          Alterar {campoAtual?.label?.toLowerCase()}
-        </Text>
-      </View>
-
-
-      {/* Campo antigo */}
-      <Text style={[tw`text-[#61D483] mb-1`, { fontFamily: "Poppins_500Medium", }]}>Antigo {campoAtual?.label?.toLowerCase()}:</Text>
-      <TextInput
-        value={editData[campoAtual?.key] || ""}
-        editable={false}
-        style={tw`border border-gray-300 w-full rounded-lg p-3 mb-4 bg-gray-100 text-gray-600 outline-none`}
+      <ModalEditarPerfil
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        saveInfo={saveInfo}
+        editData={editData}
+        setEditData={setEditData}
+        fotoPerfil={fotoPerfil}
+        setFotoPerfil={setFotoPerfil}
+        fotoBanner={fotoBanner}
+        setFotoBanner={setFotoBanner}
+        fotoPerfilUrl={fotoPerfilUrl}
+        fotoBannerUrl={fotoBannerUrl}
+        escolherImagem={escolherImagem}
+        fontsLoaded={fontsLoaded}
       />
-
-      {/* Campo novo */}
-      <Text style={tw`text-gray-500 mb-1`}>Novo {campoAtual?.label?.toLowerCase()}:</Text>
-      <TextInput
-        value={valorCampo}
-        onChangeText={setValorCampo}
-        placeholder={`Digite o novo ${campoAtual?.label?.toLowerCase()}`}
-        keyboardType={
-          campoAtual?.key === "alturaCm" || campoAtual?.key === "pesoKg"
-            ? "numeric"
-            : "default"
-        }
-        style={tw`border-2 border-[#61D483] w-full rounded-lg p-3 mb-5 text-gray-700`}
-      />
-
-      {/* Botões */}
-      <View style={tw`flex-row justify-between mt-2`}>
-        <Pressable
-          onPress={fecharModalAtualizacao}
-          style={tw`border border-[#61D483] p-2 items-center justify-center rounded-[12px] w-[45%]`}
-        >
-          <Text style={[tw`text-[#61D483]`, { fontFamily: "Poppins_500Medium" }]}>
-            Cancelar
-          </Text>
-        </Pressable>
-
-        <Pressable
-          onPress={() => {
-            const novoValor = valorCampo.trim();
-            setEditData((prev) => ({ ...prev, [campoAtual.key]: novoValor }));
-            setValorCampo("");
-            setShowModalAtualizar(false);
-          }}
-
-          style={tw`bg-[#61D483] items-center justify-center rounded-[12px] w-[45%]`}
-        >
-          <Text style={[tw`text-white`, { fontFamily: "Poppins_500Medium" }]}>
-            Salvar
-          </Text>
-        </Pressable>
-      </View>
-    </View>
-  </View>
-</Modal>
-
 
 
 
