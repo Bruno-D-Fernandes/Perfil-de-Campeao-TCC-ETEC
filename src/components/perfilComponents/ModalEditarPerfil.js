@@ -28,11 +28,11 @@ export default function ModalEditarPerfil({
 }) {
   if (!fontsLoaded) return null;
 
+
   const [showModalAtualizar, setShowModalAtualizar] = useState(false);
   const [campoAtual, setCampoAtual] = useState(null);
   const [valorCampo, setValorCampo] = useState("");
 
-  // ✅ Função para abrir o modal de atualização
   const abrirModalAtualizacao = (key, label, valorAntigo) => {
     setCampoAtual({ key, label, valorAntigo });
     setValorCampo(valorAntigo || "");
@@ -64,21 +64,28 @@ export default function ModalEditarPerfil({
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
       <View style={tw`flex-1 bg-white`}>
         {/* HEADER */}
-        <View style={tw`flex-row items-center justify-between px-4 py-3 border-b border-gray-200`}>
-          <Pressable style={tw`p-2`} onPress={onClose}>
+        <View className="flex-row items-center justify-around gap-10 px-2 py-3 border-b border-gray-200">
+          <Pressable style={tw`p-3 bg-[#61D483] w-[40px] h-[40px] rounded-full items-center justify-center`} onPress={onClose}>
             <Image
-              style={{ width: 12, height: 20 }}
+              style={{ width: 12, height: 20, marginRight: 4 }}
               source={require("../../../assets/cadastro/icon_voltar.png")}
             />
           </Pressable>
 
-          <Text style={tw`text-2xl font-bold text-[#61D483]`}>Editar Perfil</Text>
+          <Text style={[tw`text-[20px] text-[#61D483]`, { fontFamily: "Poppins_500Medium" }]}>Editar Perfil</Text>
 
           <Pressable
-            style={tw`bg-[#61D483] rounded-full p-2 px-4`}
+            className="bg-[#61D483] flex-row rounded-full flex p-2 px-4"
             onPress={saveInfo}
           >
             <Text style={tw`font-semibold text-base text-white`}>Salvar</Text>
+
+            <View className="justify-center items-center bg-[#ffff] rounded-full w-[40%] ml-2">
+            <Image
+              source={require("../../../assets/icons/icon_salvar.png")}
+              style={{ width: 17, height: 12, }}
+            />
+            </View>
           </Pressable>
         </View>
 

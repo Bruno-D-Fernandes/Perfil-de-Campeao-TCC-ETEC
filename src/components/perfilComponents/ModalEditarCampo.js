@@ -18,7 +18,7 @@ export default function ModalEditarCampo({
   setEditData,
   onSave,
 }) {
-  if (!fieldKey) return null; // evita erro caso não tenha campo selecionado
+  if (!fieldKey) return null;
 
   return (
     <Modal
