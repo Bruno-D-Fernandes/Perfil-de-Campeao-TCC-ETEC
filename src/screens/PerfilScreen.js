@@ -380,7 +380,7 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        <View style={tw`w-full mt-1 p-3 `}>
+        <View style={tw`w-full mt-1 p-4 `}>
           <View style={tw`bg-[#61D48330] rounded-[18px] flex-row flex-wrap justify-between px-2 pt-3`}>
             {infoCardsData.map((item, index) => (
               <InfoCard key={index} {...item} />
@@ -407,7 +407,7 @@ export default function ProfileScreen() {
 
             
           {/* Esse modal aqui é onde o usuario tem as opções de esporte, todos os esportes possíveis de criação e edição | ModalPerfilCRUD na pasta componentes/perfilComponents */}
-          <View style={tw`flex-row w-full flex-wrap pb-10 rounded-lg mt-6 gap-[1%]`}>
+          <View style={tw`flex-row w-full flex-wrap pb-10 rounded-lg mt-6 justify-between`}>
 
             <View style={tw`items-center justify-center bg-[#61D48330] w-[70%] flex-row rounded-[999px]`}>
               <Picker
@@ -424,64 +424,96 @@ export default function ProfileScreen() {
                 ))}
               </Picker>
             </View>
+            
+            <View style={tw`flex-row gap-1`}>
+              <Pressable onPress={() => ControllTypeModal("create")}>
+                <Animated.View
+                  style={tw`w-10 h-10 p-2 items-center justify-center mr-1 bg-white rounded-2 bg-[#61D48330]`}
+                >
+                  <Image
+                    source={require("../../assets/icons/mais.png")}
+                    style={{ width: '90%', height: '90%' }}
+                  />
+                </Animated.View>
+                    </Pressable>
 
-            <Pressable onPress={() => ControllTypeModal("create")}>
-              <Animated.View
-                style={tw`w-10 h-10 p-2 items-center justify-center mr-1 bg-white rounded-2 bg-[#61D48330]`}
-              >
-                <Image
-                  source={require("../../assets/icons/mais.png")}
-                  style={{ width: '90%', height: '90%' }}
-                />
-              </Animated.View>
-                  </Pressable>
-
-                  <Pressable onPress={() => ControllTypeModal("update")}>
-                    <Animated.View
-                      style={tw`w-10 h-10 p-2 items-center justify-center mr-1 bg-white rounded-2 bg-[#61D48330]`}
-                    >
-                      <Image
-                        source={require("../../assets/icons/edit.png")}
-                        style={{ width: '90%', height: '90%' }}
-                      />                    
-                    </Animated.View>
-                  </Pressable>
+                    <Pressable onPress={() => ControllTypeModal("update")}>
+                      <Animated.View
+                        style={tw`w-10 h-10 p-2 items-center justify-center mr-1 bg-white rounded-2 bg-[#61D48330]`}
+                      >
+                        <Image
+                          source={require("../../assets/icons/edit.png")}
+                          style={{ width: '90%', height: '90%' }}
+                        />                    
+                  </Animated.View>
+                </Pressable>
+            </View>
 
             <View
-              style={tw`w-full px-4 pt-4 flex-row rounded-tr-4 bg-white flex-wrap justify-between pb-30`}
+              style={tw`w-full  flex-row rounded-tr-4 flex-wrap justify-between pb-30`}
             >
-              {selectedEsporte && (
-                <View style={{ marginTop: 20 }}>
-                  {perfis[selectedEsporte].map((perfil) => (
-                    <View key={perfil.id} style={{ marginBottom: 16 }}>
-                      <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                        {perfil.esporte.nomeEsporte}
-                      </Text>
+             {selectedEsporte && (
+                  <View style={tw`mt-6 w-full`}>
+                    {perfis[selectedEsporte].map((perfil) => (
+                      <View
+                        key={perfil.id}
+                        style={tw`w-full p-4 bg-white rounded-2xl shadow-md border border-gray-200`}
+                      >
+                        {/* Cabeçalho */}
+                        <View style={tw`mb-4 border-b border-gray-200 pb-2`}>
+                          <Text style={tw`text-[22px] font-bold text-[#2E7844]`}>
+                            {perfil.esporte.nomeEsporte}
+                          </Text>
+                          <Text style={tw`text-[16px] text-gray-600`}>
+                            {perfil.categoria.nomeCategoria}
+                          </Text>
+                        </View>
 
-                      <Text>Categoria: {perfil.categoria.nomeCategoria}</Text>
+                        {/* Posições */}
+                        <View style={tw`mb-3`}>
+                          <Text style={tw`text-[18px] font-semibold text-[#61D483] mb-2`}>
+                            Posições
+                          </Text>
+                          <View style={tw`flex-row flex-wrap`}>
+                            {perfil.posicoes.map((p) => (
+                              <View
+                                key={p.id}
+                                style={tw`bg-[#61D48320] px-4 py-2 rounded-lg m-1`}
+                              >
+                                <Text style={tw`text-gray-800 font-medium`}>
+                                  {p.nomePosicao}
+                                </Text>
+                              </View>
+                            ))}
+                          </View>
+                        </View>
 
-                      <Text>Posições:</Text>
-                      {perfil.posicoes.map((p) => (
-                        <Text key={p.id}>{p.nomePosicao}</Text>
-                      ))}
+                        {/* Características */}
+                        {perfil.caracteristicas.length > 0 && (
+                          <View style={tw`mt-2`}>
+                            <Text style={tw`text-[18px] font-semibold text-[#61D483] mb-2`}>
+                              Características
+                            </Text>
+                            {perfil.caracteristicas.map((c) => (
+                              <View
+                                key={c.id}
+                                style={tw`flex-row justify-between bg-gray-50 rounded-lg px-3 py-2 mb-2`}
+                              >
+                                <Text style={tw`text-gray-700 font-medium`}>
+                                  {c.caracteristica}
+                                </Text>
+                                <Text style={tw`text-gray-800`}>
+                                  {c.pivot.valor} {c.unidade_medida}
+                                </Text>
+                              </View>
+                            ))}
+                          </View>
+                        )}
+                      </View>
+                    ))}
+                  </View>
+                )}
 
-                      {perfil.caracteristicas.length > 0 && (
-                        <>
-                          <Text>Características:</Text>
-                          {perfil.caracteristicas.map((c) => (
-                            <View key={c.id}>
-                              <Text>{c.caracteristica}</Text>
-                              <Text>
-                                {c.pivot.valor} {c.unidade_medida}
-                              </Text>
-                            </View>
-                          ))}
-                        </>
-                      )}
-                    </View>
-                  ))}
-                </View>
-              )}
             </View>
           </View>
         </View>

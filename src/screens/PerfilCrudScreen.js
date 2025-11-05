@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Pressable,
+  Image,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
@@ -143,97 +144,128 @@ export default function PerfilCrudScreen() {
   }, [crud, esporte, perfis]);
 
   return (
-    <ScrollView style={tw`flex-1 p-4`}>
-      <Text style={tw`text-3xl font-bold mb-6`}>
-        Criar perfil para {esporte?.item?.nomeEsporte}
-      </Text>
+    <ScrollView style={tw`flex-1 p-4 bg-white`}>
+      <View style={tw``}>
+        <View style={tw`flex-row items-center gap-20 mb-8`}>
+          <Pressable
+            style={tw`p-3 h-12 w-12 bg-[#61D483] rounded-full items-center justify-center`}
+            onPress={() => {
+              navigation.replace("MainTabs", {
+                screen: "Perfil",
+              });
+            }}
+          >
+            <Image
+              source={require("../../assets/icons/icon_voltar.png")}
+              style={{ width: 12, height: 22, tintColor: "#FFFFFF", marginRight: 4 }}
+            />
+          </Pressable>
+          <Text style={tw`text-[20px] `}>
+            {crud === "create" ? "Criar Perfil" : "Editar Perfil"}
+          </Text>
+        </View>
+        <Text style={tw`text-3xl font-semiBold text-gray-700 mb-6`}>
+          {esporte?.item?.nomeEsporte}
+        </Text>
+      </View>
 
       {/* Categoria Picker */}
-      <Text style={tw`text-xl font-semibold mt-4 mb-2`}>Categoria:</Text>
-      <View style={tw`border border-gray-300 rounded-lg mb-4`}>
+      <Text style={tw`text-[22px] font-semibold mb-2 text-[#61D483]`}>
+        Categoria
+      </Text>
+      <View style={tw`border border-gray-300 rounded-lg mb-4 p-2`}>
         <Picker
           selectedValue={selectedCategoria}
           onValueChange={(itemValue) => setSelectedCategoria(itemValue)}
-          style={tw`w-full`}
+          className="outline-none text-gray-700"
         >
           <Picker.Item label="Selecione uma Categoria" value={null} />
           {categorias.map((cat) => (
-            <Picker.Item
-              key={cat.id}
-              label={cat.nomeCategoria}
-              value={cat.id}
-            />
+            <Picker.Item key={cat.id} label={cat.nomeCategoria} value={cat.id} />
           ))}
         </Picker>
       </View>
 
-      {/* Posições Multi-select */}
-      <Text style={tw`text-xl font-semibold mt-4 mb-2`}>Posições:</Text>
-      <View style={tw`flex-row flex-wrap mb-4`}>
+      {/* Posições */}
+        {posicoes.length > 0 && (
+        <>
+    <Text style={tw`text-[22px] font-semibold mt-4 mb-2 text-[#61D483]`}>Posições</Text>
+      <View style={tw`flex-row flex-wrap mb-2`}>
         {posicoes.map((pos) => (
           <Pressable
             key={pos.id}
-            style={tw`px-4 py-2 m-1 rounded-full ${
-              selectedPosicoes.includes(pos.id) ? "bg-blue-500" : "bg-gray-200"
+            style={tw`px-5 py-3 m-1 rounded-[12px] ${
+              selectedPosicoes.includes(pos.id) ? "bg-[#61D48370]" : "bg-gray-200"
             }`}
             onPress={() => togglePosicao(pos.id)}
           >
             <Text
-              style={tw`${
+              style={[tw`${
                 selectedPosicoes.includes(pos.id)
-                  ? "text-white"
+                  ? "text-[#2E7844]"
                   : "text-gray-800"
-              }`}
+              } semi-bold`]}
             >
               {pos.nomePosicao}
             </Text>
           </Pressable>
         ))}
       </View>
+        </>
+        )}
 
-      {/* Características Dinâmicas */}
-      <Text style={tw`text-xl font-semibold mt-4 mb-2`}>Características:</Text>
-      {caracteristicas.map((carac) => (
-        <View key={carac.id} style={tw`mb-4`}>
-          <Text style={tw`text-lg mb-1`}>
-            {carac.caracteristica} ({carac.unidade_medida}):
+      
+      {caracteristicas.length > 0 && (
+        <>
+          <Text style={tw`text-[22px] font-semibold mt-4 mb-2 text-[#61D483]`}>
+            Características
           </Text>
-          <TextInput
-            style={tw`border border-gray-300 p-3 rounded-lg`}
-            keyboardType="numeric"
-            placeholder={`Digite a ${carac.caracteristica}`}
-            value={caracteristicaValues[carac.id] || ""}
-            onChangeText={(text) => handleCaracteristicaChange(carac.id, text)}
-          />
-        </View>
-      ))}
-
-      <Pressable
-        style={tw`bg-green-500 p-4 rounded-lg mt-6 mb-10 items-center`}
-        onPress={handleSubmit}
-      >
-        <Text style={tw`text-white text-lg font-bold`}>Salvar Perfil</Text>
-      </Pressable>
-
-      <Pressable
-        style={tw`bg-yellow-500 p-4 rounded-lg mt-6 mb-10 items-center`}
-        onPress={() => {
-          navigation.replace("MainTabs", {
-            screen: "Perfil",
-          });
-        }}
-      >
-        <Text style={tw`text-white text-lg font-bold`}>Cancelar</Text>
-      </Pressable>
-
-      {crud === "update" && (
-        <Pressable
-          style={tw`bg-red-500 p-4 rounded-lg mt-6 mb-10 items-center`}
-          onPress={handleDelete}
-        >
-          <Text style={tw`text-white text-lg font-bold`}>Excluir Perfil</Text>
-        </Pressable>
+          {caracteristicas.map((carac) => (
+            <View key={carac.id} style={tw`mb-4`}>
+              <Text style={tw`text-[16px] mb-1`}>
+                {carac.caracteristica} ({carac.unidade_medida}):
+              </Text>
+              <TextInput
+                style={tw`border border-[#61D483] border-2 p-3 outline-none rounded-lg`}
+                keyboardType="numeric"
+                placeholder={`Digite a ${carac.caracteristica}`}
+                value={caracteristicaValues[carac.id] || ""}
+                onChangeText={(text) => handleCaracteristicaChange(carac.id, text)}
+              />
+            </View>
+          ))}
+        </>
       )}
+
+      <View style={tw`flex-row justify-between gap-4 mt-10`}>
+        {crud === "update" && (
+          <Pressable
+            className="bg-[#f06969] w-[150px] h-12 flex-row items-center justify-center rounded-[12px] p-1 gap-2"
+            onPress={handleDelete}
+          >
+            <Image
+                source={require("../../assets/icons/delete.png")}
+                style={{ width: 16, height: 23, tintColor: "#ffff" }}
+              />
+            <Text style={tw`font-semibold text-base text-[120%] ml-2 text-white`}>
+              Apagar
+            </Text> 
+          </Pressable>
+        )}
+
+        <Pressable
+          className="bg-[#61D483] w-[150px] h-12 flex-row items-center justify-center gap-8 rounded-[12px] p-1 flex"
+          onPress={handleSubmit}
+        >
+          <Text style={tw`font-semibold text-base text-[120%] ml-2 text-white`}>
+            Salvar
+          </Text>
+            <Image
+              source={require("../../assets/icons/icon_salvar.png")}
+              style={{ width: 18, height: 13, tintColor: "#ffff" }}
+            />
+        </Pressable>
+      </View>
     </ScrollView>
   );
 }

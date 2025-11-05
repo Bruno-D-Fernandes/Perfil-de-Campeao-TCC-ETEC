@@ -37,6 +37,11 @@ export default function ModalPerfilEsporte({
 
   const [esportesData, setEsportesData] = useState([]);
 
+  const icons = 
+  crud === "create"
+  ? require("../../../assets/icons/mais.png")
+  : require("../../../assets/icons/edit.png");
+
   useEffect(() => {
     if (crud === "create") {
       fetchDataCreate();
@@ -101,9 +106,7 @@ export default function ModalPerfilEsporte({
             {/* Header Modal */}
             {/* Header Modal */}
 
-            <View
-              style={tw`flex-row justify-between items-center border-b border-gray-200 pb-2 p-4`}
-            >
+            <View style={tw`flex-row justify-between items-center border-b border-gray-200 pb-2 p-4`}>
               <Text style={tw`text-lg font-semibold`}>
                 {crud === "create"
                   ? "Criar Perfil"
@@ -112,9 +115,10 @@ export default function ModalPerfilEsporte({
                   : "Deletar Perfil"}
               </Text>
               <Pressable onPress={onClose}>
-                <Text style={tw`text-lg font-semibold text-red-500`}>
-                  Cancelar
-                </Text>
+                <Image
+                  source={require("../../../assets/icons/cancelar.png")}
+                  style={{ width: 18, height: 18 }}
+                />
               </Pressable>
             </View>
 
@@ -126,25 +130,20 @@ export default function ModalPerfilEsporte({
               data={esportesData}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item, index }) => (
-                <View
-                  style={tw` mt-1 mx-2 rounded-2 border-2 border-green-300 p-4 flex flex-row justify-between`}
+                <Pressable
+                  onPress={() => handleCrudPerfil({ item })}
+                  style={tw` mt-4 mx-2 rounded-2 border-2 border-green-300 p-4 flex flex-row items-center justify-between`}
                 >
                   <Text style={tw`text-base font-medium`}>
                     {crud === "create"
                       ? item.nomeEsporte
                       : item?.esporte.nomeEsporte}
                   </Text>
-
-                  <Pressable onPress={() => handleCrudPerfil({ item })}>
-                    <Text style={tw`text-sm text-green-400 underline mt-2`}>
-                      {crud === "create"
-                        ? "Criar"
-                        : crud === "update"
-                        ? "Editar"
-                        : "Deletar"}
-                    </Text>
-                  </Pressable>
-                </View>
+                      <Image
+                        source={icons}
+                        style={{ width: 18, height: 18 }}
+                      />
+                </Pressable>
               )}
             />
           </View>
