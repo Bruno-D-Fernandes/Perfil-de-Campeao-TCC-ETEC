@@ -16,7 +16,7 @@ import * as ImagePicker from "expo-image-picker";
 import tw from "twrnc";
 import usuario from "./../../services/usuario";
 import TopNotification from "../components/TopNotification";
-import InfoCard from "../components/InfoCard";
+import InfoCard from "../components/perfilComponents/InfoCard";
 import { Picker } from "@react-native-picker/picker";
 import Animated, { SlideInRight, SlideOutRight } from "react-native-reanimated";
 import ModalPerfilEsporte from "../components/perfilComponents/ModalPerfilEsporte";
@@ -322,7 +322,7 @@ export default function ProfileScreen() {
     <View style={tw`flex-1`}>
       {viewError && <TopNotification error={error} />}
 
-      <ScrollView style={tw`flex-1`}>
+      <ScrollView style={tw`flex-1 bg-white`}>
         <ImageBackground
           source={
             fotoBannerUrl
@@ -380,8 +380,8 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        <View style={tw`w-full mt-1`}>
-          <View style={tw`flex-row flex-wrap justify-between px-2 pt-3`}>
+        <View style={tw`w-full mt-1 p-3 `}>
+          <View style={tw`bg-[#61D48330] rounded-[18px] flex-row flex-wrap justify-between px-2 pt-3`}>
             {infoCardsData.map((item, index) => (
               <InfoCard key={index} {...item} />
             ))}
@@ -407,39 +407,11 @@ export default function ProfileScreen() {
 
             
           {/* Esse modal aqui é onde o usuario tem as opções de esporte, todos os esportes possíveis de criação e edição | ModalPerfilCRUD na pasta componentes/perfilComponents */}
-          <View style={tw`flex-row flex-wrap pb-10 rounded-lg mt-6`}>
+          <View style={tw`flex-row w-full flex-wrap pb-10 rounded-lg mt-6 gap-[1%]`}>
 
-            <View
-              style={tw`flex-row justify-end w-full relative bottom-2 h-13`}
-            >
-              {optionProfile && (
-                <Animated.View // Trocar essa animação tosca
-                  entering={SlideInRight.duration(500)}
-                  exiting={SlideOutRight.duration(500)}
-                  style={tw`flex-row`}
-                >
-                  <Pressable onPress={() => ControllTypeModal("create")}>
-                    <Animated.View
-                      style={tw`w-16 h-13 mr-1 bg-white rounded-2`}
-                    >
-                      <Text style={tw`text-center m-auto`}>Criar</Text>
-                    </Animated.View>
-                  </Pressable>
-
-                  <Pressable onPress={() => ControllTypeModal("update")}>
-                    <Animated.View
-                      style={tw`w-16 h-13 mr-1 bg-white rounded-2`}
-                    >
-                      <Text>Editar</Text>
-                    </Animated.View>
-                  </Pressable>
-                </Animated.View>
-              )}
-            </View>
-
-            <View style={tw`w-85 justify-end rounded-t-5`}>
+            <View style={tw`items-center justify-center bg-[#61D48330] w-[70%] flex-row rounded-[999px]`}>
               <Picker
-                style={tw`w-full px-4 h-12 border-none bg-white rounded-t-5`}
+                className="bg-[#61D48300] w-[90%] text-[#2E7844] outline-none border-none rounded-[999px]"
                 selectedValue={selectedEsporte}
                 onValueChange={(value) => setSelectedEsporte(value)}
               >
@@ -453,11 +425,27 @@ export default function ProfileScreen() {
               </Picker>
             </View>
 
-            <Pressable onPress={perfilOptions}>
+            <Pressable onPress={() => ControllTypeModal("create")}>
               <Animated.View
-                style={tw`w-16 h-11 justify-end ml-1 bg-white rounded-2`}
-              />
-            </Pressable>
+                style={tw`w-10 h-10 p-2 items-center justify-center mr-1 bg-white rounded-2 bg-[#61D48330]`}
+              >
+                <Image
+                  source={require("../../assets/icons/mais.png")}
+                  style={{ width: '90%', height: '90%' }}
+                />
+              </Animated.View>
+                  </Pressable>
+
+                  <Pressable onPress={() => ControllTypeModal("update")}>
+                    <Animated.View
+                      style={tw`w-10 h-10 p-2 items-center justify-center mr-1 bg-white rounded-2 bg-[#61D48330]`}
+                    >
+                      <Image
+                        source={require("../../assets/icons/edit.png")}
+                        style={{ width: '90%', height: '90%' }}
+                      />                    
+                    </Animated.View>
+                  </Pressable>
 
             <View
               style={tw`w-full px-4 pt-4 flex-row rounded-tr-4 bg-white flex-wrap justify-between pb-30`}
