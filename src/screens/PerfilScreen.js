@@ -363,18 +363,18 @@ export default function ProfileScreen() {
           </View>
 
           <View style={tw`items-center mt-2`}>
-            <Text style={tw`text-2xl font-bold text-gray-600 capitalize`}>
+            <Text style={[tw`text-[20px] font-bold text-gray-600 capitalize`, {fontFamily:"Poppins_500Medium"}]}>
               {userData?.nomeCompletoUsuario}
             </Text>
 
             <View style={tw`flex-row justify-around w-full mt-4 px-8`}>
               <View style={tw`items-center`}>
-                <Text style={tw`text-lg font-bold text-[#4ADC76]`}>0</Text>
-                <Text style={tw`text-sm text-gray-500`}>Seguidores</Text>
+                <Text style={[tw`text-lg font-bold text-[#4ADC76]`,{fontFamily:"Poppins_500Medium"}]}>0</Text>
+                <Text style={[tw`text-sm text-gray-500`,{fontFamily:"Poppins_400Regular"}]}>Seguidores</Text>
               </View>
               <View style={tw`items-center`}>
-                <Text style={tw`text-lg font-bold text-[#4ADC76]`}>0</Text>
-                <Text style={tw`text-sm text-gray-500`}>Seguindo</Text>
+                <Text style={[tw`text-lg font-bold text-[#4ADC76]`,{fontFamily:"Poppins_500Medium"}]}>0</Text>
+                <Text style={[tw`text-sm text-gray-500`,{fontFamily:"Poppins_400Regular"}]}>Seguindo</Text>
               </View>
             </View>
           </View>
@@ -412,6 +412,7 @@ export default function ProfileScreen() {
             <View style={tw`items-center justify-center bg-[#61D48330] w-[70%] flex-row rounded-[999px]`}>
               <Picker
                 className="bg-[#61D48300] w-[90%] text-[#2E7844] outline-none border-none rounded-[999px]"
+                style={{fontFamily:"Poppins_500Medium"}}
                 selectedValue={selectedEsporte}
                 onValueChange={(value) => setSelectedEsporte(value)}
               >
@@ -461,17 +462,17 @@ export default function ProfileScreen() {
                       >
                         {/* Cabeçalho */}
                         <View style={tw`mb-4 border-b border-gray-200 pb-2`}>
-                          <Text style={tw`text-[22px] font-bold text-[#2E7844]`}>
+                          <Text style={[tw`text-[22px] font-bold text-[#2E7844]`,{fontFamily:"Poppins_500Medium"}]}>
                             {perfil.esporte.nomeEsporte}
                           </Text>
-                          <Text style={tw`text-[16px] text-gray-600`}>
+                          <Text style={[tw`text-[16px] text-gray-600`,{fontFamily:"Poppins_500Medium"}]}>
                             {perfil.categoria.nomeCategoria}
                           </Text>
                         </View>
 
                         {/* Posições */}
                         <View style={tw`mb-3`}>
-                          <Text style={tw`text-[18px] font-semibold text-[#61D483] mb-2`}>
+                          <Text style={[tw`text-[18px] font-semibold text-[#61D483] mb-2`,{fontFamily:"Poppins_500Medium"}]}>
                             Posições
                           </Text>
                           <View style={tw`flex-row flex-wrap`}>
@@ -480,7 +481,7 @@ export default function ProfileScreen() {
                                 key={p.id}
                                 style={tw`bg-[#61D48320] px-4 py-2 rounded-lg m-1`}
                               >
-                                <Text style={tw`text-gray-800 font-medium`}>
+                                <Text style={[tw`text-[#2E7844] `,{fontFamily:"Poppins_500Medium"}]}>
                                   {p.nomePosicao}
                                 </Text>
                               </View>
@@ -491,18 +492,18 @@ export default function ProfileScreen() {
                         {/* Características */}
                         {perfil.caracteristicas.length > 0 && (
                           <View style={tw`mt-2`}>
-                            <Text style={tw`text-[18px] font-semibold text-[#61D483] mb-2`}>
+                            <Text style={[tw`text-[18px] font-semibold text-[#61D483] mb-2`,{fontFamily:"Poppins_500Medium"}]}>
                               Características
                             </Text>
                             {perfil.caracteristicas.map((c) => (
                               <View
                                 key={c.id}
-                                style={tw`flex-row justify-between bg-gray-50 rounded-lg px-3 py-2 mb-2`}
+                                style={[tw`flex-row justify-between bg-gray-50 rounded-lg px-3 py-2 mb-2`,{fontFamily:"Poppins_500Medium"}]}
                               >
-                                <Text style={tw`text-gray-700 font-medium`}>
+                                <Text style={[tw`text-gray-700 font-medium`,{fontFamily:"Poppins_500Medium"}]}>
                                   {c.caracteristica}
                                 </Text>
-                                <Text style={tw`text-gray-800`}>
+                                <Text style={[tw`text-gray-800`,{fontFamily:"Poppins_500Medium"}]}>
                                   {c.pivot.valor} {c.unidade_medida}
                                 </Text>
                               </View>

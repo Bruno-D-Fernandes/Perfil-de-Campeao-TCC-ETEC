@@ -19,6 +19,12 @@ import Animated from "react-native-reanimated";
 import { FlatList } from "react-native";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
+import {
+  useFonts,
+  Poppins_400Regular,
+  Poppins_500Medium,
+} from "@expo-google-fonts/poppins";
+
 
 export default function ModalPerfilEsporte({
   crud,
@@ -29,6 +35,12 @@ export default function ModalPerfilEsporte({
   controllSheet,
   perfis,
 }) {
+
+  const [fontsLoaded] = useFonts({
+  Poppins_400Regular,
+  Poppins_500Medium,
+});
+
   const navigation = useNavigation();
 
   // SHEETS
@@ -107,7 +119,7 @@ export default function ModalPerfilEsporte({
             {/* Header Modal */}
 
             <View style={tw`flex-row justify-between items-center border-b border-gray-200 pb-2 p-4`}>
-              <Text style={tw`text-lg font-semibold`}>
+              <Text style={[tw`text-lg font-semibold`, {fontFamily: "Poppins_500Medium"}]}>
                 {crud === "create"
                   ? "Criar Perfil"
                   : crud === "update"
@@ -132,16 +144,16 @@ export default function ModalPerfilEsporte({
               renderItem={({ item, index }) => (
                 <Pressable
                   onPress={() => handleCrudPerfil({ item })}
-                  style={tw` mt-4 mx-2 rounded-2 border-2 border-green-300 p-4 flex flex-row items-center justify-between`}
+                  style={tw` mt-4 mx-2 rounded-2 border-2 border-[#61D48340] p-4 flex flex-row items-center justify-between`}
                 >
-                  <Text style={tw`text-base font-medium`}>
+                  <Text style={[tw`text-base text-[#2E7844]`, {fontFamily: "Poppins_500Medium"}]}>
                     {crud === "create"
                       ? item.nomeEsporte
                       : item?.esporte.nomeEsporte}
                   </Text>
                       <Image
                         source={icons}
-                        style={{ width: 18, height: 18 }}
+                        style={{ width: 18, height: 18, }}
                       />
                 </Pressable>
               )}

@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { useEffect, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
+import { useFonts, Poppins_400Regular, Poppins_700Bold, Poppins_500Medium } from "@expo-google-fonts/poppins";
 import {
   handleForm,
   createPerfil,
@@ -31,6 +32,12 @@ export default function PerfilCrudScreen() {
   const [selectedCategoria, setSelectedCategoria] = useState(null);
   const [selectedPosicoes, setSelectedPosicoes] = useState([]);
   const [caracteristicaValues, setCaracteristicaValues] = useState({});
+
+  const [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_700Bold,
+    Poppins_500Medium,
+  });
 
   const handleCreateForm = async (id) => {
     const response = await handleForm(id);
@@ -143,6 +150,8 @@ export default function PerfilCrudScreen() {
     carregarDados();
   }, [crud, esporte, perfis]);
 
+  if (!fontsLoaded) return null;
+
   return (
     <ScrollView style={tw`flex-1 p-4 bg-white`}>
       <View style={tw``}>
@@ -160,17 +169,17 @@ export default function PerfilCrudScreen() {
               style={{ width: 12, height: 22, tintColor: "#FFFFFF", marginRight: 4 }}
             />
           </Pressable>
-          <Text style={tw`text-[20px] `}>
+          <Text style={[tw`text-[20px]`, { fontFamily: "Poppins_500Medium" }]}>
             {crud === "create" ? "Criar Perfil" : "Editar Perfil"}
           </Text>
         </View>
-        <Text style={tw`text-3xl font-semiBold text-gray-700 mb-6`}>
+        <Text style={[tw`text-3xl font-semiBold mb-6`, { fontFamily: "Poppins_500Medium" }]}>
           {esporte?.item?.nomeEsporte}
         </Text>
       </View>
 
       {/* Categoria Picker */}
-      <Text style={tw`text-[22px] font-semibold mb-2 text-[#61D483]`}>
+      <Text style={[tw`text-[22px]  mb-2 text-[#61D483]`, { fontFamily: "Poppins_500Medium" }]}>
         Categoria
       </Text>
       <View style={tw`border border-gray-300 rounded-lg mb-4 p-2`}>
@@ -178,55 +187,58 @@ export default function PerfilCrudScreen() {
           selectedValue={selectedCategoria}
           onValueChange={(itemValue) => setSelectedCategoria(itemValue)}
           className="outline-none text-gray-700"
+          style={{ fontFamily: "Poppins_500Medium" }}
         >
-          <Picker.Item label="Selecione uma Categoria" value={null} />
+          <Picker.Item label="Selecione uma Categoria" value={null} style={{ fontFamily: "Poppins_500Medium" }} />
           {categorias.map((cat) => (
-            <Picker.Item key={cat.id} label={cat.nomeCategoria} value={cat.id} />
+            <Picker.Item key={cat.id} label={cat.nomeCategoria} value={cat.id} style={{ fontFamily: "Poppins_500Medium" }} />
           ))}
         </Picker>
       </View>
 
       {/* Posições */}
-        {posicoes.length > 0 && (
+      {posicoes.length > 0 && (
         <>
-    <Text style={tw`text-[22px] font-semibold mt-4 mb-2 text-[#61D483]`}>Posições</Text>
-      <View style={tw`flex-row flex-wrap mb-2`}>
-        {posicoes.map((pos) => (
-          <Pressable
-            key={pos.id}
-            style={tw`px-5 py-3 m-1 rounded-[12px] ${
-              selectedPosicoes.includes(pos.id) ? "bg-[#61D48370]" : "bg-gray-200"
-            }`}
-            onPress={() => togglePosicao(pos.id)}
-          >
-            <Text
-              style={[tw`${
-                selectedPosicoes.includes(pos.id)
-                  ? "text-[#2E7844]"
-                  : "text-gray-800"
-              } semi-bold`]}
-            >
-              {pos.nomePosicao}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
+          <Text style={[tw`text-[22px]  mt-4 mb-2 text-[#61D483]`, { fontFamily: "Poppins_500Medium" }]}>Posições</Text>
+          <View style={tw`flex-row flex-wrap mb-2`}>
+            {posicoes.map((pos) => (
+              <Pressable
+                key={pos.id}
+                style={tw`px-5 py-3 m-1 rounded-[12px] ${
+                  selectedPosicoes.includes(pos.id) ? "bg-[#61D48370]" : "bg-gray-200"
+                }`}
+                onPress={() => togglePosicao(pos.id)}
+              >
+                <Text
+                  style={[
+                    tw`${
+                      selectedPosicoes.includes(pos.id)
+                        ? "text-[#2E7844]"
+                        : "text-gray-800"
+                    }`,
+                    { fontFamily: "Poppins_500Medium" },
+                  ]}
+                >
+                  {pos.nomePosicao}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
         </>
-        )}
+      )}
 
-      
       {caracteristicas.length > 0 && (
         <>
-          <Text style={tw`text-[22px] font-semibold mt-4 mb-2 text-[#61D483]`}>
+          <Text style={[tw`text-[22px] mt-4 mb-2 text-[#61D483]`, { fontFamily: "Poppins_500Medium" }]}>
             Características
           </Text>
           {caracteristicas.map((carac) => (
             <View key={carac.id} style={tw`mb-4`}>
-              <Text style={tw`text-[16px] mb-1`}>
+              <Text style={[tw`text-[14px] mb-1`, { fontFamily: "Poppins_400Regular" }]}>
                 {carac.caracteristica} ({carac.unidade_medida}):
               </Text>
               <TextInput
-                style={tw`border border-[#61D483] border-2 p-3 outline-none rounded-lg`}
+                style={[tw`border border-[#61D483] border-2 p-3 outline-none rounded-lg`, { fontFamily: "Poppins_400Regular" }]}
                 keyboardType="numeric"
                 placeholder={`Digite a ${carac.caracteristica}`}
                 value={caracteristicaValues[carac.id] || ""}
@@ -244,12 +256,12 @@ export default function PerfilCrudScreen() {
             onPress={handleDelete}
           >
             <Image
-                source={require("../../assets/icons/delete.png")}
-                style={{ width: 16, height: 23, tintColor: "#ffff" }}
-              />
-            <Text style={tw`font-semibold text-base text-[120%] ml-2 text-white`}>
+              source={require("../../assets/icons/delete.png")}
+              style={{ width: 16, height: 23, tintColor: "#ffff" }}
+            />
+            <Text style={[tw`font-semibold text-base text-[120%] ml-2 text-white`, { fontFamily: "Poppins_500Medium" }]}>
               Apagar
-            </Text> 
+            </Text>
           </Pressable>
         )}
 
@@ -257,13 +269,13 @@ export default function PerfilCrudScreen() {
           className="bg-[#61D483] w-[150px] h-12 flex-row items-center justify-center gap-8 rounded-[12px] p-1 flex"
           onPress={handleSubmit}
         >
-          <Text style={tw`font-semibold text-base text-[120%] ml-2 text-white`}>
+          <Text style={[tw`font-semibold text-base text-[120%] ml-2 text-white`, { fontFamily: "Poppins_500Medium" }]}>
             Salvar
           </Text>
-            <Image
-              source={require("../../assets/icons/icon_salvar.png")}
-              style={{ width: 18, height: 13, tintColor: "#ffff" }}
-            />
+          <Image
+            source={require("../../assets/icons/icon_salvar.png")}
+            style={{ width: 18, height: 13, tintColor: "#ffff" }}
+          />
         </Pressable>
       </View>
     </ScrollView>
