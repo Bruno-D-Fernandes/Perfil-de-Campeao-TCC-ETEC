@@ -1,38 +1,70 @@
-import api from './axios';
+import api from "./axios";
 
-const postagemData = async (formData) => {
+export const postagemData = async (formData) => {
   try {
-    const response = await api.post('/postagem', formData, {
+    const response = await api.post("/postagem", formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
-        Accept: 'application/json',
+        Accept: "application/json",
       },
     });
     return response.data;
   } catch (error) {
-    console.error('Erro ao enviar postagem:', error.response?.data || error.message);
+    console.error(
+      "Erro ao enviar postagem:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 
-const getPostagens = async () => {
+export const getPostagensAll = async () => {
   try {
-    const response = await api.get('/postagem');
+    const response = await api.get("/postagem");
     return response.data;
   } catch (error) {
-    console.error('Erro ao buscar postagens:', error.response?.data || error.message);
+    console.error(
+      "Erro ao buscar postagens:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 
-const getPostagensPorUsuario = async (userId) => {
+export const getPostagensPorUsuario = async (userId, esporteId) => {
   try {
-    const response = await api.get(`/postagem/user/${userId}`);
+    const response = await api.get(`/postagem/user/${userId}/${esporteId}`);
     return response.data;
   } catch (error) {
-    console.error('Erro ao buscar postagens do usuário:', error.response?.data || error.message);
+    console.error(
+      "Erro ao buscar postagens do usuário:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 
-export default { postagemData, getPostagens, getPostagensPorUsuario };
+export const updatePostagemUser = async (postagemId, data) => {
+  try {
+    const response = await api.post(`/postagem/${postagemId}`, data);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Erro ao atualizar postagem do usuário:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+export const deletePostagemUser = async (postagemId) => {
+  try {
+    const response = await api.delete(`/postagem/${postagemId}`);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Erro ao deletar postagem do usuário:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};

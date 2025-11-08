@@ -123,39 +123,6 @@ function MainTabs() {
               <Feather name="arrow-left" size={24} color="#ffffff" />
             </Pressable>
           ),
-          headerRight: () => (
-            <Pressable
-              onPress={() => {
-                // Lógica para postar
-                console.log("Postar pressionado");
-              }}
-              style={{
-                backgroundColor: "#4ADE80",
-                borderRadius: 20,
-                paddingHorizontal: 15,
-                paddingVertical: 8,
-                flexDirection: "row",
-                alignItems: "center",
-                marginRight: 15,
-              }}
-            >
-              <Text
-                style={{
-                  color: "#ffffff",
-                  fontSize: 16,
-                  fontWeight: "600",
-                }}
-              >
-                Postar
-              </Text>
-              <Feather
-                name="arrow-right"
-                size={16}
-                color="#ffffff"
-                style={{ marginLeft: 5 }}
-              />
-            </Pressable>
-          ),
           headerTitleAlign: "center",
         })}
       />

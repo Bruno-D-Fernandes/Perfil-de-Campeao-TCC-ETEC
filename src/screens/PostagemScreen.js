@@ -1,10 +1,56 @@
-import React, { useState } from "react"; // Adicione o 'React' aqui
+import React, { useState, useEffect, useLayoutEffect } from "react"; // Adicione o 'React' aqui
 import { View, Text, Image, Pressable, Alert } from "react-native";
 import { Modal, TextInput } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { Picker } from "@react-native-picker/picker";
+import { useNavigation } from "@react-navigation/native";
+import { Platform } from "react-native";
+
+import tw from "twrnc";
+
+import usuario from "./../../services/usuario";
+import { loadPerfilAll } from "./../../services/perfil";
+import { postagemData } from "./../../services/postagem";
+
 export default function PostagemScreen() {
+  const navigation = useNavigation();
+
   const [cellModal, setCellModal] = useState(false);
   const [imagem, setImagem] = useState(null);
+
+  const [selectedEsporte, setSelectedEsporte] = useState(null);
+  const [perfis, setPerfis] = useState([]);
+  const [textoPostagem, setTextoPostagem] = useState("");
+
+  // Carrega dados do usuário e logo abaixo dois useEffect relacionados
+
+  const loadUserData = async () => {
+    try {
+      // setLoading(true);
+      const response = await usuario.splashUser();
+      // setUserData(response?.data); parte de informações do usuario
+      // setError(null);
+
+      const responsePerfil = await loadPerfilAll(); // aqui pode ser mais interessante fazer uma query na api para saber somente os esportes, depois refinar isso --Bruno
+      setPerfis(responsePerfil);
+    } catch (err) {
+      // setError("Erro ao carregar dados do usuário");
+      console.error("Erro ao carregar dados:", err);
+    }
+    // finally {
+    //   setLoading(false);
+    // }
+  };
+
+  useEffect(() => {
+    if (perfis && Object.keys(perfis).length > 0 && !selectedEsporte) {
+      setSelectedEsporte(Object.keys(perfis)[0]);
+    }
+  }, [perfis]);
+
+  useEffect(() => {
+    loadUserData();
+  }, []);
 
   // Função para solicitar permissão da câmera
   const solicitarPermissaoCamera = async () => {
@@ -16,7 +62,94 @@ export default function PostagemScreen() {
     return true;
   };
 
-  // Função para tirar foto usando a câmera
+  const handlePostagem = async () => {
+    console.log("Handle postagem chamado");
+
+    if (!textoPostagem && !imagem) {
+      console.error("Erro", "A postagem precisa de texto ou imagem.");
+      return;
+    }
+
+    if (!selectedEsporte) {
+      console.error("Erro", "Selecione um esporte para a postagem.");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+
+      formData.append("textoPostagem", textoPostagem);
+
+      const perfilSelecionado = Object.values(perfis)
+        .flat()
+        .find((p) => p.esporte.nomeEsporte === selectedEsporte);
+
+      if (perfilSelecionado) {
+        formData.append("esporte_id", perfilSelecionado.esporte.id.toString());
+      } else {
+        console.error("Erro", "ID do esporte não encontrado.");
+        return;
+      }
+
+      if (imagem) {
+        const fileName = imagem.split("/").pop() || "image.jpg";
+
+        let fileType;
+        if (fileName.toLowerCase().endsWith(".png")) {
+          fileType = "image/png";
+        } else if (
+          fileName.toLowerCase().endsWith(".jpg") ||
+          fileName.toLowerCase().endsWith(".jpeg")
+        ) {
+          fileType = "image/jpeg";
+        } else {
+          fileType = "application/octet-stream";
+        }
+
+        if (Platform.OS === "web") {
+          const response = await fetch(imagem);
+          const blob = await response.blob();
+          formData.append("imagem", blob, fileName);
+        } else {
+          formData.append("imagem", {
+            uri: imagem,
+            name: fileName,
+            type: fileType,
+          });
+        }
+      }
+
+      const response = await postagemData(formData);
+      console.log(response);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable
+          onPress={handlePostagem}
+          style={{
+            backgroundColor: "#4ADE80",
+            borderRadius: 20,
+            paddingHorizontal: 15,
+            paddingVertical: 8,
+            flexDirection: "row",
+            alignItems: "center",
+            marginRight: 15,
+          }}
+        >
+          <Text style={{ color: "#ffffff", fontSize: 16, fontWeight: "600" }}>
+            Postar
+          </Text>
+        </Pressable>
+      ),
+    });
+  }, [navigation, handlePostagem]);
+
+  // Função para tirar foto usando a câmera || colocar essa função no utils
   const tirarFoto = async () => {
     const permissao = await solicitarPermissaoCamera();
     if (!permissao) return;
@@ -124,7 +257,25 @@ export default function PostagemScreen() {
           multiline={true}
           placeholder="Sobre o que você quer falar?"
           placeholderTextColor="#61D483/60"
+          onChangeText={(text) => setTextoPostagem(text)}
         />
+      </View>
+
+      <View style={tw`w-85 justify-end rounded-t-5`}>
+        {/* Picker para o esporte */}
+        <Picker
+          style={tw`w-full px-4 h-12 border-none bg-red-200 rounded-t-5`}
+          selectedValue={selectedEsporte}
+          onValueChange={(value) => setSelectedEsporte(value)}
+        >
+          {Object.entries(perfis).map(([nomeEsporte, listaDePerfis]) => (
+            <Picker.Item
+              key={listaDePerfis[0].esporte.id}
+              label={nomeEsporte}
+              value={nomeEsporte}
+            />
+          ))}
+        </Picker>
       </View>
 
       {/* Icones inferior, faz aparecer modal */}

@@ -108,8 +108,8 @@ export default function ModalPerfilEsporte({
                 {crud === "create"
                   ? "Criar Perfil"
                   : crud === "update"
-                  ? "Editar Perfil"
-                  : "Deletar Perfil"}
+                    ? "Editar Perfil"
+                    : "Deletar Perfil"}
               </Text>
               <Pressable onPress={onClose}>
                 <Text style={tw`text-lg font-semibold text-red-500`}>
@@ -140,8 +140,8 @@ export default function ModalPerfilEsporte({
                       {crud === "create"
                         ? "Criar"
                         : crud === "update"
-                        ? "Editar"
-                        : "Deletar"}
+                          ? "Editar"
+                          : "Deletar"}
                     </Text>
                   </Pressable>
                 </View>
