@@ -3,6 +3,7 @@ import api from "./axios";
 export const handleForm = async (id) => {
   try {
     const response = await api.get(`perfilForm/${id}`);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Erro ao buscar formulário:", error);

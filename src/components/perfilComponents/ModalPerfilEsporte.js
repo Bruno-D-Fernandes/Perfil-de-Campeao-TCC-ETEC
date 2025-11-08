@@ -136,6 +136,7 @@ export default function ModalPerfilEsporte({
                   </Text>
 
                   <Pressable onPress={() => handleCrudPerfil({ item })}>
+                    {console.log("Item enviado: ", item)}
                     <Text style={tw`text-sm text-green-400 underline mt-2`}>
                       {crud === "create"
                         ? "Criar"

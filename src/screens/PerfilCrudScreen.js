@@ -33,6 +33,7 @@ export default function PerfilCrudScreen() {
 
   const handleCreateForm = async (id) => {
     const response = await handleForm(id);
+    console.log("reponse da construção de formulario: ", response);
     setPosicoes(response.posicoes);
     setCategorias(response.categorias);
     setCaracteristicas(response.caracteristicas);
@@ -51,14 +52,11 @@ export default function PerfilCrudScreen() {
   };
 
   const handleDelete = async () => {
-    const perfil = Object.entries(perfis)
-      .flat()
-      .find((p) => p.esporte_id === esporte.item.id);
-    if (!perfil) return;
+    const perfilArray = Object.values(perfis).flat();
 
-    await excluirPerfil(perfil.id);
+    const perfil = perfilArray[0];
+    const response = await excluirPerfil(perfil.id);
 
-    await carregarPerfisUsuario();
     navigation.replace("MainTabs", {
       screen: "Perfil",
     });
@@ -78,7 +76,7 @@ export default function PerfilCrudScreen() {
     const form = {
       usuario_id: userId.id,
       categoria_id: selectedCategoria,
-      esporte_id: esporte.item.id,
+      esporte_id: esporte.item.esporte_id,
       caracteristicas: caracteristicasFormatadas,
       posicoes: selectedPosicoes,
     };
@@ -87,15 +85,17 @@ export default function PerfilCrudScreen() {
 
     try {
       if (crud === "create") {
+        form.esporte_id = esporte.item.id;
+
         const response = await createPerfil(form);
         console.log("Perfil criado:", response);
         navigation.replace("MainTabs", {
           screen: "Perfil",
         });
       } else if (crud === "update") {
-        const perfil = Object.values(perfis)
-          .flat()
-          .find((p) => p.esporte_id === esporte.item.id);
+        const perfilArray = Object.values(perfis).flat();
+
+        const perfil = perfilArray[0];
 
         if (!perfil) {
           console.warn("Nenhum perfil encontrado para atualizar.");
@@ -116,17 +116,16 @@ export default function PerfilCrudScreen() {
 
   useEffect(() => {
     const carregarDados = async () => {
-      await handleCreateForm(esporte.item.id);
+      console.log("esporte solicitado para construção: ", esporte.item.id);
 
-      console.log(perfis);
+      crud === "create"
+        ? await handleCreateForm(esporte.item.id)
+        : await handleCreateForm(esporte.item.esporte_id);
 
       if (crud === "update" && perfis) {
-        // erro aqui
-        const perfil = Object.values(perfis)
-          .flat()
-          .find((p) => p.item.esporte_id === esporte.item.id);
+        const perfisArray = Object.values(perfis).flat();
 
-        console.log("aiestá", perfil);
+        const perfil = perfisArray[0];
 
         if (perfil) {
           setSelectedCategoria(perfil.categoria_id);
@@ -137,7 +136,7 @@ export default function PerfilCrudScreen() {
           });
           setCaracteristicaValues(caracteristicasMap);
 
-          console.log("Perfil carregado para edição:", perfil);
+          console.log("Perfil carregado para edição:", caracteristicas);
         } else {
           console.warn("Nenhum perfil encontrado para esse esporte.");
         }
@@ -151,7 +150,9 @@ export default function PerfilCrudScreen() {
   return (
     <ScrollView style={tw`flex-1 p-4`}>
       <Text style={tw`text-3xl font-bold mb-6`}>
-        Criar perfil para {esporte.item?.esporte.nomeEsporte}
+        {crud === "create"
+          ? `Criar perfil para ${esporte.item?.nomeEsporte}`
+          : `Editar perfil de ${esporte.item?.esporte.nomeEsporte}`}
       </Text>
 
       {/* Categoria Picker */}
@@ -201,6 +202,7 @@ export default function PerfilCrudScreen() {
       <Text style={tw`text-xl font-semibold mt-4 mb-2`}>Características:</Text>
       {caracteristicas.map((carac) => (
         <View key={carac.id} style={tw`mb-4`}>
+          {console.log("Caracterista:", carac)}
           <Text style={tw`text-lg mb-1`}>
             {carac.caracteristica} ({carac.unidade_medida}):
           </Text>
