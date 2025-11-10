@@ -171,6 +171,10 @@ function InitialSplashScreen({ navigation }) {
   useEffect(() => {
     async function checkToken() {
       try {
+
+        await new Promise((resolve) => setTimeout(resolve, 1400));
+
+
         const token = await AsyncStorage.getItem("token");
 
         if (token) {
@@ -225,7 +229,7 @@ export default function App() {
             <Stack.Screen
               name="PerfilCrudScreen"
               component={PerfilCrudScreen}
-              options={{ headerShown: true }}
+              options={{ headerShown: false }}
             />
           </Stack.Navigator>
         </NavigationContainer>

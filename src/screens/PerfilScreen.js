@@ -16,15 +16,23 @@ import * as ImagePicker from "expo-image-picker";
 import tw from "twrnc";
 import usuario from "./../../services/usuario";
 import TopNotification from "../components/TopNotification";
-import InfoCard from "../components/InfoCard";
+import InfoCard from "../components/perfilComponents/InfoCard";
 import { Picker } from "@react-native-picker/picker";
 import Animated, { SlideInRight, SlideOutRight } from "react-native-reanimated";
 import ModalPerfilEsporte from "../components/perfilComponents/ModalPerfilEsporte";
+import ModalEditarPerfil from "../components/perfilComponents/ModalEditarPerfil";
 import BottomSheetCriaPerfil from "../components/BottomSheetCriaPerfil";
 import { loadPerfilAll } from "./../../services/perfil";
+import {
+  useFonts,
+  Poppins_400Regular,
+  Poppins_700Bold,
+  Poppins_500Medium,
+} from "@expo-google-fonts/poppins";
 
 export default function ProfileScreen() {
   const [showModal, setShowModal] = useState(false);
+  const [showModalAtualizar, setShowModalAtualizar] = useState(false);
   const [editData, setEditData] = useState({});
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -38,12 +46,29 @@ export default function ProfileScreen() {
   const [perfis, setPerfis] = useState([]);
   const [fotoPerfil, setFotoPerfil] = useState(null);
   const [fotoBanner, setFotoBanner] = useState(null);
+  const [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_700Bold,
+    Poppins_500Medium,
+  });
+  const [campoAtual, setCampoAtual] = useState(null);
+  const [valorCampo, setValorCampo] = useState("");
 
   // Multiplos perfis
   // Multiplos perfis
   // Multiplos perfis
   // Multiplos perfis
   // Multiplos perfis
+
+  const abrirModalAtualizacao = (key, label) => {
+    setCampoAtual({ key, label });
+    setValorCampo(editData[key] || "");
+    setShowModalAtualizar(true);
+  };
+
+  const fecharModalAtualizacao = () => {
+    setShowModalAtualizar(false);
+  };
 
   const abrirSheet = () => {
     setTimeout(() => {
@@ -150,7 +175,7 @@ export default function ProfileScreen() {
 
   const saveInfo = async () => {
     if (!userData?.id) {
-      console.error("ID do usuário não disponível.");
+      Alert.alert("Erro", "ID do usuário não disponível.");
       return;
     }
 
@@ -158,29 +183,26 @@ export default function ProfileScreen() {
       const formData = new FormData();
 
       const dataToSend = { ...editData };
-      if (dataToSend.dataNascimentoUsuario) {
+      if (dataToSend.dataNascimentoUsuario?.includes("/")) {
         dataToSend.dataNascimentoUsuario = formatDateToISO(
           dataToSend.dataNascimentoUsuario
         );
       }
 
-      for (const key in dataToSend) {
-        if (dataToSend[key] !== null && dataToSend[key] !== undefined) {
-          formData.append(key, String(dataToSend[key]));
+      Object.entries(dataToSend).forEach(([key, value]) => {
+        if (value !== "" && value !== null && value !== undefined) {
+          formData.append(key, String(value));
         }
-      }
+      });
 
       formData.append("_method", "PUT");
 
       const appendImageToForm = async (imageAsset, fieldName) => {
         if (!imageAsset) return;
-
         const fileName = imageAsset.uri.split("/").pop();
-        const fileType = imageAsset.type
-          ? `image/${imageAsset.type.split("/").pop()}`
-          : fileName.includes(".png")
-            ? "image/png"
-            : "image/jpeg";
+        const fileType =
+          imageAsset.type ||
+          (fileName.endsWith(".png") ? "image/png" : "image/jpeg");
 
         if (Platform.OS === "web") {
           const response = await fetch(imageAsset.uri);
@@ -198,20 +220,20 @@ export default function ProfileScreen() {
       await appendImageToForm(fotoPerfil, "fotoPerfilUsuario");
       await appendImageToForm(fotoBanner, "fotoBannerUsuario");
 
-      await usuario.editUser(formData, userData.id);
+      await usuario.editUser(formData, userData.id, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       await loadUserData();
       setShowModal(false);
       Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
     } catch (err) {
-      console.error("Erro ao salvar:", err.response ? err.response.data : err);
-      setError(err.response?.data?.error || "Erro ao atualizar perfil.");
+      console.error("Erro ao salvar perfil:", err.response?.data || err);
+      setError(err.response?.data?.message || "Erro ao atualizar perfil.");
       setViewError(true);
       setTimeout(() => setViewError(false), 3000);
     }
   };
-
-  // Carrega dados do usuário e logo abaixo dois useEffect relacionados
 
   const loadUserData = async () => {
     try {
@@ -239,8 +261,6 @@ export default function ProfileScreen() {
   useEffect(() => {
     loadUserData();
   }, []);
-
-  // Tela de loading
 
   if (loading) {
     return (
@@ -291,19 +311,19 @@ export default function ProfileScreen() {
   const fotoPerfilUrl = // Aqui ele ta pegando as fotos da api | provavelmente existe formas melhores de fazer isso --Bruno
     fotoPerfil?.uri ??
     (userData?.fotoPerfilUsuario
-      ? `http://192.168.0.102:8000/storage/${userData.fotoPerfilUsuario}`
+      ? `http://192.168.0.101:8000/storage/${userData.fotoPerfilUsuario}`
       : null);
   const fotoBannerUrl =
     fotoBanner?.uri ??
     (userData?.fotoBannerUsuario
-      ? `http://192.168.0.102:8000/storage/${userData.fotoBannerUsuario}`
+      ? `http://192.168.0.101:8000/storage/${userData.fotoBannerUsuario}`
       : null);
 
   return (
     <View style={tw`flex-1`}>
       {viewError && <TopNotification error={error} />}
 
-      <ScrollView style={tw`flex-1`}>
+      <ScrollView style={tw`flex-1 bg-white`}>
         <ImageBackground
           source={
             fotoBannerUrl
@@ -344,14 +364,21 @@ export default function ProfileScreen() {
           </View>
 
           <View style={tw`items-center mt-2`}>
-            <Text style={tw`text-2xl font-bold text-gray-600 capitalize`}>
+            <Text
+              style={[
+                tw`text-[20px] font-bold text-gray-600 capitalize`,
+                { fontFamily: "Poppins_500Medium" },
+              ]}
+            >
               {userData?.nomeCompletoUsuario}
             </Text>
           </View>
         </View>
 
-        <View style={tw`w-full mt-1`}>
-          <View style={tw`flex-row flex-wrap justify-between px-2 pt-3`}>
+        <View style={tw`w-full mt-1 p-4 `}>
+          <View
+            style={tw`bg-[#61D48330] rounded-[18px] flex-row flex-wrap justify-between px-2 pt-3`}
+          >
             {infoCardsData.map((item, index) => (
               <InfoCard key={index} {...item} />
             ))}
@@ -363,51 +390,28 @@ export default function ProfileScreen() {
           {/* MÚLTIPLOS PERFIS */}
           {/* MÚLTIPLOS PERFIS */}
 
+          {modalEsportes && (
+            <ModalPerfilEsporte
+              crud={controllSheet}
+              visible={modalEsportes}
+              onClose={() => setModalEsportes(false)}
+              abrirSheet={abrirSheet}
+              fecharSheet={fecharSheet}
+              controllSheet={ControllTypeModal}
+              perfis={perfis}
+            />
+          )}
+
           {/* Esse modal aqui é onde o usuario tem as opções de esporte, todos os esportes possíveis de criação e edição | ModalPerfilCRUD na pasta componentes/perfilComponents */}
-          <View style={tw`flex-row flex-wrap pb-10 rounded-lg mt-6`}>
-            {modalEsportes && (
-              <ModalPerfilEsporte
-                crud={controllSheet}
-                visible={modalEsportes}
-                onClose={() => setModalEsportes(false)}
-                abrirSheet={abrirSheet}
-                fecharSheet={fecharSheet}
-                controllSheet={ControllTypeModal}
-                perfis={perfis}
-              />
-            )}
-
+          <View
+            style={tw`flex-row w-full flex-wrap pb-10 rounded-lg mt-6 justify-between`}
+          >
             <View
-              style={tw`flex-row justify-end w-full relative bottom-2 h-13`}
+              style={tw`items-center justify-center bg-[#61D48330] w-[70%] flex-row rounded-[999px]`}
             >
-              {optionProfile && (
-                <Animated.View // Trocar essa animação tosca
-                  entering={SlideInRight.duration(500)}
-                  exiting={SlideOutRight.duration(500)}
-                  style={tw`flex-row`}
-                >
-                  <Pressable onPress={() => ControllTypeModal("create")}>
-                    <Animated.View
-                      style={tw`w-16 h-13 mr-1 bg-white rounded-2`}
-                    >
-                      <Text style={tw`text-center m-auto`}>Criar</Text>
-                    </Animated.View>
-                  </Pressable>
-
-                  <Pressable onPress={() => ControllTypeModal("update")}>
-                    <Animated.View
-                      style={tw`w-16 h-13 mr-1 bg-white rounded-2`}
-                    >
-                      <Text>Editar</Text>
-                    </Animated.View>
-                  </Pressable>
-                </Animated.View>
-              )}
-            </View>
-
-            <View style={tw`w-85 justify-end rounded-t-5`}>
               <Picker
-                style={tw`w-full px-4 h-12 border-none bg-white rounded-t-5`}
+                className="bg-[#61D48300] w-[90%] text-[#2E7844] outline-none border-none rounded-[999px]"
+                style={{ fontFamily: "Poppins_500Medium" }}
                 selectedValue={selectedEsporte}
                 onValueChange={(value) => setSelectedEsporte(value)}
               >
@@ -421,42 +425,127 @@ export default function ProfileScreen() {
               </Picker>
             </View>
 
-            <Pressable onPress={perfilOptions}>
-              <Animated.View
-                style={tw`w-16 h-11 justify-end ml-1 bg-white rounded-2`}
-              />
-            </Pressable>
+            <View style={tw`flex-row gap-1`}>
+              <Pressable onPress={() => ControllTypeModal("create")}>
+                <Animated.View
+                  style={tw`w-10 h-10 p-2 items-center justify-center mr-1 bg-white rounded-2 bg-[#61D48330]`}
+                >
+                  <Image
+                    source={require("../../assets/icons/mais.png")}
+                    style={{ width: "90%", height: "90%" }}
+                  />
+                </Animated.View>
+              </Pressable>
+
+              <Pressable onPress={() => ControllTypeModal("update")}>
+                <Animated.View
+                  style={tw`w-10 h-10 p-2 items-center justify-center mr-1 bg-white rounded-2 bg-[#61D48330]`}
+                >
+                  <Image
+                    source={require("../../assets/icons/edit.png")}
+                    style={{ width: "90%", height: "90%" }}
+                  />
+                </Animated.View>
+              </Pressable>
+            </View>
 
             <View
-              style={tw`w-full px-4 pt-4 flex-row rounded-tr-4 bg-white flex-wrap justify-between pb-30`}
+              style={tw`w-full  flex-row rounded-tr-4 flex-wrap justify-between pb-30`}
             >
               {selectedEsporte && (
-                <View style={{ marginTop: 20 }}>
+                <View style={tw`mt-6 w-full`}>
                   {perfis[selectedEsporte].map((perfil) => (
-                    <View key={perfil.id} style={{ marginBottom: 16 }}>
-                      <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                        {perfil.esporte.nomeEsporte}
-                      </Text>
+                    <View
+                      key={perfil.id}
+                      style={tw`w-full p-4 bg-white rounded-2xl shadow-md border border-gray-200`}
+                    >
+                      {/* Cabeçalho */}
+                      <View style={tw`mb-4 border-b border-gray-200 pb-2`}>
+                        <Text
+                          style={[
+                            tw`text-[22px] font-bold text-[#2E7844]`,
+                            { fontFamily: "Poppins_500Medium" },
+                          ]}
+                        >
+                          {perfil.esporte.nomeEsporte}
+                        </Text>
+                        <Text
+                          style={[
+                            tw`text-[16px] text-gray-600`,
+                            { fontFamily: "Poppins_500Medium" },
+                          ]}
+                        >
+                          {perfil.categoria.nomeCategoria}
+                        </Text>
+                      </View>
 
-                      <Text>Categoria: {perfil.categoria.nomeCategoria}</Text>
+                      {/* Posições */}
+                      <View style={tw`mb-3`}>
+                        <Text
+                          style={[
+                            tw`text-[18px] font-semibold text-[#61D483] mb-2`,
+                            { fontFamily: "Poppins_500Medium" },
+                          ]}
+                        >
+                          Posições
+                        </Text>
+                        <View style={tw`flex-row flex-wrap`}>
+                          {perfil.posicoes.map((p) => (
+                            <View
+                              key={p.id}
+                              style={tw`bg-[#61D48320] px-4 py-2 rounded-lg m-1`}
+                            >
+                              <Text
+                                style={[
+                                  tw`text-[#2E7844] `,
+                                  { fontFamily: "Poppins_500Medium" },
+                                ]}
+                              >
+                                {p.nomePosicao}
+                              </Text>
+                            </View>
+                          ))}
+                        </View>
+                      </View>
 
-                      <Text>Posições:</Text>
-                      {perfil.posicoes.map((p) => (
-                        <Text key={p.id}>{p.nomePosicao}</Text>
-                      ))}
-
+                      {/* Características */}
                       {perfil.caracteristicas.length > 0 && (
-                        <>
-                          <Text>Características:</Text>
+                        <View style={tw`mt-2`}>
+                          <Text
+                            style={[
+                              tw`text-[18px] font-semibold text-[#61D483] mb-2`,
+                              { fontFamily: "Poppins_500Medium" },
+                            ]}
+                          >
+                            Características
+                          </Text>
                           {perfil.caracteristicas.map((c) => (
-                            <View key={c.id}>
-                              <Text>{c.caracteristica}</Text>
-                              <Text>
+                            <View
+                              key={c.id}
+                              style={[
+                                tw`flex-row justify-between bg-gray-50 rounded-lg px-3 py-2 mb-2`,
+                                { fontFamily: "Poppins_500Medium" },
+                              ]}
+                            >
+                              <Text
+                                style={[
+                                  tw`text-gray-700 font-medium`,
+                                  { fontFamily: "Poppins_500Medium" },
+                                ]}
+                              >
+                                {c.caracteristica}
+                              </Text>
+                              <Text
+                                style={[
+                                  tw`text-gray-800`,
+                                  { fontFamily: "Poppins_500Medium" },
+                                ]}
+                              >
                                 {c.pivot.valor} {c.unidade_medida}
                               </Text>
                             </View>
                           ))}
-                        </>
+                        </View>
                       )}
                     </View>
                   ))}
@@ -473,137 +562,21 @@ export default function ProfileScreen() {
       {/* MODAL DE EDIÇÃO DE PERFIL PRINCIPAL*/}
       {/* MODAL DE EDIÇÃO DE PERFIL PRINCIPAL*/}
 
-      <Modal
+      <ModalEditarPerfil
         visible={showModal}
-        animationType="slide"
-        onRequestClose={() => setShowModal(false)}
-      >
-        <View style={tw`flex-1 bg-white`}>
-          <View
-            style={tw`flex-row items-center justify-between px-4 py-3 border-b border-gray-200`}
-          >
-            <Pressable style={tw`p-2`} onPress={() => setShowModal(false)}>
-              <Image
-                style={{ width: 12, height: 20 }}
-                source={require("../../assets/cadastro/icon_voltar.png")}
-              />
-            </Pressable>
-            <Text style={tw`text-2xl font-bold text-[#61D483]`}>
-              Editar Perfil
-            </Text>
-            <Pressable
-              style={tw`bg-[#61D483] rounded-full p-2 px-4`}
-              onPress={saveInfo}
-            >
-              <Text style={tw`font-semibold text-base text-white`}>Salvar</Text>
-            </Pressable>
-          </View>
-
-          <ScrollView>
-            {/* Seção de Imagens */}
-            <View style={tw`items-center mt-4 relative`}>
-              <Pressable
-                onPress={() => escolherImagem("banner")}
-                style={tw`w-full h-40 bg-gray-200 justify-center items-center`}
-              >
-                <ImageBackground
-                  source={
-                    fotoBannerUrl
-                      ? { uri: fotoBannerUrl }
-                      : require("../../assets/perfil/banner.png")
-                  }
-                  style={tw`w-full h-full justify-center items-center`}
-                >
-                  <View style={tw`bg-black/40 p-2 rounded-full`}>
-                    <Image
-                      source={require("../../assets/perfil/camera_icone.png")}
-                      style={{ width: 25, height: 20, tintColor: "white" }}
-                    />
-                  </View>
-                </ImageBackground>
-              </Pressable>
-
-              <View style={tw`absolute -bottom-16 items-center`}>
-                <Pressable
-                  onPress={() => escolherImagem("perfil")}
-                  style={tw`relative`}
-                >
-                  <Image
-                    source={
-                      fotoPerfilUrl
-                        ? { uri: fotoPerfilUrl }
-                        : require("../../assets/perfil/fotoPerfil.png")
-                    }
-                    style={{
-                      width: 130,
-                      height: 130,
-                      borderRadius: 65,
-                      borderWidth: 4,
-                      borderColor: "white",
-                    }}
-                  />
-                  <View
-                    style={tw`absolute bottom-1 right-1 bg-[#61D483] p-2 rounded-full`}
-                  >
-                    <Image
-                      source={require("../../assets/perfil/camera_icone.png")}
-                      style={{ width: 20, height: 15, tintColor: "white" }}
-                    />
-                  </View>
-                </Pressable>
-              </View>
-            </View>
-
-            {/* Seção de Informações */}
-            <View style={tw`mt-24 px-4`}>
-              <Text style={tw`font-bold text-xl text-[#61D483] mb-4`}>
-                Informações Pessoais
-              </Text>
-              {[
-                { label: "Nome", key: "nomeCompletoUsuario" },
-                {
-                  label: "Nascimento",
-                  key: "dataNascimentoUsuario",
-                  isDate: true,
-                },
-                { label: "Gênero", key: "generoUsuario" },
-                { label: "Estado", key: "estadoUsuario" },
-                { label: "Cidade", key: "cidadeUsuario" },
-                {
-                  label: "Altura (cm)",
-                  key: "alturaCm",
-                  keyboardType: "numeric",
-                },
-                { label: "Peso (kg)", key: "pesoKg", keyboardType: "numeric" },
-                { label: "Mão Dominante", key: "maoDominante" },
-                { label: "Pé Dominante", key: "peDominante" },
-              ].map((field) => (
-                <View key={field.key} style={tw`mb-3`}>
-                  <Text style={tw`text-gray-500 text-sm mb-1`}>
-                    {field.label}
-                  </Text>
-                  <TextInput
-                    value={editData[field.key] || ""}
-                    onChangeText={(text) =>
-                      setEditData({ ...editData, [field.key]: text })
-                    }
-                    placeholder={
-                      field.isDate
-                        ? "DD/MM/AAAA"
-                        : `Digite seu ${field.label.toLowerCase()}`
-                    }
-                    keyboardType={
-                      field.keyboardType ||
-                      (field.isDate ? "numeric" : "default")
-                    }
-                    style={tw`bg-gray-100 rounded-lg p-3 text-base text-gray-800`}
-                  />
-                </View>
-              ))}
-            </View>
-          </ScrollView>
-        </View>
-      </Modal>
+        onClose={() => setShowModal(false)}
+        saveInfo={saveInfo}
+        editData={editData}
+        setEditData={setEditData}
+        fotoPerfil={fotoPerfil}
+        setFotoPerfil={setFotoPerfil}
+        fotoBanner={fotoBanner}
+        setFotoBanner={setFotoBanner}
+        fotoPerfilUrl={fotoPerfilUrl}
+        fotoBannerUrl={fotoBannerUrl}
+        escolherImagem={escolherImagem}
+        fontsLoaded={fontsLoaded}
+      />
     </View>
   );
 }

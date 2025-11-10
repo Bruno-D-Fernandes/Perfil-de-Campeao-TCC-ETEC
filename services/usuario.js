@@ -43,9 +43,25 @@ export const inscreverOportunidade = async (idOportunidade) => {
   }
 };
 
-const editUser = (data, id) => {
-  return api.put(`/update/${id}`, data);
+const editUser = async (formData, id) => {
+  try {
+
+    console.log("Enviando atualização:", [...formData.entries()]);
+
+    const response = await api.post(`/update/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    console.log("Atualização OK:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao atualizar usuário:", error.response?.data || error);
+    throw error;
+  }
 };
+
 
 const deleteUser = (id) => {
   return api.delete(`/destroy/${id}`);
