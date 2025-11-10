@@ -15,9 +15,10 @@ import { postagemData } from "./../../services/postagem";
 export default function PostagemScreen() {
   const navigation = useNavigation();
 
-  const [cellModal, setCellModal] = useState(false);
+  const [showModalLocal, setShowModalLocal] = useState(false);
   const [imagem, setImagem] = useState(null);
   const [localizacao, setLocalizacao] = useState("");
+  const [tempLocalizacao, setTempLocalizacao] = useState("");
 
 
   const [selectedEsporte, setSelectedEsporte] = useState(null);
@@ -32,8 +33,13 @@ export default function PostagemScreen() {
   }
 };
 
-
-  
+  const abrirModalLocal = () => {
+    setShowModalLocal(true);
+    setTempLocalizacao(localizacao);
+  }
+  const fecharModalLocal = () => {
+    setShowModalLocal(false);
+  }
 
   // Carrega dados do usuário e logo abaixo dois useEffect relacionados
 
@@ -179,15 +185,13 @@ export default function PostagemScreen() {
   };
 
   const imageMap = {
-    0: require("../../assets/icons-postagem/SetaIconPostagem.png"),
-    1: require("../../assets/icons-postagem/localizacaoIconPostagem.png"),
-    2: require("../../assets/icons-postagem/hashtagIconPostagem.png"),
+    0: require("../../assets/icons-postagem/foto.png"),
+    1: require("../../assets/icons-postagem/local.png")
   };
 
   function Usuario({ userInfo }) {
-  console.log("🧩 userInfo recebido:", userInfo);
-  const nome = userInfo?.nome || "Usuário";
-  const foto = userInfo?.imagemPerfil; // ajuste conforme o nome da chave que vem da API
+  const nome = userInfo?.nomeCompletoUsuario || "Usuário";
+  const foto = userInfo?.fotoPerfilUsuario;
 
   return (
     <View className="w-full h-[63px] flex-row justify-start gap-[14px] items-center my-4 ml-5">
@@ -232,14 +236,17 @@ export default function PostagemScreen() {
     );
   }
 
-  function Card({ nome, imagem, onPress }) {
+  function Card({ nome, imagem, onPress, color }) {
     return (
       <Pressable
         onPress={onPress}
-        className="bg-[#D9D9D9]/50 flex-row rounded-[12px] h-full w-full items-center p-2 my-[10px]"
+        className="bg-[#D9D9D9]/40 rounded-[12px] w-full gap-3 p-3 my-[10px]"
       >
-        <Image source={imageMap[imagem]} className="w-10 h-10" />
-        <Text>{nome}</Text>
+        <View className="flex-row w-full justify-between">
+         <Image source={imageMap[imagem]} className="w-10 h-10" />
+         <Image source={require("../../assets/icons-postagem/mais.png")} style={{width:16, height:16, tintColor:color,}} />
+        </View>
+        <Text style={{color:color, fontFamily:"Poppins_500Medium", fontSize:18}}>{nome}</Text>
       </Pressable>
     );
   }
@@ -297,20 +304,10 @@ export default function PostagemScreen() {
           </Text>
     </View>
 
-      </View>
 
       {/* Exibição da imagem selecionada */}
      {/* Campo de localização (fora da imagem) */}
-<View className="w-[95%] self-center mt-2">
-  <Text style={{ fontFamily: "Poppins_500Medium", fontSize: 18 }}>Localização</Text>
-  <TextInput
-    className="bg-white p-4 rounded-[20px] border-[2px] border-[#61D483]/60 font-medium text-[#575757] text-[16px] mt-2"
-    placeholder="Digite o local do evento..."
-    placeholderTextColor="#61D48399"
-    value={localizacao}
-    onChangeText={setLocalizacao}
-  />
-</View>
+
 
 {/* Exibição da imagem selecionada */}
 {imagem && (
@@ -320,7 +317,6 @@ export default function PostagemScreen() {
       alignSelf: "center",
       backgroundColor: "#fff",
       borderRadius: 16,
-      marginTop: 15,
       position: "relative",
       borderWidth: 1.5,
       borderColor: "#61D48360",
@@ -353,23 +349,56 @@ export default function PostagemScreen() {
     </Pressable>
 
     {/* Localização digitada */}
-    {localizacao ? (
-      <View style={{ padding: 10, flexDirection: "row", alignItems: "center" }}>
-      <Text>Lixo</Text>
-        <Text
-          style={{
-            marginLeft: 5,
-            fontSize: 14,
-            color: "#61D483",
-            fontFamily: "Poppins_500Medium",
-          }}
-        >
-          Em: {localizacao}
-        </Text>
-      </View>
-    ) : null}
   </View>
 )}
+
+{localizacao && (
+  <View
+    style={{
+      width: "95%",
+      alignSelf: "center",
+      backgroundColor: "#fff",
+      borderRadius: 16,
+      marginTop: 15,
+      position: "relative",
+      borderWidth: 1.5,
+      borderColor: "#61D48360",
+      overflow: "hidden",
+      paddingVertical: 14,
+      paddingHorizontal: 12,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    }}
+  >
+    {/* Localização e ícone */}
+    <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
+      <Image source={require("../../assets/icons-postagem/local.png")} style={{tintColor:'#61D483',}}/>
+      <Text
+        style={{
+          marginLeft: 8,
+          fontSize: 15,
+          color: "#61D483",
+          fontFamily: "Poppins_500Medium",
+          flexShrink: 1,
+        }}
+        numberOfLines={1}
+      >
+        Em: {localizacao}
+      </Text>
+    </View>
+
+    {/* Botão de remover localização */}
+    <Pressable
+      onPress={() => setLocalizacao("")}
+      className = "bg-[#61D48330] w-8 h-8 items-center justify-center rounded-[6px]"
+    >
+      <Image source={require("../../assets/icons-postagem/fechar.png")} style={{tintColor:'#61D483', width: 12, height: 12,}}/>
+    </Pressable>
+  </View>
+)}
+
+      </View>
 
 
 
@@ -388,7 +417,7 @@ export default function PostagemScreen() {
     borderRadius: 25,
     borderColor: "#61D483",
     borderWidth: 2,
-    marginHorizontal: "3%", // ✅ 90% visual (5% margem de cada lado)
+    marginHorizontal: "3%", 
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
@@ -405,28 +434,80 @@ export default function PostagemScreen() {
   <BottomSheetView
     style={[
       tw`items-center justify-start w-full`,
-      { paddingVertical: 20, paddingHorizontal: 10 },
+      { paddingVertical: 20, paddingHorizontal: 20 },
     ]}
   >
-    <Text className="font-semibold text-[20px] text-[#61D483] mb-[15px]">
-      Adicione ao seu post:
-    </Text>
+    <View className="w-[95%]">
+      <Text className="font-semibold text-[20px] text-[#61D483] mb-[15px]">
+        Adicione ao seu post:
+      </Text>
+    </View>
 
     <View className="flex-row flex-wrap justify-between w-[95%]">
       <View className="w-[48%] flex-col h-[90px] rounded-[12px] my-[10px]">
-        <Card nome={"Mídia"} imagem={0} onPress={tirarFoto} />
+        <Card nome={"Mídia"} imagem={0} color={"#2B87EF"} onPress={tirarFoto} />
       </View>
-
       <View className="w-[48%] h-[90px] rounded-[12px] my-[10px]">
-        <Card nome={"Localização"} imagem={1} />
-      </View>
-
-      <View className="w-[48%] h-[90px] rounded-[12px] my-[10px]">
-        <Card nome={"Hashtag"} imagem={2} />
+        <Card nome={"Localização"} imagem={1} color={"#F69533"} onPress={abrirModalLocal} />
       </View>
     </View>
   </BottomSheetView>
 </BottomSheetModal>
+
+<Modal visible={showModalLocal} transparent animationType="fade">
+  <View className="bg-black/60 flex-1 justify-center items-center">
+    <View className="bg-white p-6 rounded-2xl w-[80%]">
+      <Text className="text-lg mb-4 text-[#61D483] font-semibold">
+        Adicionar Localização
+      </Text>
+
+      {/* Campo de input local temporário */}
+      <View className="w-[95%] self-center mt-2">
+        <Text
+          style={{
+            fontFamily: "Poppins_500Medium",
+            fontSize: 18,
+            color: "#333",
+          }}
+        >
+          Localização
+        </Text>
+
+        <TextInput
+          className="bg-white p-4 rounded-[20px] border-[2px] border-[#61D483]/60 font-medium text-[#575757] text-[16px] mt-2"
+          placeholder="Digite o local do evento..."
+          placeholderTextColor="#61D48399"
+          value={tempLocalizacao}
+          onChangeText={setTempLocalizacao}
+        />
+      </View>
+
+      {/* Botões */}
+      <View className="flex-row justify-between mt-5">
+        <Pressable
+          onPress={fecharModalLocal}
+          className="bg-gray-300 px-4 py-2 rounded-xl w-[45%]"
+        >
+          <Text className="text-center text-gray-700 font-semibold">
+            Cancelar
+          </Text>
+        </Pressable>
+
+        <Pressable
+          onPress={() => {
+            setLocalizacao(tempLocalizacao);
+            fecharModalLocal();
+          }}
+          className="bg-[#61D483] px-4 py-2 rounded-xl w-[45%]"
+        >
+          <Text className="text-center text-white font-semibold">Salvar</Text>
+        </Pressable>
+      </View>
+    </View>
+  </View>
+</Modal>
+
+
 
 
 
