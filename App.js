@@ -7,7 +7,9 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import usuario from "./services/usuario";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import "./global.css";
-import { Pressable, Text } from "react-native"; // ADICIONE ESTA LINHA
+import { Pressable, Text } from "react-native";
+import Animated from "react-native-reanimated";
+import CustomTabBar from "./src/components/CustomTabBar";
 
 import { Feather } from "@expo/vector-icons";
 
@@ -30,52 +32,10 @@ const Tab = createBottomTabNavigator();
 function MainTabs() {
   return (
     <Tab.Navigator
+      tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarStyle: {
-          height: "8%",
-          width: "95%",
-          marginLeft: "2.5%",
-          marginRight: "2.5%",
-          position: "absolute",
-          bottom: "2%",
-          borderRadius: 60,
-          padding: "4%",
-          justifyContent: "center",
-          backgroundColor: "#ffff",
-          shadowColor: "#000",
-          shadowOffset: { width: 1, height: 0.1 },
-          shadowOpacity: 0.1,
-          shadowRadius: 15,
-        },
-        tabBarActiveTintColor: "#4CAF50",
-        tabBarInactiveTintColor: "#888",
-        tabBarIcon: ({ color, size }) => {
-          let iconName;
-
-          if (route.name === "Oportunidades") {
-            iconName = "briefcase";
-          }
-          if (route.name === "Postagem") {
-            iconName = "plus-circle";
-            size = 36;
-          }
-          if (route.name === "Perfil") {
-            iconName = "user";
-          }
-          if (route.name === "Config") {
-            iconName = "settings";
-          }
-          if (route.name === "Notificacao") {
-            iconName = "bell";
-          }
-          if (route.name === "Portfolio") {
-            iconName = "book";
-          }
-
-          return <Feather name={iconName} size={size} color={color} />;
-        },
       })}
     >
       <Tab.Screen name="Oportunidades" component={OportunidadesScreen} />
@@ -171,9 +131,7 @@ function InitialSplashScreen({ navigation }) {
   useEffect(() => {
     async function checkToken() {
       try {
-
         await new Promise((resolve) => setTimeout(resolve, 1400));
-
 
         const token = await AsyncStorage.getItem("token");
 

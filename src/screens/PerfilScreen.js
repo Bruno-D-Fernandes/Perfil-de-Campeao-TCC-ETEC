@@ -237,7 +237,7 @@ export default function ProfileScreen() {
 
   const loadUserData = async () => {
     try {
-      setLoading(true);
+      if (userData) setLoading(true);
       const response = await usuario.splashUser();
       setUserData(response.data);
       setError(null);

@@ -17,15 +17,16 @@ export default function Oportunidade({ data }) {
     descricaoOportunidades = "",
     estadoOportunidade = "",
     enderecoOportunidade = "",
-    imagem = null,
   } = data || {};
+
+  const imagem = data.clube.fotoPerfilClube || null;
 
   const nomeEsporte = esporte?.nomeEsporte || "Esporte não informado";
 
   const [mensagem, setMensagem] = useState(""); // Mensagem de feedback
   const [mensagemTipo, setMensagemTipo] = useState(""); // 'erro' ou 'sucesso'
   const sheetRef = useRef(null);
-  const snapPoints = useMemo(() => ["60%", "90%"], []);
+  const snapPoints = useMemo(() => ["45%", "50%"], []);
 
   const abrirDetalhes = useCallback(() => {
     // Present the bottom sheet managed by the root provider
@@ -56,36 +57,63 @@ export default function Oportunidade({ data }) {
     }
   };
 
+  console.log(data);
+
+  const fotoPerfilUrl = data.clube.fotoPerfilClube
+    ? `http://192.168.0.101:8000/storage/${data.clube.fotoPerfilClube}`
+    : null;
+
   return (
-    <View className="w-full mb-4 items-center flex-row bg-white p-4 rounded-3xl border-[2px] border-[#61D483] gap-4">
-      <View className="flex-1 flex-row justify-between items-center">
-        <View className="gap-1">
-          <Text
-            className=" text-[16px]"
-            style={{ fontFamily: "Poppins_500Medium" }}
-          >
-            {clube.nomeClube}
-          </Text>
-          <Text
-            className="text-gray-500 "
-            style={{ fontFamily: "Poppins_500Medium" }}
-          >
-            {posicao.nomePosicao}
-          </Text>
-          <Text
-            className="text-gray-400 text-[13px]"
-            style={{ fontFamily: "Poppins_500Medium" }}
-          >
-            {nomeEsporte} - {idadeMinima} a {idadeMaxima} anos
-          </Text>
+    <View className="w-full mb-4 items-center flex-row bg-white p-4 rounded-3xl border-[2px] border-[#76D292] gap-4">
+      <Pressable
+        onPress={abrirDetalhes}
+        className="flex-1 flex-row justify-between items-center"
+      >
+        <View className="flex-1 flex-row justify-between items-center">
+          <View className="rounded-full w-[70px] h-[70px]">
+            <Image
+              source={
+                fotoPerfilUrl
+                  ? { uri: fotoPerfilUrl }
+                  : require("../../assets/perfil/fotoPerfil.png")
+              }
+              style={{
+                width: 70,
+                height: 70,
+                borderRadius: 100,
+              }}
+            />
+          </View>
+
+          <View className="w-[70%] justify-center gap-1">
+            <Text
+              className=" text-[16px]"
+              style={{ fontFamily: "Poppins_500Medium" }}
+            >
+              {clube.nomeClube}
+            </Text>
+            <View className="flex-row items-center gap-2">
+              <Text
+                className="text-gray-500 "
+                style={{ fontFamily: "Poppins_500Medium" }}
+              >
+                {posicao.nomePosicao}
+              </Text>
+              <Text
+                className="text-gray-400 text-[13px]"
+                style={{ fontFamily: "Poppins_500Medium" }}
+              >
+                {nomeEsporte} - {idadeMinima} a {idadeMaxima} anos
+              </Text>
+            </View>
+          </View>
+
+          <View>
+            <Image source={require("../../assets/icons/icon_proximo.png")} />
+          </View>
         </View>
+      </Pressable>
 
-        <Pressable onPress={abrirDetalhes}>
-          <Image source={require("../../assets/icons/icon_proximo.png")} />
-        </Pressable>
-      </View>
-
-      {/* Bottom sheet (uses root BottomSheetModalProvider/GestureHandlerRootView) */}
       <BottomSheetModal
         ref={sheetRef}
         index={0}
@@ -104,6 +132,20 @@ export default function Oportunidade({ data }) {
         <BottomSheetView style={{ padding: 20 }}>
           <View className="w-full justify-center gap-4">
             <View className="flex-row items-center gap-4">
+              <View className="rounded-full w-[70px] h-[70px]">
+                <Image
+                  source={
+                    fotoPerfilUrl
+                      ? { uri: fotoPerfilUrl }
+                      : require("../../assets/perfil/fotoPerfil.png")
+                  }
+                  style={{
+                    width: 70,
+                    height: 70,
+                    borderRadius: 100,
+                  }}
+                />
+              </View>
               <Text
                 style={{ fontFamily: "Poppins_500Medium" }}
                 className=" text-lg"
@@ -114,7 +156,7 @@ export default function Oportunidade({ data }) {
 
             <View className="gap-1">
               <Text
-                className="text-gray-400 text-[18px]"
+                className="text-gray-400 text-[22px]"
                 style={{ fontFamily: "Poppins_500Medium" }}
               >
                 {posicao.nomePosicao}
