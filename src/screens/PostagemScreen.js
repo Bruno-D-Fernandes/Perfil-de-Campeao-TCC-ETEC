@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useLayoutEffect } from "react"; // Adicione o 'React' aqui
-import { View, Text, Image, Pressable, Alert } from "react-native";
-import { Modal, TextInput } from "react-native";
+import React, { useState, useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { View, Text, Image, Pressable, Alert, Modal, TextInput } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
 import { Platform } from "react-native";
+import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 
 import tw from "twrnc";
 
@@ -17,10 +17,23 @@ export default function PostagemScreen() {
 
   const [cellModal, setCellModal] = useState(false);
   const [imagem, setImagem] = useState(null);
+  const [localizacao, setLocalizacao] = useState("");
+
 
   const [selectedEsporte, setSelectedEsporte] = useState(null);
   const [perfis, setPerfis] = useState([]);
   const [textoPostagem, setTextoPostagem] = useState("");
+  const snapPoints = useMemo(() => ["60%", "90%"], []);
+  const sheetRef = useRef(null);
+
+  const abrirBottomSheet = () => {
+  if (sheetRef.current) {
+    sheetRef.current.present();
+  }
+};
+
+
+  
 
   // Carrega dados do usuário e logo abaixo dois useEffect relacionados
 
@@ -171,62 +184,50 @@ export default function PostagemScreen() {
     2: require("../../assets/icons-postagem/hashtagIconPostagem.png"),
   };
 
-  function Usuario() {
-    // {imagem, nome} colocar parametro depois
-    return (
-      <View className="w-full h-[63px] flex-row justify-start gap-[14px] items-center my-4 ml-5">
-        <Image
-          source={require("../../assets/post/perfilFoto.png")}
-          style={{ width: 63, height: 63 }}
-          resizeMode="cover"
-        />
-        <Text className="text-[18px] font-semibold text-[#959595]">
-          Nome Usuario
-        </Text>
-      </View>
-    );
-  }
+  function Usuario({ userInfo }) {
+  console.log("🧩 userInfo recebido:", userInfo);
+  const nome = userInfo?.nome || "Usuário";
+  const foto = userInfo?.imagemPerfil; // ajuste conforme o nome da chave que vem da API
+
+  return (
+    <View className="w-full h-[63px] flex-row justify-start gap-[14px] items-center my-4 ml-5">
+      <Image
+        source={
+          foto
+            ? { uri: foto }
+            : require("../../assets/post/perfilFoto.png")
+        }
+        style={{ width: 63, height: 63, borderRadius: 999 }}
+        resizeMode="cover"
+      />
+      <Text className="text-[18px] font-semibold text-[#959595]">
+        {nome}
+      </Text>
+    </View>
+  );
+}
+
 
   function IconsBottom() {
     return (
-      <View className="w-90 h-10 flex-row justify-between mx-[5px]">
-        <View className="flex-row gap-[16px]">
-          <Pressable
-            onPress={() => {
-              setCellModal(true);
-            }}
-          >
-            {/*Arrumar o onClick()*/}
+      <View className="w-90 h-10 flex-row gap-4 items-center m-[12px]">
+        <View>
+         <Pressable className="flex-row items-center gap-[16px]" onPress={abrirBottomSheet}>
             <Image
               source={require("../../assets/icons-postagem/imagemIConPostagem.png")}
               className="w-10 h-10"
             />
-          </Pressable>
-
-          <Pressable>
-            {/*Arrumar o onClick()*/}
             <Image
               source={require("../../assets/icons-postagem/localizacaoIconPostagem.png")}
               className="w-10 h-10"
             />
-          </Pressable>
 
-          <Pressable>
-            {/*Arrumar o onClick()*/}
-            <Image
-              source={require("../../assets/icons-postagem/hashtagIconPostagem.png")}
-              className="w-10 h-10"
-            />
-          </Pressable>
-        </View>
-
-        <Pressable className="justify-center items-center">
-          {/*Arrumar o onClick()*/}
-          <Image
+             <Image
             source={require("../../assets/icons-postagem/SetaIconPostagem.png")}
             className="w-10 h-10"
           />
-        </Pressable>
+          </Pressable>
+        </View>
       </View>
     );
   }
@@ -248,65 +249,188 @@ export default function PostagemScreen() {
   }
 
   return (
-    <View className="w-full h-full bg-white gap-10 direction-col justify-between    ">
-      <View className="h-[50%] w-full items-center">
+    <View className="w-full h-full bg-white gap-10 direction-col justify-between">
+      <View className="h-[30%] w-full items-center gap-6">
         <Usuario />
+        <View className="gap-3 w-[95%]">
+          <Text style={{fontFamily:"Poppins_500Medium", fontSize:18, }}>Esporte</Text>
+          <View style={tw`w-[100%] items-center px-4 justify-center bg-[#61D48330] rounded-[30px]`}>
+          {/* Picker para o esporte */}
+            <Picker
+              className="w-full h-12 border-none bg-[#4ade8000] text-[#2E7844] text-[18px] outline-none"
+              style={{fontFamily:"Poppins_500Medium"}}
+              selectedValue={selectedEsporte}
+              onValueChange={(value) => setSelectedEsporte(value)}
+            >
+            {Object.entries(perfis).map(([nomeEsporte, listaDePerfis]) => (
+              <Picker.Item
+                key={listaDePerfis[0].esporte.id}
+                label={nomeEsporte}
+                value={nomeEsporte}
+              />
+            ))}
+          </Picker>
+        </View>
+      </View>
+    <View className="gap-3 w-[95%] h-[85%]">
+      <Text style={{ fontFamily: "Poppins_500Medium", fontSize: 18 }}>Legenda</Text>
 
-        <TextInput
-          className="w-[95%] h-[70%] bg-white p-4 rounded-[20px] border-[2px] border-[#61D483]/60 font-medium text-[#61D483] text-[20px]"
-          multiline={true}
-          placeholder="Sobre o que você quer falar?"
-          placeholderTextColor="#61D483/60"
-          onChangeText={(text) => setTextoPostagem(text)}
-        />
+      <TextInput
+        className="h-[100%] bg-white p-4 rounded-[20px] border-[2px] border-[#61D483]/60 font-medium text-[#575757] text-[16px] outline-none"
+        multiline={true}
+        placeholder="Sobre o que você quer falar?"
+        placeholderTextColor="#61D483/60"
+        maxLength={200} // limita a 100 caracteres
+        value={textoPostagem}
+        onChangeText={(text) => setTextoPostagem(text)}
+      />
+
+          <Text
+            style={{
+              alignSelf: "flex-end",
+              fontSize: 16,
+              color: textoPostagem?.length >= 200 ? "red" : "#4ADE80",
+              fontFamily: "Poppins_400Regular",
+            }}
+          >
+            {textoPostagem?.length || 0}/200
+          </Text>
+    </View>
+
       </View>
 
-      <View style={tw`w-85 justify-end rounded-t-5`}>
-        {/* Picker para o esporte */}
-        <Picker
-          style={tw`w-full px-4 h-12 border-none bg-red-200 rounded-t-5`}
-          selectedValue={selectedEsporte}
-          onValueChange={(value) => setSelectedEsporte(value)}
+      {/* Exibição da imagem selecionada */}
+     {/* Campo de localização (fora da imagem) */}
+<View className="w-[95%] self-center mt-2">
+  <Text style={{ fontFamily: "Poppins_500Medium", fontSize: 18 }}>Localização</Text>
+  <TextInput
+    className="bg-white p-4 rounded-[20px] border-[2px] border-[#61D483]/60 font-medium text-[#575757] text-[16px] mt-2"
+    placeholder="Digite o local do evento..."
+    placeholderTextColor="#61D48399"
+    value={localizacao}
+    onChangeText={setLocalizacao}
+  />
+</View>
+
+{/* Exibição da imagem selecionada */}
+{imagem && (
+  <View
+    style={{
+      width: "95%",
+      alignSelf: "center",
+      backgroundColor: "#fff",
+      borderRadius: 16,
+      marginTop: 15,
+      position: "relative",
+      borderWidth: 1.5,
+      borderColor: "#61D48360",
+      overflow: "hidden",
+    }}
+  >
+    {/* Imagem */}
+    <Image
+      source={{ uri: imagem }}
+      style={{
+        width: "100%",
+        height: 180,
+      }}
+      resizeMode="cover"
+    />
+
+    {/* Botão de excluir imagem */}
+    <Pressable
+      onPress={() => setImagem(null)}
+      style={{
+        position: "absolute",
+        top: 8,
+        right: 8,
+        backgroundColor: "rgba(255,255,255,0.9)",
+        padding: 6,
+        borderRadius: 20,
+      }}
+    >
+       <Text>Lixo</Text>
+    </Pressable>
+
+    {/* Localização digitada */}
+    {localizacao ? (
+      <View style={{ padding: 10, flexDirection: "row", alignItems: "center" }}>
+      <Text>Lixo</Text>
+        <Text
+          style={{
+            marginLeft: 5,
+            fontSize: 14,
+            color: "#61D483",
+            fontFamily: "Poppins_500Medium",
+          }}
         >
-          {Object.entries(perfis).map(([nomeEsporte, listaDePerfis]) => (
-            <Picker.Item
-              key={listaDePerfis[0].esporte.id}
-              label={nomeEsporte}
-              value={nomeEsporte}
-            />
-          ))}
-        </Picker>
+          Em: {localizacao}
+        </Text>
       </View>
+    ) : null}
+  </View>
+)}
+
+
 
       {/* Icones inferior, faz aparecer modal */}
       <IconsBottom />
 
       {/* Modal abaixo */}
 
-      <Modal transparent={true} visible={cellModal} animationType="slide">
-        <Pressable
-          className="flex-1 justify-end items-center"
-          onPress={() => setCellModal(false)}
-        >
-          <Pressable className="w-[95%] h-[45%] bg-white border-[2px] border-[#61D483] rounded-tl-[36px] rounded-tr-[36px] p-4 items-center border-b-0">
-            <View className="h-[2px] w-[80px] bg-[#61D483] m-[20px] mb-[40px]"></View>
-            <Text className="font-semibold text-[24px] text-[#61D483] mb-[10px] mr-[10px]">
-              Adicione Seu post:
-            </Text>
-            <View className="flex-row flex-wrap justify-between">
-              <View className="w-[48%] h-[50px] rounded-[12px] my-[10px]">
-                <Card nome={"Mídia"} imagem={0} onPress={tirarFoto} />
-              </View>
-              <View className="w-[48%] h-[50px] rounded-[12px] my-[10px]">
-                <Card nome={"Localização"} imagem={1} />
-              </View>
-              <View className="w-[48%] h-[50px] rounded-[12px] my-[10px]">
-                <Card nome={"Hashtag"} imagem={2} />
-              </View>
-            </View>
-          </Pressable>
-        </Pressable>
-      </Modal>
+     
+<BottomSheetModal
+  ref={sheetRef}
+  index={0}
+  snapPoints={snapPoints}
+  backgroundStyle={{
+    backgroundColor: "#fff",
+    borderRadius: 25,
+    borderColor: "#61D483",
+    borderWidth: 2,
+    marginHorizontal: "3%", // ✅ 90% visual (5% margem de cada lado)
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 12,
+  }}
+  handleIndicatorStyle={{
+    backgroundColor: "#61D483",
+    width: 60,
+    height: 4,
+    borderRadius: 4,
+  }}
+>
+  <BottomSheetView
+    style={[
+      tw`items-center justify-start w-full`,
+      { paddingVertical: 20, paddingHorizontal: 10 },
+    ]}
+  >
+    <Text className="font-semibold text-[20px] text-[#61D483] mb-[15px]">
+      Adicione ao seu post:
+    </Text>
+
+    <View className="flex-row flex-wrap justify-between w-[95%]">
+      <View className="w-[48%] flex-col h-[90px] rounded-[12px] my-[10px]">
+        <Card nome={"Mídia"} imagem={0} onPress={tirarFoto} />
+      </View>
+
+      <View className="w-[48%] h-[90px] rounded-[12px] my-[10px]">
+        <Card nome={"Localização"} imagem={1} />
+      </View>
+
+      <View className="w-[48%] h-[90px] rounded-[12px] my-[10px]">
+        <Card nome={"Hashtag"} imagem={2} />
+      </View>
     </View>
+  </BottomSheetView>
+</BottomSheetModal>
+
+
+
+      </View>
+
   );
 }
