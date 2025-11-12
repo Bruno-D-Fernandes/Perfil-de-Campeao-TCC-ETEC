@@ -41,51 +41,6 @@ export default function PrtifolioScreen() {
   const [isActionModalVisible, setIsActionModalVisible] = useState(false);
   const [selectedPostagem, setSelectedPostagem] = useState(null);
 
-  const icon1 = useSharedValue(40); // Lixeira
-  const icon2 = useSharedValue(40); // Edição
-  const icon3 = useSharedValue(40); // Postagem
-  const iconHeight = useSharedValue(10);
-
-  const styleIcon1 = useAnimatedStyle(() => ({
-    bottom: icon1.value,
-    right: 15,
-    height: iconHeight.value,
-    width: iconHeight.value,
-    zIndex: 1,
-  }));
-
-  const styleIcon2 = useAnimatedStyle(() => ({
-    bottom: icon2.value + 50,
-    right: icon2.value - 20,
-    height: iconHeight.value,
-    width: iconHeight.value,
-    zIndex: 1,
-  }));
-
-  const styleIcon3 = useAnimatedStyle(() => ({
-    right: icon3.value,
-    bottom: 80,
-    height: iconHeight.value,
-    width: iconHeight.value,
-    zIndex: 1,
-  }));
-
-  const popIn = () => {
-    setPop(true);
-    icon1.value = withSpring(190);
-    icon2.value = withSpring(110);
-    icon3.value = withSpring(120);
-    iconHeight.value = withSpring(56);
-  };
-
-  const popOut = () => {
-    setPop(false);
-    icon1.value = withTiming(40, { duration: 200 });
-    icon2.value = withTiming(40, { duration: 200 });
-    icon3.value = withTiming(40, { duration: 200 });
-    iconHeight.value = withTiming(10, { duration: 200 });
-  };
-
   const fetchUserPosts = async (esporteId) => {
     setLoading(true);
     try {
@@ -93,7 +48,6 @@ export default function PrtifolioScreen() {
       let userId = JSON.parse(userData);
       userId = userId.id;
 
-      // Passa o ID do esporte para a função de busca
       const data = await getPostagensPorUsuario(userId, esporteId);
       setPostagens(data);
     } catch (error) {
@@ -119,7 +73,6 @@ export default function PrtifolioScreen() {
 
   useEffect(() => {
     if (perfis && Object.keys(perfis).length > 0 && !selectedEsporte) {
-      // Seleciona o ID do primeiro esporte para carregar as postagens iniciais
       const primeiroEsporteId = Object.values(perfis).flat()[0]?.esporte_id;
       setSelectedEsporte(primeiroEsporteId);
     }
@@ -131,20 +84,17 @@ export default function PrtifolioScreen() {
     }
   }, [selectedEsporte]);
 
-  // Função para abrir o modal de ações
   const openActionModal = (postagem) => {
     setSelectedPostagem(postagem);
     setIsActionModalVisible(true);
     popOut(); // Fecha os botões animados se estiverem abertos
   };
 
-  // Função para fechar o modal de ações
   const closeActionModal = () => {
     setIsActionModalVisible(false);
     setSelectedPostagem(null);
   };
 
-  // Função para recarregar as postagens após uma ação (update/delete)
   const handleSuccessAction = () => {
     fetchUserPosts(selectedEsporte);
   };
@@ -157,32 +107,8 @@ export default function PrtifolioScreen() {
       </View>
     );
   }
-
   return (
     <View className="flex-1 bg-white">
-      {/* BOTÕES ANIMADOS - Modificados para abrir o modal de ações */}
-      {/* O botão de Lixeira e Edição agora não são mais necessários aqui, pois a ação será feita no item da lista ou no botão principal de postagem */}
-      {/* Mantendo o botão de Nova Postagem e o botão principal */}
-
-      {/* Botão de Nova Postagem (Icon3) - Mantido para navegação para a tela de criação */}
-      <Animated.View
-        style={styleIcon3}
-        className="bg-green-500 absolute rounded-full justify-center items-center"
-      >
-        <Pressable onPress={() => console.log(" Navegar para Nova postagem")}>
-          <Icon name="plus" size={25} color="#FFF" />
-        </Pressable>
-      </Animated.View>
-
-      {/* BOTÃO PRINCIPAL - Mantido para abrir/fechar o menu de ações (se necessário) ou para a nova postagem */}
-      <Pressable
-        className="bg-green-500 w-14 h-14 absolute bottom-10 mb-10 right-5 rounded-full justify-center items-center"
-        style={{ zIndex: 1 }}
-        onPress={() => (pop ? popOut() : popIn())}
-      >
-        <Icon name="plus" size={25} color="#FFF" />
-      </Pressable>
-
       {/* Picker para o esporte */}
       <View style={tw`w-full justify-end rounded-t-5`}>
         <Picker
@@ -214,8 +140,8 @@ export default function PrtifolioScreen() {
             <View className="mb-4 bg-gray-100 p-4 rounded-xl shadow-sm mx-4 mt-2">
               <View style={tw`flex-row justify-between items-start`}>
                 <View>
-                  <Text className="font-bold text-lg mb-1 text-gray-800">
-                    {item.usuario?.name || "Usuário"}
+                  <Text className="font-bold text-[17px] mb-1 text-gray-800">
+                    {item.usuario?.nomeCompletoUsuario || "Usuário"}
                   </Text>
                   <Text className="text-gray-700">{item.textoPostagem}</Text>
                 </View>
