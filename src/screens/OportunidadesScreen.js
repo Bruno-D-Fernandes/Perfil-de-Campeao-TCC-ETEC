@@ -6,6 +6,7 @@ import {
   TextInput,
   FlatList,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import {
   useFonts,
@@ -18,6 +19,7 @@ import oportunidadesService from "../../services/oportunidades";
 import { useEffect, useState, useMemo } from "react";
 import usuarioService from "../../services/usuario";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { inscricoesOportunidades } from "../../services/oportunidades";
 
 export default function OportunidadesScreen() {
   const [nameUser, setNameUser] = useState("Usuário");
@@ -27,6 +29,14 @@ export default function OportunidadesScreen() {
   const [page, setPage] = useState(1);
   const perPage = 10;
   const [searchText, setSearchText] = useState("");
+  const [inscritoAba, setInscritoAba] = useState(false);
+  // Filtros
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [filterEsporte, setFilterEsporte] = useState("");
+  const [filterEstado, setFilterEstado] = useState("");
+  const [filterIdadeMin, setFilterIdadeMin] = useState("");
+  const [filterIdadeMax, setFilterIdadeMax] = useState("");
+  const [appliedFilters, setAppliedFilters] = useState(null);
 
   const fetchAndSetUserData = async () => {
     try {
@@ -47,7 +57,8 @@ export default function OportunidadesScreen() {
   };
 
   const fetchOportunidades = async () => {
-    if (loading || !hasMore || searchText.length > 0) return;
+    // não pagina quando há busca por texto ou filtros aplicados (carregamento específico)
+    if (loading || !hasMore || searchText.length > 0 || appliedFilters) return;
 
     setLoading(true);
     try {
@@ -67,8 +78,80 @@ export default function OportunidadesScreen() {
     }
   };
 
+  const applyFilters = async () => {
+    const filters = {};
+    if (filterEsporte) filters.esporte = filterEsporte;
+    if (filterEstado) filters.estado = filterEstado;
+    if (filterIdadeMin) filters.idadeMinima = Number(filterIdadeMin);
+    if (filterIdadeMax) filters.idadeMaxima = Number(filterIdadeMax);
+
+    setFilterModalVisible(false);
+    setAppliedFilters(Object.keys(filters).length ? filters : null);
+
+    // Faz a chamada ao backend com filtros (página 1) usando oportunidadesService.oportunidadeFiltrar
+    setLoading(true);
+    try {
+      const response = await oportunidadesService.oportunidadeFiltrar(filters);
+      const newItems = response?.data || response || [];
+      setData(newItems);
+      setPage(2);
+      setHasMore(newItems.length >= perPage);
+    } catch (error) {
+      console.error("Erro ao aplicar filtros:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const clearFilters = async () => {
+    setFilterEsporte("");
+    setFilterEstado("");
+    setFilterIdadeMin("");
+    setFilterIdadeMax("");
+    setAppliedFilters(null);
+
+    setLoading(true);
+    try {
+      const response = await usuarioService.oportunidadeData(1, perPage);
+      const newItems = response?.data?.data || response?.data || [];
+      setData(newItems);
+      setPage(2);
+      setHasMore(newItems.length >= perPage);
+    } catch (error) {
+      console.error("Erro ao limpar filtros:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchInscricoes = async () => {
+      try {
+        setLoading(true);
+        setData([]);
+        const response = await inscricoesOportunidades();
+        const inscricoes = response?.data || [];
+
+        setData(inscricoes);
+      } catch (error) {
+        console.error("Erro ao buscar inscrições:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (inscritoAba) {
+      fetchInscricoes();
+    }
+  }, [inscritoAba]);
+
   useEffect(() => {
     const initializeScreenData = async () => {
+      setData([]);
+      setPage(1);
+      setHasMore(true);
+      setSearchText("");
+
       const storedUserData = await AsyncStorage.getItem("user");
       if (storedUserData) {
         try {
@@ -83,12 +166,27 @@ export default function OportunidadesScreen() {
           );
         }
       }
-      fetchAndSetUserData();
-      fetchOportunidades();
+
+      setLoading(true);
+      try {
+        const response = await usuarioService.oportunidadeData(1, perPage);
+        const newItems = response?.data?.data || response?.data || [];
+        setData(newItems);
+        setPage(2); // Próxima página é 2
+        if (newItems.length < perPage) {
+          setHasMore(false);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar oportunidades:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    initializeScreenData();
-  }, []);
+    if (!inscritoAba) {
+      initializeScreenData();
+    }
+  }, [inscritoAba]);
 
   useEffect(() => {
     if (page > 1) {
@@ -111,8 +209,6 @@ export default function OportunidadesScreen() {
 
     return data.filter((item) => {
       const clubeNome = item.clube?.nomeClube?.toLowerCase() || "";
-      const posicaoNome = item.posicao?.nomePosicao?.toLowerCase() || "";
-      const esporteNome = item.esporte?.nomeEsporte?.toLowerCase() || "";
 
       return (
         clubeNome.includes(lowerCaseSearch) ||
@@ -126,7 +222,7 @@ export default function OportunidadesScreen() {
   return (
     <View className="bg-white flex-1 p-4">
       {/* HEADER */}
-      <View className="w-full h-[29%]">
+      <View className="w-full h-[35%]">
         <View className="flex-row items-center justify-between mb-[3%]">
           <Image
             source={require("../../assets/Logo_PerfilDeCampeao.png")}
@@ -156,13 +252,16 @@ export default function OportunidadesScreen() {
             className="text-[24px] font-medium text-[#2E7844]"
             style={{ fontFamily: "Poppins_500Medium" }}
           >
-            Oportunidades
+            {inscritoAba ? "Inscrições" : "Oportunidades"}
           </Text>
         </View>
 
         <View className="w-full h-[19%] flex-row gap-2 mb-[2%]">
           {/*BTN FILTRO*/}
-          <Pressable className="rounded-full bg-[#EFEFEF] h-[100%] w-[14%] items-center justify-center">
+          <Pressable
+            className="rounded-full bg-[#EFEFEF] h-[100%] w-[14%] items-center justify-center"
+            onPress={() => setFilterModalVisible(true)}
+          >
             <Image
               source={require("../../assets/icons/filtro.png")}
               style={{ width: "20px", height: "20px" }}
@@ -177,31 +276,148 @@ export default function OportunidadesScreen() {
             <TextInput
               className="color-gray-600 font-normal w-[80%] h-[90%]"
               style={{ fontFamily: "Poppins_400Regular" }}
-              placeholder="Pesquisar"
+              placeholder="Pesquisar por clube"
               value={searchText}
               onChangeText={setSearchText}
             />
           </View>
         </View>
+
+        {/* Modal de filtros */}
+        <Modal
+          visible={filterModalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setFilterModalVisible(false)}
+        >
+          <View className="flex-1 justify-end bg-black/30">
+            <View className="bg-white p-4 rounded-t-3xl">
+              <Text className="text-lg font-medium mb-2">
+                Filtrar oportunidades
+              </Text>
+
+              <Text className="text-sm text-gray-600 mt-2">Esporte</Text>
+              <TextInput
+                className="border p-2 rounded mt-1"
+                placeholder="Ex: Futebol"
+                value={filterEsporte}
+                onChangeText={setFilterEsporte}
+              />
+
+              <Text className="text-sm text-gray-600 mt-2">
+                Estado / Cidade
+              </Text>
+              <TextInput
+                className="border p-2 rounded mt-1"
+                placeholder="Ex: SP"
+                value={filterEstado}
+                onChangeText={setFilterEstado}
+              />
+
+              <View className="flex-row gap-2 mt-2">
+                <View className="flex-1">
+                  <Text className="text-sm text-gray-600">Idade mínima</Text>
+                  <TextInput
+                    className="border p-2 rounded mt-1"
+                    placeholder="Ex: 12"
+                    keyboardType="numeric"
+                    value={filterIdadeMin}
+                    onChangeText={setFilterIdadeMin}
+                  />
+                </View>
+                <View className="flex-1">
+                  <Text className="text-sm text-gray-600">Idade máxima</Text>
+                  <TextInput
+                    className="border p-2 rounded mt-1"
+                    placeholder="Ex: 18"
+                    keyboardType="numeric"
+                    value={filterIdadeMax}
+                    onChangeText={setFilterIdadeMax}
+                  />
+                </View>
+              </View>
+
+              <View className="flex-row justify-between mt-4">
+                <Pressable
+                  className="p-3 rounded-xl bg-gray-200 flex-1 mr-2 items-center"
+                  onPress={() => {
+                    setFilterModalVisible(false);
+                    clearFilters();
+                  }}
+                >
+                  <Text>Limpar</Text>
+                </Pressable>
+
+                <Pressable
+                  className="p-3 rounded-xl bg-[#49D372] flex-1 ml-2 items-center"
+                  onPress={applyFilters}
+                >
+                  <Text className="text-white">Aplicar</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        <View className="w-full flex-row justify-around mt-[2%]">
+          <Pressable onPress={() => setInscritoAba(false)}>
+            <Text
+              className={`text-[16px] font-medium ${
+                !inscritoAba ? "text-[#2E7844]" : "text-gray-400"
+              }`}
+              style={{ fontFamily: "Poppins_500Medium" }}
+            >
+              Oportunidades
+            </Text>
+            {!inscritoAba && (
+              <View className="h-1 bg-[#2E7844] rounded-full mt-1" />
+            )}
+          </Pressable>
+
+          <Pressable onPress={() => setInscritoAba(true)}>
+            <Text
+              className={`text-[16px] font-medium ${
+                inscritoAba ? "text-[#2E7844]" : "text-gray-400"
+              }`}
+              style={{ fontFamily: "Poppins_500Medium" }}
+            >
+              Inscrições
+            </Text>
+            {inscritoAba && (
+              <View className="h-1 bg-[#2E7844] rounded-full mt-1" />
+            )}
+          </Pressable>
+        </View>
       </View>
 
       {/* FEED */}
-      <FlatList
-        data={filteredData}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => <Oportunidade data={item} />}
-        onEndReached={fetchOportunidades}
-        onEndReachedThreshold={0.2}
-        ListFooterComponent={
-          loading && !searchText ? (
-            <ActivityIndicator
-              size="large"
-              color="#2E7844"
-              style={{ marginVertical: 16 }}
-            />
-          ) : null
-        }
-      />
+
+      {data.length === 0 && !loading ? (
+        <View className="w-full h-[30%] items-center justify-center">
+          <Text className="text-gray-400 text-sm">
+            {inscritoAba
+              ? "Você não tem inscrições no momento"
+              : "Nenhuma oportunidade disponível"}
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredData}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => <Oportunidade data={item} />}
+          onEndReached={fetchOportunidades}
+          onEndReachedThreshold={0.2}
+          ListFooterComponent={
+            loading && !searchText ? (
+              <ActivityIndicator
+                size="large"
+                color="#2E7844"
+                style={{ marginVertical: 16 }}
+              />
+            ) : null
+          }
+        />
+      )}
     </View>
   );
 }

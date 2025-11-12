@@ -12,24 +12,81 @@ export default function Oportunidade({ data }) {
     esporte = {},
     idadeMinima = -1,
     idadeMaxima = -1,
-    data_limite = "",
-    titulo = "",
+    data_limite = "Ainda não implementado",
+    titulo = "Sem titulo implementado",
     descricaoOportunidades = "",
     estadoOportunidade = "",
     enderecoOportunidade = "",
-  } = data || {};
+  } = data.oportunidade || data || {};
 
-  const imagem = data.clube.fotoPerfilClube || null;
+  const { status = null } = data || {};
+  const [localStatus, setLocalStatus] = useState(status || null);
+  const [showStatusInfo, setShowStatusInfo] = useState(false);
+  const statusTimeoutRef = useRef(null);
+
+  const normalizedStatus =
+    (localStatus ?? status)
+      ? String(localStatus ?? status).toLowerCase()
+      : null;
+  let statusKey = null;
+  if (normalizedStatus) {
+    if (normalizedStatus === "pending" || normalizedStatus === "pendente") {
+      statusKey = "pending";
+    } else if (
+      normalizedStatus === "approved" ||
+      normalizedStatus === "aprovado" ||
+      normalizedStatus === "aprovada"
+    ) {
+      statusKey = "approved";
+    } else if (
+      normalizedStatus === "rejected" ||
+      normalizedStatus === "rejeitado" ||
+      normalizedStatus === "rejeitada"
+    ) {
+      statusKey = "rejected";
+    }
+  }
+
+  const statusLabel = {
+    pending: "Pendente",
+    approved: "Aprovado",
+    rejected: "Rejeitado",
+  };
+
+  const statusColor = {
+    pending: "#F59E0B",
+    approved: "#16A34A",
+    rejected: "#EF4444",
+  };
+
+  const statusInfo = {
+    pending: "Sua inscrição está sendo avaliada.",
+    approved: "Sua inscrição foi aprovada!",
+    rejected: "Sua inscrição foi rejeitada.",
+  };
+
+  const handleStatusPress = () => {
+    setShowStatusInfo(true);
+    if (statusTimeoutRef.current) clearTimeout(statusTimeoutRef.current);
+    statusTimeoutRef.current = setTimeout(() => setShowStatusInfo(false), 3000);
+  };
+
+  React.useEffect(() => {
+    return () => {
+      if (statusTimeoutRef.current) clearTimeout(statusTimeoutRef.current);
+    };
+  }, []);
+
+  // console.log("Dados da oportunidade recebidos:", data);
 
   const nomeEsporte = esporte?.nomeEsporte || "Esporte não informado";
 
-  const [mensagem, setMensagem] = useState(""); // Mensagem de feedback
-  const [mensagemTipo, setMensagemTipo] = useState(""); // 'erro' ou 'sucesso'
+  const [mensagem, setMensagem] = useState("");
+  const [mensagemTipo, setMensagemTipo] = useState("");
   const sheetRef = useRef(null);
   const snapPoints = useMemo(() => ["45%", "50%"], []);
 
   const abrirDetalhes = useCallback(() => {
-    // Present the bottom sheet managed by the root provider
     setTimeout(() => {
       sheetRef.current?.present();
     }, 100);
@@ -43,10 +100,12 @@ export default function Oportunidade({ data }) {
   const handleTenhoInteresse = async () => {
     try {
       await inscreverOportunidade(id);
+      setLocalStatus("pendente");
       setMensagemTipo("sucesso");
       setMensagem("Você se inscreveu nesta oportunidade!");
     } catch (error) {
       if (error.response?.status === 409) {
+        setLocalStatus("pendente");
         setMensagemTipo("erro");
         setMensagem("Você já está inscrito nesta oportunidade!");
       } else {
@@ -57,18 +116,45 @@ export default function Oportunidade({ data }) {
     }
   };
 
-  console.log(data);
-
-  const fotoPerfilUrl = data.clube.fotoPerfilClube
-    ? `http://192.168.0.101:8000/storage/${data.clube.fotoPerfilClube}`
-    : null;
+  const fotoPerfilUrl = data?.clube?.fotoPerfilClube
+    ? `http://127.0.0.1:8000/storage/${data.clube.fotoPerfilClube}`
+    : data?.oportunidade?.clube?.fotoPerfilClube
+      ? `http://127.0.0.1:8000/storage/${data.oportunidade.clube.fotoPerfilClube}`
+      : null;
 
   return (
     <View className="w-full mb-4 items-center flex-row bg-white p-4 rounded-3xl border-[2px] border-[#76D292] gap-4">
       <Pressable
         onPress={abrirDetalhes}
-        className="flex-1 flex-row justify-between items-center"
+        className="flex-1  justify-between items-center"
       >
+        {statusKey ? (
+          <Pressable
+            onPress={handleStatusPress}
+            className="px-9 py-1 rounded-xl mb-[10px]"
+            style={{
+              backgroundColor: statusColor[statusKey] || "#E5E7EB",
+            }}
+          >
+            <Text className="text-white text-xs">
+              {statusLabel[statusKey] || status}
+            </Text>
+          </Pressable>
+        ) : null}
+
+        {showStatusInfo && statusKey ? (
+          <Text
+            style={{
+              color: "#6B7280",
+              fontSize: 12,
+              marginBottom: 6,
+              textAlign: "center",
+              maxWidth: 120,
+            }}
+          >
+            {statusInfo[statusKey]}
+          </Text>
+        ) : null}
         <View className="flex-1 flex-row justify-between items-center">
           <View className="rounded-full w-[70px] h-[70px]">
             <Image
@@ -108,7 +194,7 @@ export default function Oportunidade({ data }) {
             </View>
           </View>
 
-          <View>
+          <View className="items-center">
             <Image source={require("../../assets/icons/icon_proximo.png")} />
           </View>
         </View>
@@ -186,7 +272,7 @@ export default function Oportunidade({ data }) {
 
             <View className="gap-1">
               <Text
-                className=" text-gray-600"
+                className=" text-gray-600 text-[18px]"
                 style={{ fontFamily: "Poppins_500Medium" }}
               >
                 {titulo}
@@ -219,12 +305,16 @@ export default function Oportunidade({ data }) {
               </View>
             ) : null}
 
-            <Pressable
-              onPress={handleTenhoInteresse}
-              className="mt-6 p-3 bg-[#49D372] items-center justify-center rounded-xl"
-            >
-              <Text className="text-white font-semibold">Tenho interesse</Text>
-            </Pressable>
+            {statusKey ? null : (
+              <Pressable
+                onPress={handleTenhoInteresse}
+                className="mt-6 p-3 bg-[#49D372] items-center justify-center rounded-xl"
+              >
+                <Text className="text-white font-semibold">
+                  Tenho interesse
+                </Text>
+              </Pressable>
+            )}
           </View>
         </BottomSheetView>
       </BottomSheetModal>
