@@ -231,7 +231,7 @@ export default function PrtifolioScreen() {
               {item.imagens && item.imagens.length > 0 ? (
                 <Image
                   source={{
-                    uri: `http://192.168.0.103:8000/storage/${item.imagens[0].caminhoImagem}`,
+                    uri: `http://127.0.0.1:8000/storage/${item.imagens[0].caminhoImagem}`,
                   }}
                   className="w-full h-48 mt-2 rounded-lg"
                   resizeMode="cover"

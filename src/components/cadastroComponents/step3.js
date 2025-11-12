@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Image, Animated } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Image,
+  Animated,
+  Pressable,
+} from "react-native";
 import tw from "twrnc";
 import {
   useFonts,
@@ -21,6 +28,8 @@ export default function Step3({
   });
 
   const animatedWidth = useState(new Animated.Value(0))[0];
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     const password = formData.senhaUsuario || "";
@@ -125,8 +134,16 @@ export default function Step3({
             placeholderTextColor="#A9A9A9"
             value={formData.senhaUsuario}
             onChangeText={(text) => updateField("senhaUsuario", text)}
-            secureTextEntry
+            secureTextEntry={!showPassword}
           />
+          <Pressable
+            onPress={() => setShowPassword((s) => !s)}
+            style={tw`pr-3`}
+          >
+            <Text style={{ color: "#4ADC76", fontFamily: "Poppins_500Medium" }}>
+              {showPassword ? "Ocultar" : "Mostrar"}
+            </Text>
+          </Pressable>
         </View>
         {formData.senhaUsuario.length > 0 && (
           <View style={tw`mt-2`}>
@@ -179,8 +196,16 @@ export default function Step3({
             onChangeText={(text) =>
               updateField("confirmacaoSenhaUsuario", text)
             }
-            secureTextEntry
+            secureTextEntry={!showConfirmPassword}
           />
+          <Pressable
+            onPress={() => setShowConfirmPassword((s) => !s)}
+            style={tw`pr-3`}
+          >
+            <Text style={{ color: "#4ADC76", fontFamily: "Poppins_500Medium" }}>
+              {showConfirmPassword ? "Ocultar" : "Mostrar"}
+            </Text>
+          </Pressable>
         </View>
       </View>
     </View>

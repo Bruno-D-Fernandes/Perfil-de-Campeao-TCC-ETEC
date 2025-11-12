@@ -311,12 +311,12 @@ export default function ProfileScreen() {
   const fotoPerfilUrl = // Aqui ele ta pegando as fotos da api | provavelmente existe formas melhores de fazer isso --Bruno
     fotoPerfil?.uri ??
     (userData?.fotoPerfilUsuario
-      ? `http://192.168.0.101:8000/storage/${userData.fotoPerfilUsuario}`
+      ? `http://127.0.0.1:8000/storage/${userData.fotoPerfilUsuario}`
       : null);
   const fotoBannerUrl =
     fotoBanner?.uri ??
     (userData?.fotoBannerUsuario
-      ? `http://192.168.0.101:8000/storage/${userData.fotoBannerUsuario}`
+      ? `http://127.0.0.1:8000/storage/${userData.fotoBannerUsuario}`
       : null);
 
   return (
