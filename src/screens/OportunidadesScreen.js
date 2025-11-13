@@ -254,7 +254,7 @@ export default function OportunidadesScreen() {
         <View className="w-full h-[19%] flex-row gap-2 mb-[2%]">
           {/*BTN FILTRO*/}
           <Pressable
-            className="rounded-full bg-[#EFEFEF] h-[100%] w-[14%] items-center justify-center"
+            className="rounded-full bg-[#EFEFEF] h-[50px] w-[50px] items-center justify-center"
             onPress={() => setFilterModalVisible(true)}
           >
             <Image
@@ -263,7 +263,7 @@ export default function OportunidadesScreen() {
             />
           </Pressable>
 
-          <View className="h-[100%] w-[85%] rounded-full bg-[#EFEFEF] gap-4 flex-row items-center">
+          <View className="h-[50px] w-[85%] rounded-full bg-[#EFEFEF] gap-4 flex-row items-center">
             <Image
               source={require("../../assets/icons/pesquisa.png")}
               style={{ width: "22px", height: "22px", marginLeft: 15 }}
@@ -281,39 +281,48 @@ export default function OportunidadesScreen() {
         {/* Modal de filtros */}
         <Modal
           visible={filterModalVisible}
-          animationType="slide"
+          animationType="fade"
           transparent={true}
           onRequestClose={() => setFilterModalVisible(false)}
         >
           <View className="flex-1 justify-end bg-black/30">
             <View className="bg-white p-4 rounded-t-3xl">
-              <Text className="text-lg font-medium mb-2">
+
+              <View className="flex-row items-center justify-between">
+              <Text className="text-lg font-medium mb-2" style={{fontFamily:"Poppins_500Medium"}}>
                 Filtrar oportunidades
               </Text>
 
-              <Text className="text-sm text-gray-600 mt-2">Esporte</Text>
+              <Pressable onPress={() => setFilterModalVisible(false)}>
+                <Image source={require('../../assets/icons/cancelar.png')} className="mb-2"/>
+              </Pressable>
+              </View>
+
+              <Text className="mt-2 text-[18px] font-semibold" styles={{fontFamily:"Poppins_500Medium",}}>Esporte</Text>
               <TextInput
-                className="border p-2 rounded mt-1"
+                className="border border-[#36A958] text-[18px] outline-none p-2 rounded-[10px] mt-1"
                 placeholder="Ex: Futebol"
                 value={filterEsporte}
                 onChangeText={setFilterEsporte}
               />
 
-              <Text className="text-sm text-gray-600 mt-2">
-                Estado / Cidade
-              </Text>
-              <TextInput
-                className="border p-2 rounded mt-1"
-                placeholder="Ex: SP"
-                value={filterEstado}
-                onChangeText={setFilterEstado}
-              />
+              <View className="mt-4"> 
+                <Text className="text-gray-600 mt-2 text-[16px] font-semibold " style={{fontFamily:'Poppins_500Medium',}}>
+                  Estado / Cidade
+                </Text>
+                <TextInput
+                  className="border border-[#36A958] text-[18px] outline-none p-2 rounded-[10px] mt-"
+                  placeholder="Ex: SP"
+                  value={filterEstado}
+                  onChangeText={setFilterEstado}
+                />
+              </View>
 
-              <View className="flex-row gap-2 mt-2">
+              <View className="flex-row gap-2 mt-4 mb-10">
                 <View className="flex-1">
-                  <Text className="text-sm text-gray-600">Idade mínima</Text>
+                  <Text className="text-[16px] text-gray-600 font-semibold" style={{fontFamily:'Poppins_500Medium',}}>Idade mínima</Text>
                   <TextInput
-                    className="border p-2 rounded mt-1"
+                    className="border border-[#36A958] text-[18px] outline-none  p-2 rounded-[10px] mt-1"
                     placeholder="Ex: 12"
                     keyboardType="numeric"
                     value={filterIdadeMin}
@@ -321,9 +330,9 @@ export default function OportunidadesScreen() {
                   />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-sm text-gray-600">Idade máxima</Text>
+                  <Text className="text-[16px] text-gray-600 font-semibold"  style={{fontFamily:'Poppins_500Medium',}}>Idade máxima</Text>
                   <TextInput
-                    className="border p-2 rounded mt-1"
+                    className="border border-[#36A958] text-[18px] outline-none p-2 rounded-[10px] mt-1"
                     placeholder="Ex: 18"
                     keyboardType="numeric"
                     value={filterIdadeMax}
