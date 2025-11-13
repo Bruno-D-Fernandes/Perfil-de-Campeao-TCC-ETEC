@@ -7,51 +7,45 @@ import {
   FlatList,
   ActivityIndicator,
 } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withSpring,
-} from "react-native-reanimated";
-import { getPostagensPorUsuario } from "../../services/postagem";
-
-import tw from "twrnc";
-
 import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-import usuario from "./../../services/usuario";
-import { loadPerfilAll } from "./../../services/perfil";
-// import { postagemData } from "./../../services/postagem"; // Não é necessário aqui
-
-// IMPORTAÇÃO DO NOVO COMPONENTE DE MODAL
+import tw from "twrnc";
+import { getPostagensPorUsuario } from "../../services/postagem";
+import usuario from "../../services/usuario";
+import { loadPerfilAll } from "../../services/perfil";
+import FloatingOptionsModal from "../components/portfolioComponents/FloatingOptionsModal";
 import PortfolioActionModal from "../components/portfolioComponents/PortfolioActionModal";
 
-export default function PrtifolioScreen() {
+export default function PortifolioScreen() {
   const [perfilMain, setPerfilMain] = useState({});
-  const [pop, setPop] = useState(false);
   const [postagens, setPostagens] = useState([]);
-
   const [loading, setLoading] = useState(true);
   const [selectedEsporte, setSelectedEsporte] = useState(null);
   const [perfis, setPerfis] = useState([]);
 
-  // Estados para o Modal de Ações
-  const [isActionModalVisible, setIsActionModalVisible] = useState(false);
+  // Estados dos modais
+  const [showFloatingModal, setShowFloatingModal] = useState(false);
+  const [showActionModal, setShowActionModal] = useState(false);
   const [selectedPostagem, setSelectedPostagem] = useState(null);
+  const [modalPos, setModalPos] = useState({ top: 0, left: 0 });
+  const [modalMode, setModalMode] = useState("edit");
+
+  const handleCloseAll = () => {
+    setShowFloatingModal(false);
+    setShowActionModal(false);
+    setSelectedPostagem(null);
+    setModalMode("edit");
+  };
 
   const fetchUserPosts = async (esporteId) => {
     setLoading(true);
     try {
       const userData = await AsyncStorage.getItem("user");
-      let userId = JSON.parse(userData);
-      userId = userId.id;
-
+      const userId = JSON.parse(userData).id;
       const data = await getPostagensPorUsuario(userId, esporteId);
       setPostagens(data);
     } catch (error) {
-      console.error("Erro ao buscar postagens do usuário:", error);
+      console.error("Erro ao buscar postagens:", error);
     } finally {
       setLoading(false);
     }
@@ -59,7 +53,7 @@ export default function PrtifolioScreen() {
 
   const loadUserData = async () => {
     try {
-      const response = await usuario.splashUser();
+      await usuario.splashUser();
       const responsePerfil = await loadPerfilAll();
       setPerfis(responsePerfil);
     } catch (err) {
@@ -84,100 +78,139 @@ export default function PrtifolioScreen() {
     }
   }, [selectedEsporte]);
 
-  const openActionModal = (postagem) => {
+  const handleOpenOptions = (event, postagem) => {
+    const { pageY, pageX } = event.nativeEvent;
+    setModalPos({ top: pageY - 80, left: pageX - 120 });
     setSelectedPostagem(postagem);
-    setIsActionModalVisible(true);
-    popOut(); // Fecha os botões animados se estiverem abertos
+    setShowFloatingModal(true);
   };
 
-  const closeActionModal = () => {
-    setIsActionModalVisible(false);
+  const handleOpenActionModal = (action) => {
+    setShowFloatingModal(false);
+    setModalMode(action);
+    setShowActionModal(true);
+  };
+
+  const handleCloseActionModal = () => {
+    setShowActionModal(false);
     setSelectedPostagem(null);
+    setModalMode("edit");
   };
 
   const handleSuccessAction = () => {
     fetchUserPosts(selectedEsporte);
+    handleCloseAll();
   };
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center bg-white">
+      <View style={tw`flex-1 justify-center items-center bg-white`}>
         <ActivityIndicator size="large" color="#49D372" />
-        <Text className="mt-2 text-gray-500">Carregando postagens...</Text>
+        <Text style={tw`mt-2 text-gray-500`}>Carregando postagens...</Text>
       </View>
     );
   }
-  return (
-    <View className="flex-1 bg-white">
-      {/* Picker para o esporte */}
-      <View style={tw`w-full justify-end rounded-t-5`}>
-        <Picker
-          style={tw`w-full px-4 h-12 border-none bg-red-200 rounded-t-5`}
-          selectedValue={selectedEsporte}
-          onValueChange={(value) => setSelectedEsporte(value)}
-        >
-          {Object.entries(perfis).map(([nomeEsporte, listaDePerfis]) => (
-            <Picker.Item
-              key={listaDePerfis[0].esporte.id}
-              label={nomeEsporte}
-              value={listaDePerfis[0].esporte.id}
-            />
-          ))}
-        </Picker>
-      </View>
 
-      {/* FEED DE POSTAGENS */}
+  return (
+    <View style={tw`flex-1 bg-white`}>
+      <View className="p-4"> 
+        <Text style={{fontFamily:'Poppins_500Medium', fontSize: 30,}}>Portfólio</Text>
+        <Text style={{fontFamily:'Poppins_500Medium', fontSize: 18, color:"#2e7844",}}>Minhas postagens</Text>
+      </View>
+      <View className="w-[50%] bg-[#61D48340] rounded-[30px] p-2 m-3">
+                    <Picker
+                      selectedValue={selectedEsporte}
+                      onValueChange={(value) => setSelectedEsporte(value)}
+                      style={{
+                        backgroundColor: "#61D48300",
+                        width: "100%",
+                        color: "#2E7844",
+                        fontFamily: "Poppins_500Medium",
+                        borderRadius: 5,
+                      }}
+                    >
+                      {Object.entries(perfis).map(([nomeEsporte, listaDePerfis]) => (
+                        <Picker.Item
+                          key={listaDePerfis[0].esporte.id}
+                          label={nomeEsporte}
+                          value={nomeEsporte}
+                        />
+                      ))}
+                    </Picker>
+                </View>
+
       {postagens.length === 0 ? (
-        <Text className="text-center text-gray-500 mt-10">
+        <Text style={tw`text-center text-gray-500 mt-10`}>
           Nenhuma postagem encontrada.
         </Text>
       ) : (
         <FlatList
           data={postagens}
           keyExtractor={(item) => item.id.toString()}
-          showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
-            <View className="mb-4 bg-gray-100 p-4 rounded-xl shadow-sm mx-4 mt-2">
-              <View style={tw`flex-row justify-between items-start`}>
-                <View>
-                  <Text className="font-bold text-[17px] mb-1 text-gray-800">
+            <View
+              style={tw`bg-white mx-4 my-3 p-4 rounded-3xl border border-[#49D372] shadow-sm`}
+            >
+              <View style={tw`gap-3 mb-3`}>
+                <View style={tw`flex-row items-center`}>
+                  <Image
+                    source={{
+                      uri:
+                        item.usuario?.fotoPerfil ||
+                        "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+                    }}
+                    style={tw`w-10 h-10 rounded-full mr-2`}
+                  />
+                  <Text style={tw`text-gray-800 font-semibold text-[16px]`}>
                     {item.usuario?.nomeCompletoUsuario || "Usuário"}
                   </Text>
-                  <Text className="text-gray-700">{item.textoPostagem}</Text>
                 </View>
-                {/* Botão de Ações (Update/Delete) no item da lista */}
-                <Pressable
-                  onPress={() => openActionModal(item)}
-                  style={tw`p-2`}
-                >
-                  <Icon name="ellipsis-v" size={20} color="#374151" />
-                </Pressable>
+                <Text style={tw`text-gray-700 text-[14px]`}>
+                  {item.textoPostagem || "Sem legenda"}
+                </Text>
               </View>
 
-              {item.imagens && item.imagens.length > 0 ? (
+              {item.imagens?.length > 0 && (
                 <Image
                   source={{
                     uri: `http://127.0.0.1:8000/storage/${item.imagens[0].caminhoImagem}`,
                   }}
-                  className="w-full h-48 mt-2 rounded-lg"
+                  style={tw`w-full h-48 rounded-2xl mb-3`}
                   resizeMode="cover"
                 />
-              ) : (
-                <View className="w-full h-48 mt-2 bg-gray-300 rounded-lg justify-center items-center">
-                  <Text className="text-gray-500">Sem imagem</Text>
-                </View>
               )}
+
+              <View style={tw`flex-row justify-end gap-4`}>
+                <Pressable
+                  onPress={(e) => handleOpenOptions(e, item)}
+                  style={tw`p-2`}
+                >
+                  <View style={tw`flex-row gap-1 items-center justify-center`}>
+                    <View style={tw`bg-[#61D483] w-2 h-2 rounded-full`} />
+                    <View style={tw`bg-[#61D483] w-2 h-2 rounded-full`} />
+                    <View style={tw`bg-[#61D483] w-2 h-2 rounded-full`} />
+                  </View>
+                </Pressable>
+              </View>
             </View>
           )}
         />
       )}
 
-      {/* O NOVO MODAL DE AÇÕES */}
+      <FloatingOptionsModal
+        visible={showFloatingModal}
+        onClose={() => setShowFloatingModal(false)}
+        onEdit={() => handleOpenActionModal("edit")}
+        onDelete={() => handleOpenActionModal("delete")}
+        position={modalPos}
+      />
+
       {selectedPostagem && (
         <PortfolioActionModal
-          isVisible={isActionModalVisible}
-          onClose={closeActionModal}
+          isVisible={showActionModal}
+          onClose={handleCloseActionModal}
           postagem={selectedPostagem}
+          mode={modalMode}
           onSuccess={handleSuccessAction}
         />
       )}
