@@ -19,6 +19,8 @@ export default function Oportunidade({ data }) {
     enderecoOportunidade = "",
   } = data.oportunidade || data || {};
 
+  console.log("data", data);
+
   const { status = null } = data || {};
   const [localStatus, setLocalStatus] = useState(status || null);
   const [showStatusInfo, setShowStatusInfo] = useState(false);

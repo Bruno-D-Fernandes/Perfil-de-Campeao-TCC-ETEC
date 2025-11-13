@@ -210,12 +210,7 @@ export default function OportunidadesScreen() {
     return data.filter((item) => {
       const clubeNome = item.clube?.nomeClube?.toLowerCase() || "";
 
-      return (
-        clubeNome.includes(lowerCaseSearch) ||
-        posicaoNome.includes(lowerCaseSearch) ||
-        esporteNome.includes(lowerCaseSearch) ||
-        titulo.includes(lowerCaseSearch)
-      );
+      return clubeNome.includes(lowerCaseSearch);
     });
   }, [data, searchText]);
 
