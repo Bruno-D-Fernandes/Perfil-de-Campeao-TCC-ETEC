@@ -67,8 +67,9 @@ export default function PortifolioScreen() {
 
   useEffect(() => {
     if (perfis && Object.keys(perfis).length > 0 && !selectedEsporte) {
-      const primeiroEsporteId = Object.values(perfis).flat()[0]?.esporte_id;
-      setSelectedEsporte(primeiroEsporteId);
+      const primeiro = Object.values(perfis).flat()[0];
+      const primeiroEsporteId = primeiro?.esporte?.id ?? primeiro?.esporte_id ?? null;
+      if (primeiroEsporteId != null) setSelectedEsporte(primeiroEsporteId);
     }
   }, [perfis]);
 
@@ -111,6 +112,7 @@ export default function PortifolioScreen() {
     );
   }
 
+
   return (
     <View style={tw`flex-1 bg-white`}>
       <View className="p-4"> 
@@ -129,13 +131,16 @@ export default function PortifolioScreen() {
                         borderRadius: 5,
                       }}
                     >
-                      {Object.entries(perfis).map(([nomeEsporte, listaDePerfis]) => (
-                        <Picker.Item
-                          key={listaDePerfis[0].esporte.id}
-                          label={nomeEsporte}
-                          value={nomeEsporte}
-                        />
-                      ))}
+                      {Object.entries(perfis).map(([nomeEsporte, listaDePerfis]) => {
+                        const id = listaDePerfis?.[0]?.esporte?.id ?? listaDePerfis?.[0]?.esporte_id;
+                        return (
+                          <Picker.Item
+                            key={id ?? nomeEsporte}
+                            label={nomeEsporte}
+                            value={id}
+                          />
+                        );
+                      })}
                     </Picker>
                 </View>
 
