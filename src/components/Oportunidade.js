@@ -86,7 +86,7 @@ export default function Oportunidade({ data }) {
   const [mensagem, setMensagem] = useState("");
   const [mensagemTipo, setMensagemTipo] = useState("");
   const sheetRef = useRef(null);
-  const snapPoints = useMemo(() => ["45%", "50%"], []);
+  const snapPoints = useMemo(() => ["60%", "75%"], []);
 
   const abrirDetalhes = useCallback(() => {
     setTimeout(() => {
@@ -157,49 +157,65 @@ export default function Oportunidade({ data }) {
             {statusInfo[statusKey]}
           </Text>
         ) : null}
-        <View className="flex-1 flex-row justify-between items-center">
-          <View className="rounded-full w-[70px] h-[70px]">
-            <Image
-              source={
-                fotoPerfilUrl
-                  ? { uri: fotoPerfilUrl }
-                  : require("../../assets/perfil/fotoPerfil.png")
-              }
-              style={{
-                width: 70,
-                height: 70,
-                borderRadius: 100,
-              }}
-            />
-          </View>
+        <View className="flex-row items-center justify-between w-full">
 
-          <View className="w-[70%] justify-center gap-1">
-            <Text
-              className=" text-[16px]"
-              style={{ fontFamily: "Poppins_500Medium" }}
-            >
-              {clube.nomeClube}
-            </Text>
-            <View className="flex-row items-center gap-2">
-              <Text
-                className="text-gray-500 "
-                style={{ fontFamily: "Poppins_500Medium" }}
-              >
-                {posicao.nomePosicao}
-              </Text>
-              <Text
-                className="text-gray-400 text-[13px]"
-                style={{ fontFamily: "Poppins_500Medium" }}
-              >
-                {nomeEsporte} - {idadeMinima} a {idadeMaxima} anos
-              </Text>
-            </View>
-          </View>
+  {/* Avatar + textos (lado esquerdo) */}
+  <View className="flex-row flex-1 items-center gap-3">
+    
+    {/* Foto */}
+    <Image
+      source={
+        fotoPerfilUrl
+          ? { uri: fotoPerfilUrl }
+          : require("../../assets/perfil/fotoPerfil.png")
+      }
+      style={{
+        width: 60,     // reduzido para caber em telas pequenas
+        height: 60,
+        borderRadius: 100,
+      }}
+    />
 
-          <View className="items-center">
-            <Image source={require("../../assets/icons/icon_proximo.png")} />
-          </View>
-        </View>
+    {/* Textos */}
+    <View className="flex-1"> 
+      <Text
+        className="text-[15px]"
+        numberOfLines={1}
+        style={{ fontFamily: "Poppins_500Medium" }}
+      >
+        {clube.nomeClube}
+      </Text>
+
+      <View className="flex-row flex-wrap items-center">
+        <Text
+          className="text-gray-500 mr-2"
+          style={{ fontFamily: "Poppins_500Medium" }}
+        >
+          {posicao.nomePosicao}
+        </Text>
+
+        <Text
+          className="text-gray-400 text-[13px] flex-shrink"
+          numberOfLines={1}
+          style={{ fontFamily: "Poppins_500Medium" }}
+        >
+          {nomeEsporte} - {idadeMinima} a {idadeMaxima} anos
+        </Text>
+      </View>
+    </View>
+  </View>
+
+  {/* Ícone seta */}
+  <View className="pl-3">
+    <Image
+      source={require("../../assets/icons/icon_proximo.png")}
+      style={{ width: 20, height: 20 }}
+      resizeMode="contain"
+    />
+  </View>
+
+</View>
+
       </Pressable>
 
       <BottomSheetModal
