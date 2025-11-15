@@ -20,6 +20,8 @@ import { useEffect, useState, useMemo } from "react";
 import usuarioService from "../../services/usuario";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { inscricoesOportunidades } from "../../services/oportunidades";
+import { useNavigation } from "@react-navigation/native";
+import ChatScreen from "./ChatScreen";
 
 export default function OportunidadesScreen() {
   const [nameUser, setNameUser] = useState("Usuário");
@@ -37,6 +39,8 @@ export default function OportunidadesScreen() {
   const [filterIdadeMin, setFilterIdadeMin] = useState("");
   const [filterIdadeMax, setFilterIdadeMax] = useState("");
   const [appliedFilters, setAppliedFilters] = useState(null);
+
+    const navigation = useNavigation();
 
   const fetchAndSetUserData = async () => {
     try {
@@ -218,19 +222,25 @@ export default function OportunidadesScreen() {
     <View className="bg-white flex-1 p-4">
       {/* HEADER */}
       <View className="w-full pb-4">
-        <View className="flex-row items-center justify-between mb-[3%]">
+        <View className="w-full flex-row items-center justify-between mb-[3%]">
           <Image
             source={require("../../assets/Logo_PerfilDeCampeao.png")}
             style={{ width: "50px", height: "50px" }}
             resizeMode="stretch"
           />
 
-          <View className="w-[45px] h-[45px] flex-row items-center justify-center">
-            {/*BTN chat*/}
-            <Pressable className="rounded-full bg-[#EFEFEF] h-[100%] w-[100%] items-center justify-center">
+          <View className="w-[30%] h-[45px] flex-row items-center justify-center gap-4">
+            <Pressable onPress={() => navigation.navigate("Chat")} className="rounded-full bg-[#EFEFEF] h-[100%] w-11 items-center justify-center">
               <Image
                 source={require("../../assets/icons/mensagem.png")}
                 style={{ width: "20px", height: "20px" }}
+              />
+            </Pressable>
+
+            <Pressable onPress={() => navigation.navigate("Config")} className="rounded-full bg-[#EFEFEF] h-[100%] w-11 items-center justify-center">
+              <Image
+                source={require("../../assets/icons/config.png")}
+                style={{ width: "23px", height: "20px", tintColor:'#36A958' }}
               />
             </Pressable>
           </View>

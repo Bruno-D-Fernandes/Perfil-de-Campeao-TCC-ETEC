@@ -24,6 +24,7 @@ import CadastroScreen from "./src/screens/CadastroScreen";
 import NotificaScreen from "./src/screens/NotificaScreen";
 import PortfolioScreen from "./src/screens/PortfolioScreen";
 import PerfilCrudScreen from "./src/screens/PerfilCrudScreen";
+import ChatScreen from "./src/screens/ChatScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -31,6 +32,7 @@ const Tab = createBottomTabNavigator();
 // ---
 function MainTabs() {
   return (
+    
     <Tab.Navigator
       tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={({ route }) => ({
@@ -182,8 +184,15 @@ export default function App() {
             <Stack.Screen
               name="Config"
               component={ConfigScreen}
-              options={{ headerShown: true }}
+              options={{ headerShown: false }}
             />
+
+            <Stack.Screen 
+              name="Chat" 
+              component={ChatScreen} 
+              options={{ headerShown: false }}
+            />
+
             <Stack.Screen
               name="PerfilCrudScreen"
               component={PerfilCrudScreen}

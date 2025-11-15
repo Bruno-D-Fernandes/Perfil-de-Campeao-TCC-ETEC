@@ -159,10 +159,8 @@ export default function Oportunidade({ data }) {
         ) : null}
         <View className="flex-row items-center justify-between w-full">
 
-  {/* Avatar + textos (lado esquerdo) */}
   <View className="flex-row flex-1 items-center gap-3">
     
-    {/* Foto */}
     <Image
       source={
         fotoPerfilUrl
@@ -170,13 +168,12 @@ export default function Oportunidade({ data }) {
           : require("../../assets/perfil/fotoPerfil.png")
       }
       style={{
-        width: 60,     // reduzido para caber em telas pequenas
+        width: 60,  
         height: 60,
         borderRadius: 100,
       }}
     />
 
-    {/* Textos */}
     <View className="flex-1"> 
       <Text
         className="text-[15px]"
@@ -205,7 +202,6 @@ export default function Oportunidade({ data }) {
     </View>
   </View>
 
-  {/* Ícone seta */}
   <View className="pl-3">
     <Image
       source={require("../../assets/icons/icon_proximo.png")}
