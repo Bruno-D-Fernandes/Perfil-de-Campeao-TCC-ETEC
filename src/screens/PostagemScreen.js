@@ -4,6 +4,7 @@ import React, {
   useLayoutEffect,
   useMemo,
   useRef,
+  useCallback,
 } from "react";
 import {
   View,
@@ -18,7 +19,7 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Platform } from "react-native";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import tw from "twrnc";
@@ -49,6 +50,10 @@ export default function PostagemScreen() {
 
   const abrirBottomSheet = () => {
     if (sheetRef.current) sheetRef.current.present();
+  };
+
+  const fecharBottomSheet = () => {
+    if (sheetRef.current) sheetRef.current.dismiss();
   };
 
   const abrirModalLocal = () => {
@@ -84,6 +89,15 @@ export default function PostagemScreen() {
   useEffect(() => {
     loadUserData();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        fecharBottomSheet();
+        setShowModalLocal(false);
+      };
+    }, [])
+  );
 
   useEffect(() => {
     if (viewError) {
@@ -162,7 +176,9 @@ export default function PostagemScreen() {
 
       const response = await postagemData(formData);
       console.log(response);
-      // Ao postar com sucesso, navega para a aba Portfolio
+      // Ao postar com sucesso, fecha o BottomSheet e navega para a aba Portfolio
+      fecharBottomSheet();
+      setShowModalLocal(false);
       setIsPosting(false);
       navigation.navigate("Portfolio");
     } catch (e) {

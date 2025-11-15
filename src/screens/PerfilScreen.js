@@ -12,6 +12,7 @@ import {
   Platform,
 } from "react-native";
 import { useState, useEffect, useRef, useMemo } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import tw from "twrnc";
 import usuario from "./../../services/usuario";
@@ -53,12 +54,6 @@ export default function ProfileScreen() {
   });
   const [campoAtual, setCampoAtual] = useState(null);
   const [valorCampo, setValorCampo] = useState("");
-
-  // Multiplos perfis
-  // Multiplos perfis
-  // Multiplos perfis
-  // Multiplos perfis
-  // Multiplos perfis
 
   const abrirModalAtualizacao = (key, label) => {
     setCampoAtual({ key, label });
@@ -224,9 +219,18 @@ export default function ProfileScreen() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
+      try {
+        const updated = await usuario.splashUser();
+        if (updated && updated.data) {
+          await AsyncStorage.setItem("user", JSON.stringify(updated.data));
+          setUserData(updated.data);
+        }
+      } catch (inner) {
+        console.warn("Falha ao atualizar AsyncStorage:", inner);
+      }
+
       await loadUserData();
       setShowModal(false);
-      Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
     } catch (err) {
       console.error("Erro ao salvar perfil:", err.response?.data || err);
       setError(err.response?.data?.message || "Erro ao atualizar perfil.");
@@ -237,10 +241,12 @@ export default function ProfileScreen() {
 
   const loadUserData = async () => {
     try {
-      if (userData) setLoading(true);
+      setLoading(true);
       const response = await usuario.splashUser();
       setUserData(response.data);
       setError(null);
+
+      await AsyncStorage.setItem("user", JSON.stringify(response.data));
 
       const responsePerfil = await loadPerfilAll();
       setPerfis(responsePerfil);
@@ -341,7 +347,7 @@ export default function ProfileScreen() {
             style={tw`absolute right-5 top-3 p-2 rounded-full z-10`}
           >
             <Image
-              source={require("../../assets/perfil/config_icone.png")}
+              source={require("../../assets/icons/edit.png")}
               style={{ width: 30, height: 30 }}
             />
           </Pressable>
@@ -384,10 +390,6 @@ export default function ProfileScreen() {
             ))}
           </View>
 
-          {/* MÚLTIPLOS PERFIS */}
-          {/* MÚLTIPLOS PERFIS */}
-          {/* MÚLTIPLOS PERFIS */}
-          {/* MÚLTIPLOS PERFIS */}
           {/* MÚLTIPLOS PERFIS */}
 
           {modalEsportes && (

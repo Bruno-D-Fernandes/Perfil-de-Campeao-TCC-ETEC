@@ -68,7 +68,8 @@ export default function PortifolioScreen() {
   useEffect(() => {
     if (perfis && Object.keys(perfis).length > 0 && !selectedEsporte) {
       const primeiro = Object.values(perfis).flat()[0];
-      const primeiroEsporteId = primeiro?.esporte?.id ?? primeiro?.esporte_id ?? null;
+      const primeiroEsporteId =
+        primeiro?.esporte?.id ?? primeiro?.esporte_id ?? null;
       if (primeiroEsporteId != null) setSelectedEsporte(primeiroEsporteId);
     }
   }, [perfis]);
@@ -103,48 +104,54 @@ export default function PortifolioScreen() {
     handleCloseAll();
   };
 
-  if (loading) {
-    return (
-      <View style={tw`flex-1 justify-center items-center bg-white`}>
-        <ActivityIndicator size="large" color="#49D372" />
-        <Text style={tw`mt-2 text-gray-500`}>Carregando postagens...</Text>
-      </View>
-    );
-  }
-
-
   return (
     <View style={tw`flex-1 bg-white`}>
-      <View className="p-4"> 
-        <Text style={{fontFamily:'Poppins_500Medium', fontSize: 30,}}>Portfólio</Text>
-        <Text style={{fontFamily:'Poppins_500Medium', fontSize: 18, color:"#2e7844",}}>Minhas postagens</Text>
+      <View className="p-4">
+        <Text style={{ fontFamily: "Poppins_500Medium", fontSize: 30 }}>
+          Portfólio
+        </Text>
+        <Text
+          style={{
+            fontFamily: "Poppins_500Medium",
+            fontSize: 18,
+            color: "#2e7844",
+          }}
+        >
+          Minhas postagens
+        </Text>
       </View>
       <View className="w-[50%] bg-[#61D48340] rounded-[30px] p-2 m-3">
-                    <Picker
-                      selectedValue={selectedEsporte}
-                      onValueChange={(value) => setSelectedEsporte(value)}
-                      style={{
-                        backgroundColor: "#61D48300",
-                        width: "100%",
-                        color: "#2E7844",
-                        fontFamily: "Poppins_500Medium",
-                        borderRadius: 5,
-                      }}
-                    >
-                      {Object.entries(perfis).map(([nomeEsporte, listaDePerfis]) => {
-                        const id = listaDePerfis?.[0]?.esporte?.id ?? listaDePerfis?.[0]?.esporte_id;
-                        return (
-                          <Picker.Item
-                            key={id ?? nomeEsporte}
-                            label={nomeEsporte}
-                            value={id}
-                          />
-                        );
-                      })}
-                    </Picker>
-                </View>
+        <Picker
+          selectedValue={selectedEsporte}
+          onValueChange={(value) => setSelectedEsporte(value)}
+          style={{
+            backgroundColor: "#61D48300",
+            width: "100%",
+            color: "#2E7844",
+            fontFamily: "Poppins_500Medium",
+            borderRadius: 5,
+          }}
+        >
+          {Object.entries(perfis).map(([nomeEsporte, listaDePerfis]) => {
+            const id =
+              listaDePerfis?.[0]?.esporte?.id ?? listaDePerfis?.[0]?.esporte_id;
+            return (
+              <Picker.Item
+                key={id ?? nomeEsporte}
+                label={nomeEsporte}
+                value={id}
+              />
+            );
+          })}
+        </Picker>
+      </View>
 
-      {postagens.length === 0 ? (
+      {loading ? (
+        <View style={tw`flex-1 items-center justify-center mt-8`}>
+          <ActivityIndicator size="large" color="#49D372" />
+          <Text style={tw`mt-2 text-gray-500`}>Carregando postagens...</Text>
+        </View>
+      ) : postagens.length === 0 ? (
         <Text style={tw`text-center text-gray-500 mt-10`}>
           Nenhuma postagem encontrada.
         </Text>
