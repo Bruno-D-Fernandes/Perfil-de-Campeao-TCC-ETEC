@@ -217,7 +217,7 @@ export default function OportunidadesScreen() {
   return (
     <View className="bg-white flex-1 p-4">
       {/* HEADER */}
-      <View className="w-full h-[35%]">
+      <View className="w-full pb-4">
         <View className="flex-row items-center justify-between mb-[3%]">
           <Image
             source={require("../../assets/Logo_PerfilDeCampeao.png")}
@@ -411,12 +411,13 @@ export default function OportunidadesScreen() {
           renderItem={({ item }) => <Oportunidade data={item} />}
           onEndReached={fetchOportunidades}
           onEndReachedThreshold={0.2}
+          contentContainerStyle={{ paddingTop:"4%" }}
           ListFooterComponent={
             loading && !searchText ? (
               <ActivityIndicator
                 size="large"
                 color="#2E7844"
-                style={{ marginVertical: 16 }}
+                style={{ marginVertical: 16, marginTop:20, }}
               />
             ) : null
           }
