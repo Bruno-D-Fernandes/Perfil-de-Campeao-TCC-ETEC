@@ -26,6 +26,7 @@ import Animated, {
   FadeOut,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import usuarioService from "../../services/usuario";
 
 import Step1 from "../components/cadastroComponents/step1";
 import Step2 from "../components/cadastroComponents/step2";
@@ -105,6 +106,10 @@ export default function CadastroScreen() {
       const token = await usuario.createUser(formData);
       await AsyncStorage.setItem("token", token.data.access_token);
 
+      const response = await usuarioService.perfilUser();
+      console.log('aqui esta a response', response);
+      const userObj = response?.data || response;
+      await AsyncStorage.setItem("user", JSON.stringify(userObj));
       setCurrentStep(3);
       progress.value = withTiming(100, { duration: 500 });
     } catch (error) {

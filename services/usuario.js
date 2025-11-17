@@ -64,7 +64,7 @@ const editUser = async (formData, id) => {
 
 
 const deleteUser = (id) => {
-  return api.delete(`/destroy/${id}`);
+  return api.delete(`/delete/${id}`);
 };
 
 const logoutUser = () => {

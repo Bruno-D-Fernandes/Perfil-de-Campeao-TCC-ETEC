@@ -74,6 +74,7 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
                 height: "100%",
                 fontSize: 14,
                 fontFamily: "Poppins_500Medium",
+                width: 10
               }}
               placeholder="DD/MM/AAAA"
               placeholderTextColor="#A9A9A9"

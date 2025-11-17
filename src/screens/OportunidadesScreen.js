@@ -49,7 +49,9 @@ export default function OportunidadesScreen() {
 
       const userObj = response?.data || response || null;
       if (userObj) {
+        setLoading(true)
         await AsyncStorage.setItem("user", JSON.stringify(userObj));
+        setLoading(false)
         const firstName = userObj?.nomeCompletoUsuario
           ? String(userObj.nomeCompletoUsuario).split(" ")[0]
           : "Usuário";
