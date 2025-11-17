@@ -40,7 +40,7 @@ export default function OportunidadesScreen() {
   const [filterIdadeMax, setFilterIdadeMax] = useState("");
   const [appliedFilters, setAppliedFilters] = useState(null);
 
-    const navigation = useNavigation();
+  const navigation = useNavigation();
 
   const fetchAndSetUserData = async () => {
     try {
@@ -230,17 +230,23 @@ export default function OportunidadesScreen() {
           />
 
           <View className="w-[30%] h-[45px] flex-row items-center justify-center gap-4">
-            <Pressable onPress={() => navigation.navigate("Chat")} className="rounded-full bg-[#EFEFEF] h-[100%] w-11 items-center justify-center">
+            <Pressable
+              onPress={() => navigation.navigate("Chat")}
+              className="rounded-full bg-[#EFEFEF] h-[100%] w-11 items-center justify-center"
+            >
               <Image
                 source={require("../../assets/icons/mensagem.png")}
                 style={{ width: "20px", height: "20px" }}
               />
             </Pressable>
 
-            <Pressable onPress={() => navigation.navigate("Config")} className="rounded-full bg-[#EFEFEF] h-[100%] w-11 items-center justify-center">
+            <Pressable
+              onPress={() => navigation.navigate("Config")}
+              className="rounded-full bg-[#EFEFEF] h-[100%] w-11 items-center justify-center"
+            >
               <Image
                 source={require("../../assets/icons/config.png")}
-                style={{ width: "23px", height: "20px", tintColor:'#36A958' }}
+                style={{ width: "23px", height: "20px", tintColor: "#36A958" }}
               />
             </Pressable>
           </View>
@@ -297,18 +303,28 @@ export default function OportunidadesScreen() {
         >
           <View className="flex-1 justify-end bg-black/30">
             <View className="bg-white p-4 rounded-t-3xl">
-
               <View className="flex-row items-center justify-between">
-              <Text className="text-lg font-medium mb-2" style={{fontFamily:"Poppins_500Medium"}}>
-                Filtrar oportunidades
-              </Text>
+                <Text
+                  className="text-lg font-medium mb-2"
+                  style={{ fontFamily: "Poppins_500Medium" }}
+                >
+                  Filtrar oportunidades
+                </Text>
 
-              <Pressable onPress={() => setFilterModalVisible(false)}>
-                <Image source={require('../../assets/icons/cancelar.png')} className="mb-2"/>
-              </Pressable>
+                <Pressable onPress={() => setFilterModalVisible(false)}>
+                  <Image
+                    source={require("../../assets/icons/cancelar.png")}
+                    className="mb-2"
+                  />
+                </Pressable>
               </View>
 
-              <Text className="mt-2 text-[18px] font-semibold" styles={{fontFamily:"Poppins_500Medium",}}>Esporte</Text>
+              <Text
+                className="mt-2 text-[18px] font-semibold"
+                styles={{ fontFamily: "Poppins_500Medium" }}
+              >
+                Esporte
+              </Text>
               <TextInput
                 className="border border-[#36A958] text-[18px] outline-none p-2 rounded-[10px] mt-1"
                 placeholder="Ex: Futebol"
@@ -316,8 +332,11 @@ export default function OportunidadesScreen() {
                 onChangeText={setFilterEsporte}
               />
 
-              <View className="mt-4"> 
-                <Text className="text-gray-600 mt-2 text-[16px] font-semibold " style={{fontFamily:'Poppins_500Medium',}}>
+              <View className="mt-4">
+                <Text
+                  className="text-gray-600 mt-2 text-[16px] font-semibold "
+                  style={{ fontFamily: "Poppins_500Medium" }}
+                >
                   Estado / Cidade
                 </Text>
                 <TextInput
@@ -330,7 +349,12 @@ export default function OportunidadesScreen() {
 
               <View className="flex-row gap-2 mt-4 mb-10">
                 <View className="flex-1">
-                  <Text className="text-[16px] text-gray-600 font-semibold" style={{fontFamily:'Poppins_500Medium',}}>Idade mínima</Text>
+                  <Text
+                    className="text-[16px] text-gray-600 font-semibold"
+                    style={{ fontFamily: "Poppins_500Medium" }}
+                  >
+                    Idade mínima
+                  </Text>
                   <TextInput
                     className="border border-[#36A958] text-[18px] outline-none  p-2 rounded-[10px] mt-1"
                     placeholder="Ex: 12"
@@ -340,7 +364,12 @@ export default function OportunidadesScreen() {
                   />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-[16px] text-gray-600 font-semibold"  style={{fontFamily:'Poppins_500Medium',}}>Idade máxima</Text>
+                  <Text
+                    className="text-[16px] text-gray-600 font-semibold"
+                    style={{ fontFamily: "Poppins_500Medium" }}
+                  >
+                    Idade máxima
+                  </Text>
                   <TextInput
                     className="border border-[#36A958] text-[18px] outline-none p-2 rounded-[10px] mt-1"
                     placeholder="Ex: 18"
@@ -421,13 +450,13 @@ export default function OportunidadesScreen() {
           renderItem={({ item }) => <Oportunidade data={item} />}
           onEndReached={fetchOportunidades}
           onEndReachedThreshold={0.2}
-          contentContainerStyle={{ paddingTop:"4%" }}
+          contentContainerStyle={{ paddingTop: "4%", paddingBottom: 100 }}
           ListFooterComponent={
             loading && !searchText ? (
               <ActivityIndicator
                 size="large"
                 color="#2E7844"
-                style={{ marginVertical: 16, marginTop:20, }}
+                style={{ marginVertical: 16, marginTop: 20 }}
               />
             ) : null
           }
