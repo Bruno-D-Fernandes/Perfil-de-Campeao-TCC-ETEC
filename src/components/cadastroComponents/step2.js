@@ -42,7 +42,7 @@ export default function Step2({ formData, updateField }) {
             <Picker
               selectedValue={formData.maoDominante}
               onValueChange={(value) => updateField("maoDominante", value)}
-              style={{ height: 20, width: "100%", borderRadius: 10 }}
+              style={{ width: "100%", borderRadius: 10 }}
             >
               <Picker.Item label="Selecione..." value={null} />
               <Picker.Item label="Destro(a)" value="Destro" />
@@ -75,7 +75,7 @@ export default function Step2({ formData, updateField }) {
             <Picker
               selectedValue={formData.peDominante}
               onValueChange={(value) => updateField("peDominante", value)}
-              style={{ height: 20, width: "100%", borderRadius: 10 }}
+              style={{ width: "100%", borderRadius: 10 }}
             >
               <Picker.Item label="Selecione..." value={null} />
               <Picker.Item label="Direito" value="Direito" />
@@ -122,7 +122,7 @@ export default function Step2({ formData, updateField }) {
           </Text>
           <TextInput
             style={[
-              tw`bg-green-400 border-2 border-green-400 rounded-2xl px-4 bg-white flex-row items-center h-12 outline-none`,
+              tw`bg-green-400 border-2 border-green-400 rounded-2xl px-4 bg-white flex-row items-center h-12`,
               { fontFamily: "Poppins_500Medium" },
             ]}
             placeholderTextColor="#A9A9A9"
