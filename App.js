@@ -4,12 +4,13 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import usuario from "./services/usuario";
+import usuario from "./src/services/usuario";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import "./global.css";
 import { Pressable, Text } from "react-native";
 import Animated from "react-native-reanimated";
 import CustomTabBar from "./src/components/CustomTabBar";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { Feather } from "@expo/vector-icons";
 
@@ -32,7 +33,6 @@ const Tab = createBottomTabNavigator();
 // ---
 function MainTabs() {
   return (
-    
     <Tab.Navigator
       tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={({ route }) => ({
@@ -187,9 +187,9 @@ export default function App() {
               options={{ headerShown: false }}
             />
 
-            <Stack.Screen 
-              name="Chat" 
-              component={ChatScreen} 
+            <Stack.Screen
+              name="Chat"
+              component={ChatScreen}
               options={{ headerShown: false }}
             />
 

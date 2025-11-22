@@ -16,7 +16,7 @@ import {
 } from "@expo-google-fonts/poppins";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import usuario from "./../../services/usuario";
+import usuario from "../services/usuario";
 import TopNotification from "../components/TopNotification";
 import { SafeAreaView } from "react-native-safe-area-context";
 

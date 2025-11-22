@@ -14,7 +14,7 @@ import {
 import { useState, useEffect, use } from "react";
 import * as ImagePicker from "expo-image-picker";
 import tw from "twrnc";
-import { fetchEsportesPerfil } from "../../../services/esporte";
+import { fetchEsportesPerfil } from "../../services/esporte";
 import Animated from "react-native-reanimated";
 import { FlatList } from "react-native";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";

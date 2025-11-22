@@ -15,11 +15,11 @@ import {
   Poppins_500Medium,
 } from "@expo-google-fonts/poppins";
 import Oportunidade from "../components/Oportunidade";
-import oportunidadesService from "../../services/oportunidades";
+import oportunidadesService from "../services/oportunidades";
 import { useEffect, useState, useMemo } from "react";
-import usuarioService from "../../services/usuario";
+import usuarioService from "../services/usuario";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { inscricoesOportunidades } from "../../services/oportunidades";
+import { inscricoesOportunidades } from "../services/oportunidades";
 import { useNavigation } from "@react-navigation/native";
 import ChatScreen from "./ChatScreen";
 
@@ -45,13 +45,12 @@ export default function OportunidadesScreen() {
   const fetchAndSetUserData = async () => {
     try {
       const response = await usuarioService.perfilUser();
-      console.log("Dados do usuário da API:", response);
 
       const userObj = response?.data || response || null;
       if (userObj) {
-        setLoading(true)
+        setLoading(true);
         await AsyncStorage.setItem("user", JSON.stringify(userObj));
-        setLoading(false)
+        setLoading(false);
         const firstName = userObj?.nomeCompletoUsuario
           ? String(userObj.nomeCompletoUsuario).split(" ")[0]
           : "Usuário";
@@ -94,7 +93,6 @@ export default function OportunidadesScreen() {
     setFilterModalVisible(false);
     setAppliedFilters(Object.keys(filters).length ? filters : null);
 
-    // Faz a chamada ao backend com filtros (página 1) usando oportunidadesService.oportunidadeFiltrar
     setLoading(true);
     try {
       const response = await oportunidadesService.oportunidadeFiltrar(filters);
@@ -221,13 +219,13 @@ export default function OportunidadesScreen() {
   }, [data, searchText]);
 
   return (
-    <View className="bg-white flex-1 p-4">
+    <View className="bg-white flex-1 w-full px-6">
       {/* HEADER */}
-      <View className="w-full pb-4">
+      <View className="w-full pt-6 pb-4 flex-none">
         <View className="w-full flex-row items-center justify-between mb-[3%]">
           <Image
             source={require("../../assets/Logo_PerfilDeCampeao.png")}
-            style={{ width: "50px", height: "50px" }}
+            style={{ width: 50, height: 50 }}
             resizeMode="stretch"
           />
 
@@ -238,7 +236,7 @@ export default function OportunidadesScreen() {
             >
               <Image
                 source={require("../../assets/icons/mensagem.png")}
-                style={{ width: "20px", height: "20px" }}
+                style={{ width: 20, height: 20 }}
               />
             </Pressable>
 
@@ -248,7 +246,7 @@ export default function OportunidadesScreen() {
             >
               <Image
                 source={require("../../assets/icons/config.png")}
-                style={{ width: "23px", height: "20px", tintColor: "#36A958" }}
+                style={{ width: 23, height: 20, tintColor: "#36A958" }}
               />
             </Pressable>
           </View>
@@ -269,7 +267,7 @@ export default function OportunidadesScreen() {
           </Text>
         </View>
 
-        <View className="w-full h-[19%] flex-row gap-2 mb-[2%]">
+        <View className="w-full flex-row gap-2 mb-[2%]">
           {/*BTN FILTRO*/}
           <Pressable
             className="rounded-full bg-[#EFEFEF] h-[50px] w-[50px] items-center justify-center"
@@ -277,17 +275,17 @@ export default function OportunidadesScreen() {
           >
             <Image
               source={require("../../assets/icons/filtro.png")}
-              style={{ width: "20px", height: "20px" }}
+              style={{ width: 20, height: 20 }}
             />
           </Pressable>
 
-          <View className="h-[50px] w-[85%] rounded-full bg-[#EFEFEF] gap-4 flex-row items-center">
+          <View className="h-[50px] w-[85%] rounded-full bg-[#EFEFEF] gap-4 flex-row items-center justify-center">
             <Image
               source={require("../../assets/icons/pesquisa.png")}
-              style={{ width: "22px", height: "22px", marginLeft: 15 }}
+              style={{ width: 22, height: 22, marginLeft: 15 }}
             />
             <TextInput
-              className="color-gray-600 font-normal w-[80%] h-[90%]"
+              className="color-gray-600 font-normal w-[80%] h-[90%] mt-[5px] m-auto"
               style={{ fontFamily: "Poppins_400Regular" }}
               placeholder="Pesquisar por clube"
               value={searchText}
@@ -404,32 +402,39 @@ export default function OportunidadesScreen() {
           </View>
         </Modal>
 
-        <View className="w-full flex-row justify-around mt-[2%]">
-          <Pressable onPress={() => setInscritoAba(false)}>
+        <View className="w-full flex-row justify-between mt-[2%] px-9">
+          <Pressable
+            onPress={() => setInscritoAba(false)}
+            className="items-center" // CORRIGIDO: Removido w-1/2 ou flex-1
+          >
             <Text
               className={`text-[16px] font-medium ${
                 !inscritoAba ? "text-[#2E7844]" : "text-gray-400"
               }`}
               style={{ fontFamily: "Poppins_500Medium" }}
+              numberOfLines={1}
             >
               Oportunidades
             </Text>
             {!inscritoAba && (
-              <View className="h-1 bg-[#2E7844] rounded-full mt-1" />
+              <View className="w-[50%] h-1 bg-[#2E7844] rounded-full mt-1" />
             )}
           </Pressable>
-
-          <Pressable onPress={() => setInscritoAba(true)}>
+          <Pressable
+            onPress={() => setInscritoAba(true)}
+            className="items-center pr-4"
+          >
             <Text
               className={`text-[16px] font-medium ${
                 inscritoAba ? "text-[#2E7844]" : "text-gray-400"
               }`}
               style={{ fontFamily: "Poppins_500Medium" }}
+              numberOfLines={1} // NOVO: Impede a quebra de linha
             >
               Inscrições
             </Text>
             {inscritoAba && (
-              <View className="h-1 bg-[#2E7844] rounded-full mt-1" />
+              <View className="w-[50%] h-1 bg-[#2E7844] rounded-full mt-1" />
             )}
           </Pressable>
         </View>
@@ -453,6 +458,7 @@ export default function OportunidadesScreen() {
           onEndReached={fetchOportunidades}
           onEndReachedThreshold={0.2}
           contentContainerStyle={{ paddingTop: "4%", paddingBottom: 100 }}
+          showsVerticalScrollIndicator={false}
           ListFooterComponent={
             loading && !searchText ? (
               <ActivityIndicator

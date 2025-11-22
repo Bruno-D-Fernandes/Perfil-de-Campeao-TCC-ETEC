@@ -13,7 +13,7 @@ import tw from "twrnc";
 import { Picker } from "@react-native-picker/picker";
 import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import ModalAtualizarCampo from "./ModalAtualizarCampo";
-import usuario from "../../../services/usuario";
+import usuario from "../../services/usuario";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, FlatList, ActivityIndicator } from "react-native";
-import { Notificacoes } from "../../services/notificacoes";
+import { Notificacoes } from "../services/notificacoes";
 import Notificacao from "../components/Notificacao";
 
 export default function NotificationsScreen() {

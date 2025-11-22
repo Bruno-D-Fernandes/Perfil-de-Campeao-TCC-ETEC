@@ -10,9 +10,10 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import tw from "twrnc";
-import { getPostagensPorUsuario } from "../../services/postagem";
-import usuario from "../../services/usuario";
-import { loadPerfilAll } from "../../services/perfil";
+import { API_URL } from "@env";
+import { getPostagensPorUsuario } from "../services/postagem";
+import usuario from "../services/usuario";
+import { loadPerfilAll } from "../services/perfil";
 import FloatingOptionsModal from "../components/portfolioComponents/FloatingOptionsModal";
 import PortfolioActionModal from "../components/portfolioComponents/PortfolioActionModal";
 
@@ -185,7 +186,7 @@ export default function PortifolioScreen() {
               {item.imagens?.length > 0 && (
                 <Image
                   source={{
-                    uri: `http://127.0.0.1:8000/storage/${item.imagens[0].caminhoImagem}`,
+                    uri: `${API_URL}/storage/${item.imagens[0].caminhoImagem}`,
                   }}
                   style={tw`w-full h-48 rounded-2xl mb-3`}
                   resizeMode="cover"

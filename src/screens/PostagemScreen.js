@@ -24,9 +24,9 @@ import { Platform } from "react-native";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import tw from "twrnc";
 
-import usuario from "./../../services/usuario";
-import { loadPerfilAll } from "./../../services/perfil";
-import { postagemData } from "./../../services/postagem";
+import usuario from "../services/usuario";
+import { loadPerfilAll } from "../services/perfil";
+import { postagemData } from "../services/postagem";
 import TopNotification from "../components/TopNotification";
 
 export default function PostagemScreen() {

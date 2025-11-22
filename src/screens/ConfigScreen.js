@@ -1,22 +1,44 @@
 import React, { useState } from "react";
-import { Text, View, Pressable, Switch, Modal, TouchableOpacity, SafeAreaView } from "react-native";
-import { MaterialIcons, AntDesign } from '@expo/vector-icons';
-import usuario from "../../services/usuario";
+import {
+  Text,
+  View,
+  Pressable,
+  Switch,
+  Modal,
+  TouchableOpacity,
+  SafeAreaView,
+} from "react-native";
+import { MaterialIcons, AntDesign } from "@expo/vector-icons";
+import usuario from "../services/usuario";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 
-const ConfiguracaoItem = ({ icon, text, actionText, actionType = 'text', color = "#4ADC76", onPress }) => {
+const ConfiguracaoItem = ({
+  icon,
+  text,
+  actionText,
+  actionType = "text",
+  color = "#4ADC76",
+  onPress,
+}) => {
   return (
-    <Pressable className="flex-row items-center justify-between bg-white p-3 rounded-lg mb-3" onPress={onPress}>
+    <Pressable
+      className="flex-row items-center justify-between bg-white p-3 rounded-lg mb-3"
+      onPress={onPress}
+    >
       <View className="flex-row items-center space-x-3">
         {icon}
-        <Text style={{ color }} className="font-bold">{text}</Text>
+        <Text style={{ color }} className="font-bold">
+          {text}
+        </Text>
       </View>
       <View>
-        {actionType === 'text' && actionText && (
-          <Text style={{ color }} className="font-bold">{actionText}</Text>
+        {actionType === "text" && actionText && (
+          <Text style={{ color }} className="font-bold">
+            {actionText}
+          </Text>
         )}
-        {actionType === 'switch' && (
+        {actionType === "switch" && (
           <Switch
             trackColor={{ false: "#767577", true: "#61D483" }}
             thumbColor={"#f4f3f4"}
@@ -24,9 +46,11 @@ const ConfiguracaoItem = ({ icon, text, actionText, actionType = 'text', color =
             value={false}
           />
         )}
-        {actionType === 'chevron' && (
+        {actionType === "chevron" && (
           <View className="flex-row items-center space-x-1">
-            <Text style={{ color }} className="font-bold">{actionText}</Text>
+            <Text style={{ color }} className="font-bold">
+              {actionText}
+            </Text>
             <MaterialIcons name="chevron-right" size={24} color="#4ADC76" />
           </View>
         )}
@@ -54,7 +78,7 @@ export default function ConfigScreen() {
 
   const handleDeleteAccount = async () => {
     try {
-      const userJSON = await AsyncStorage.getItem('user');
+      const userJSON = await AsyncStorage.getItem("user");
 
       if (!userJSON) {
         console.error("Tentativa de exclusão sem usuário logado.");
@@ -70,7 +94,6 @@ export default function ConfigScreen() {
       await AsyncStorage.clear();
       setDeleteModalVisible(false);
       navigation.navigate("Splash");
-
     } catch (error) {
       console.error("Erro ao excluir conta:", error);
     }
@@ -78,10 +101,11 @@ export default function ConfigScreen() {
 
   return (
     <SafeAreaView className="flex-1 p-4 bg-[#F0FFF4]">
-
       {/* Seção de Conta */}
       <View className="mb-6">
-        <Text className="text-[#61D483] text-lg font-semibold mb-2 ml-2">Conta</Text>
+        <Text className="text-[#61D483] text-lg font-semibold mb-2 ml-2">
+          Conta
+        </Text>
         <View className="bg-[#E6F9EC] p-4 rounded-xl">
           <ConfiguracaoItem
             icon={<MaterialIcons name="email" size={24} color="#4ADC76" />}
@@ -117,12 +141,20 @@ export default function ConfigScreen() {
       >
         <View className="flex-1 justify-center items-center">
           <View className="bg-white p-6 rounded-3xl w-80 border-[4px] border-[#61D483]">
-            <Text className="text-lg font-semibold mb-4 text-center">Deseja mesmo sair?</Text>
+            <Text className="text-lg font-semibold mb-4 text-center">
+              Deseja mesmo sair?
+            </Text>
             <View className="flex-row justify-evenly">
-              <TouchableOpacity onPress={() => setLogoutModalVisible(false)} className="px-4 py-2 bg-gray-200 rounded">
+              <TouchableOpacity
+                onPress={() => setLogoutModalVisible(false)}
+                className="px-4 py-2 bg-gray-200 rounded"
+              >
                 <Text>Cancelar</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={handleLogout} className="px-4 py-2 bg-[#D46161] rounded">
+              <TouchableOpacity
+                onPress={handleLogout}
+                className="px-4 py-2 bg-[#D46161] rounded"
+              >
                 <Text className="text-white">Sair</Text>
               </TouchableOpacity>
             </View>
@@ -139,20 +171,29 @@ export default function ConfigScreen() {
       >
         <View className="flex-1 justify-center items-center">
           <View className="bg-white p-6 rounded-3xl border-[4px] border-[#61D483] w-80">
-            <Text className="text-lg font-semibold mb-4 text-center text-red-600">Tem certeza que deseja excluir sua conta?</Text>
-            <Text className="text-sm text-center mb-4">Essa ação não pode ser desfeita.</Text>
+            <Text className="text-lg font-semibold mb-4 text-center text-red-600">
+              Tem certeza que deseja excluir sua conta?
+            </Text>
+            <Text className="text-sm text-center mb-4">
+              Essa ação não pode ser desfeita.
+            </Text>
             <View className="flex-row justify-evenly">
-              <TouchableOpacity onPress={() => setDeleteModalVisible(false)} className="px-4 py-2 bg-gray-200 rounded">
+              <TouchableOpacity
+                onPress={() => setDeleteModalVisible(false)}
+                className="px-4 py-2 bg-gray-200 rounded"
+              >
                 <Text>Cancelar</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={handleDeleteAccount} className="px-4 py-2 bg-[#D46161] rounded">
+              <TouchableOpacity
+                onPress={handleDeleteAccount}
+                className="px-4 py-2 bg-[#D46161] rounded"
+              >
                 <Text className="text-white">Excluir</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
-
-  </SafeAreaView>
+    </SafeAreaView>
   );
 }

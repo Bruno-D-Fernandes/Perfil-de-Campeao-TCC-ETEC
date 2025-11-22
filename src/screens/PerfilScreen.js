@@ -15,7 +15,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import tw from "twrnc";
-import usuario from "./../../services/usuario";
+import usuario from "../services/usuario";
 import TopNotification from "../components/TopNotification";
 import InfoCard from "../components/perfilComponents/InfoCard";
 import { Picker } from "@react-native-picker/picker";
@@ -23,7 +23,8 @@ import Animated, { SlideInRight, SlideOutRight } from "react-native-reanimated";
 import ModalPerfilEsporte from "../components/perfilComponents/ModalPerfilEsporte";
 import ModalEditarPerfil from "../components/perfilComponents/ModalEditarPerfil";
 import BottomSheetCriaPerfil from "../components/BottomSheetCriaPerfil";
-import { loadPerfilAll } from "./../../services/perfil";
+import { loadPerfilAll } from "../services/perfil";
+import { API_URL } from "@env";
 import {
   useFonts,
   Poppins_400Regular,
@@ -317,12 +318,12 @@ export default function ProfileScreen() {
   const fotoPerfilUrl = // Aqui ele ta pegando as fotos da api | provavelmente existe formas melhores de fazer isso --Bruno
     fotoPerfil?.uri ??
     (userData?.fotoPerfilUsuario
-      ? `http://127.0.0.1:8000/storage/${userData.fotoPerfilUsuario}`
+      ? `${API_URL}/storage/${userData.fotoPerfilUsuario}`
       : null);
   const fotoBannerUrl =
     fotoBanner?.uri ??
     (userData?.fotoBannerUsuario
-      ? `http://127.0.0.1:8000/storage/${userData.fotoBannerUsuario}`
+      ? `${API_URL}/storage/${userData.fotoBannerUsuario}`
       : null);
 
   return (

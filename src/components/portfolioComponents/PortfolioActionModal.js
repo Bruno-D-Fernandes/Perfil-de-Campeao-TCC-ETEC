@@ -17,7 +17,7 @@ import * as ImagePicker from "expo-image-picker";
 import {
   updatePostagemUser,
   deletePostagemUser,
-} from "../../../services/postagem";
+} from "../../services/postagem";
 
 export default function PortfolioActionModal({
   isVisible,
@@ -55,7 +55,10 @@ export default function PortfolioActionModal({
 
   const handleUpdate = async () => {
     if (!newText.trim() && !selectedImage) {
-      console.log("Erro", "A postagem precisa de texto ou imagem para ser atualizada.");
+      console.log(
+        "Erro",
+        "A postagem precisa de texto ou imagem para ser atualizada."
+      );
       return;
     }
 
@@ -70,8 +73,8 @@ export default function PortfolioActionModal({
         const fileType = fileName.toLowerCase().endsWith(".png")
           ? "image/png"
           : fileName.toLowerCase().match(/\.(jpg|jpeg)$/)
-          ? "image/jpeg"
-          : "application/octet-stream";
+            ? "image/jpeg"
+            : "application/octet-stream";
 
         if (Platform.OS === "web") {
           const response = await fetch(selectedImage);
@@ -148,14 +151,19 @@ export default function PortfolioActionModal({
     const imageSource = selectedImage
       ? { uri: selectedImage }
       : postagem.imagens && postagem.imagens.length > 0
-      ? {
-          uri: `http://192.168.0.103:8000/storage/${postagem.imagens[0].caminhoImagem}`,
-        }
-      : null;
+        ? {
+            uri: `http://192.168.0.103:8000/storage/${postagem.imagens[0].caminhoImagem}`,
+          }
+        : null;
 
     return (
       <View style={tw`flex-1 w-full p-4`}>
-        <Text style={[tw`text-xl text-gray-800 mb-4`, {fontFamily:"Poppins_500Medium",}]}>
+        <Text
+          style={[
+            tw`text-xl text-gray-800 mb-4`,
+            { fontFamily: "Poppins_500Medium" },
+          ]}
+        >
           Editar Postagem
         </Text>
 
@@ -171,7 +179,12 @@ export default function PortfolioActionModal({
           style={tw`mt-4 p-3 bg-[#61D48340] rounded-lg`}
           onPress={handleImagePick}
         >
-          <Text style={[tw`text-[#379d55] text-center`, {fontFamily:"Poppins_500Medium"}]}>
+          <Text
+            style={[
+              tw`text-[#379d55] text-center`,
+              { fontFamily: "Poppins_500Medium" },
+            ]}
+          >
             {selectedImage ? "Trocar Imagem" : "Selecionar Nova Imagem"}
           </Text>
         </Pressable>
@@ -216,7 +229,10 @@ export default function PortfolioActionModal({
       onRequestClose={onClose}
     >
       <Pressable style={styles.overlay} onPress={onClose}>
-        <Pressable style={styles.modalView} onPress={(e) => e.stopPropagation()}>
+        <Pressable
+          style={styles.modalView}
+          onPress={(e) => e.stopPropagation()}
+        >
           {renderContent()}
           <Pressable style={tw`absolute top-3 right-3 p-2`} onPress={onClose}>
             <Icon name="close" size={24} color="#374151" />

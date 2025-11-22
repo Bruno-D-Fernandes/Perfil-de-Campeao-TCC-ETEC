@@ -24,7 +24,7 @@ import {
   loadPerfilAll,
   updatePerfil,
   excluirPerfil,
-} from "../../services/perfil";
+} from "../services/perfil";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function PerfilCrudScreen() {

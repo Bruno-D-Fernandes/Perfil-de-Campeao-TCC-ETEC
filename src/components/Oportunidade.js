@@ -2,7 +2,7 @@ import { Text, View, Image, Pressable } from "react-native";
 import React, { useMemo, useRef, useState, useCallback } from "react";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 
-import { inscreverOportunidade } from "../../services/oportunidades";
+import { inscreverOportunidade } from "../services/oportunidades";
 
 export default function Oportunidade({ data }) {
   const {
@@ -18,8 +18,6 @@ export default function Oportunidade({ data }) {
     estadoOportunidade = "",
     enderecoOportunidade = "",
   } = data.oportunidade || data || {};
-
-  console.log("data", data);
 
   const { status = null } = data || {};
   const [localStatus, setLocalStatus] = useState(status || null);
@@ -158,60 +156,56 @@ export default function Oportunidade({ data }) {
           </Text>
         ) : null}
         <View className="flex-row items-center justify-between w-full">
+          <View className="flex-row flex-1 items-center gap-3">
+            <Image
+              source={
+                fotoPerfilUrl
+                  ? { uri: fotoPerfilUrl }
+                  : require("../../assets/perfil/fotoPerfil.png")
+              }
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 100,
+              }}
+            />
 
-  <View className="flex-row flex-1 items-center gap-3">
-    
-    <Image
-      source={
-        fotoPerfilUrl
-          ? { uri: fotoPerfilUrl }
-          : require("../../assets/perfil/fotoPerfil.png")
-      }
-      style={{
-        width: 60,  
-        height: 60,
-        borderRadius: 100,
-      }}
-    />
+            <View className="flex-1">
+              <Text
+                className="text-[15px]"
+                numberOfLines={1}
+                style={{ fontFamily: "Poppins_500Medium" }}
+              >
+                {clube.nomeClube}
+              </Text>
 
-    <View className="flex-1"> 
-      <Text
-        className="text-[15px]"
-        numberOfLines={1}
-        style={{ fontFamily: "Poppins_500Medium" }}
-      >
-        {clube.nomeClube}
-      </Text>
+              <View className="flex-row flex-wrap items-center">
+                <Text
+                  className="text-gray-500 mr-2"
+                  style={{ fontFamily: "Poppins_500Medium" }}
+                >
+                  {posicao.nomePosicao}
+                </Text>
 
-      <View className="flex-row flex-wrap items-center">
-        <Text
-          className="text-gray-500 mr-2"
-          style={{ fontFamily: "Poppins_500Medium" }}
-        >
-          {posicao.nomePosicao}
-        </Text>
+                <Text
+                  className="text-gray-400 text-[13px] flex-shrink"
+                  numberOfLines={1}
+                  style={{ fontFamily: "Poppins_500Medium" }}
+                >
+                  {nomeEsporte} - {idadeMinima} a {idadeMaxima} anos
+                </Text>
+              </View>
+            </View>
+          </View>
 
-        <Text
-          className="text-gray-400 text-[13px] flex-shrink"
-          numberOfLines={1}
-          style={{ fontFamily: "Poppins_500Medium" }}
-        >
-          {nomeEsporte} - {idadeMinima} a {idadeMaxima} anos
-        </Text>
-      </View>
-    </View>
-  </View>
-
-  <View className="pl-3">
-    <Image
-      source={require("../../assets/icons/icon_proximo.png")}
-      style={{ width: 20, height: 20 }}
-      resizeMode="contain"
-    />
-  </View>
-
-</View>
-
+          <View className="pl-3">
+            <Image
+              source={require("../../assets/icons/icon_proximo.png")}
+              style={{ width: 20, height: 20 }}
+              resizeMode="contain"
+            />
+          </View>
+        </View>
       </Pressable>
 
       <BottomSheetModal
