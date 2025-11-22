@@ -231,7 +231,7 @@ export default function OportunidadesScreen() {
             resizeMode="stretch"
           />
 
-          <View className="w-[10%] h-[45px] flex-row items-center justify-center gap-4">
+          <View className="w-[25%] h-[45px] flex-row items-center justify-center gap-4">
 
             <Pressable
               onPress={() => navigation.navigate("Config")}
@@ -239,6 +239,15 @@ export default function OportunidadesScreen() {
             >
               <Image
                 source={require("../../assets/icons/config.png")}
+                style={{ width: "23px", height: "20px", tintColor: "#36A958" }}
+              />
+            </Pressable>
+            <Pressable
+              onPress={() => navigation.navigate("Agenda")}
+              className="rounded-full bg-[#EFEFEF] h-[100%] w-11 items-center justify-center"
+            >
+              <Image
+                source={require("../../assets/cadastro/icon_data.png")}
                 style={{ width: "23px", height: "20px", tintColor: "#36A958" }}
               />
             </Pressable>
