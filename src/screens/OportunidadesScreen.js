@@ -231,16 +231,7 @@ export default function OportunidadesScreen() {
             resizeMode="stretch"
           />
 
-          <View className="w-[30%] h-[45px] flex-row items-center justify-center gap-4">
-            <Pressable
-              onPress={() => navigation.navigate("Chat")}
-              className="rounded-full bg-[#EFEFEF] h-[100%] w-11 items-center justify-center"
-            >
-              <Image
-                source={require("../../assets/icons/mensagem.png")}
-                style={{ width: "20px", height: "20px" }}
-              />
-            </Pressable>
+          <View className="w-[10%] h-[45px] flex-row items-center justify-center gap-4">
 
             <Pressable
               onPress={() => navigation.navigate("Config")}
