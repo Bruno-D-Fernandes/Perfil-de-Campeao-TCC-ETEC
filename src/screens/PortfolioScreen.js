@@ -168,12 +168,13 @@ export default function PortifolioScreen() {
                 <View style={tw`flex-row items-center`}>
                   <Image
                     source={{
-                      uri:
-                        item.usuario?.fotoPerfil ||
-                        "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+                      uri: item.usuario?.fotoPerfilUsuario
+                        ? `${API_URL}/storage/${item.usuario.fotoPerfilUsuario}`
+                        : "https://cdn-icons-png.flaticon.com/512/149/149071.png",
                     }}
                     style={tw`w-10 h-10 rounded-full mr-2`}
                   />
+
                   <Text style={tw`text-gray-800 font-semibold text-[16px]`}>
                     {item.usuario?.nomeCompletoUsuario || "Usuário"}
                   </Text>
@@ -185,10 +186,14 @@ export default function PortifolioScreen() {
 
               {item.imagens?.length > 0 && (
                 <Image
+                  key={item.imagens[0].caminhoImagem} // Adicionado key para forçar recarregamento
                   source={{
                     uri: `${API_URL}/storage/${item.imagens[0].caminhoImagem}`,
                   }}
-                  style={tw`w-full h-48 rounded-2xl mb-3`}
+                  style={[
+                    tw`w-full h-48 rounded-2xl mb-3`,
+                    { tintColor: undefined },
+                  ]}
                   resizeMode="cover"
                 />
               )}

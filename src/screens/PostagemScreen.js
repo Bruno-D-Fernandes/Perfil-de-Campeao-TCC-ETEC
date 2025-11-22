@@ -29,6 +29,8 @@ import { loadPerfilAll } from "../services/perfil";
 import { postagemData } from "../services/postagem";
 import TopNotification from "../components/TopNotification";
 
+import { API_URL } from "@env";
+
 export default function PostagemScreen() {
   const navigation = useNavigation();
 
@@ -71,7 +73,6 @@ export default function PostagemScreen() {
       const response = await usuario.splashUser();
       const responsePerfil = await loadPerfilAll();
       setPerfis(responsePerfil);
-      // popula o usuário logado no estado para uso local
       if (response && response.data) setUser(response.data);
     } catch (err) {
       console.error("Erro ao carregar dados:", err);
@@ -243,7 +244,7 @@ export default function PostagemScreen() {
 
   function Usuario() {
     const nome = user?.nomeCompletoUsuario || "Usuário";
-    const foto = user?.fotoPerfilUsuario;
+    const foto = `${API_URL}/storage/${user?.fotoPerfilUsuario}`;
 
     return (
       <View className="w-full h-[63px] flex-row justify-start gap-[14px] items-center my-4 ml-5">
