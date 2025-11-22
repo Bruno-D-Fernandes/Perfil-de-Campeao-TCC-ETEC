@@ -315,7 +315,7 @@ export default function ProfileScreen() {
     },
   ];
 
-  const fotoPerfilUrl = // Aqui ele ta pegando as fotos da api | provavelmente existe formas melhores de fazer isso --Bruno
+  const fotoPerfilUrl =
     fotoPerfil?.uri ??
     (userData?.fotoPerfilUsuario
       ? `${API_URL}/storage/${userData.fotoPerfilUsuario}`
@@ -330,7 +330,10 @@ export default function ProfileScreen() {
     <View style={tw`flex-1`}>
       {viewError && <TopNotification error={error} />}
 
-      <ScrollView style={tw`flex-1 bg-white`}>
+      <ScrollView
+        style={tw`flex-1 bg-white`}
+        showsVerticalScrollIndicator={false}
+      >
         <ImageBackground
           source={
             fotoBannerUrl
@@ -410,11 +413,13 @@ export default function ProfileScreen() {
             style={tw`flex-row w-full flex-wrap pb-10 rounded-lg mt-6 justify-between`}
           >
             <View
-              style={tw`items-center justify-center bg-[#61D48330] w-[70%] flex-row rounded-[999px]`}
+              style={tw`items-center justify-center bg-[#61D48330] w-[70%] rounded-full h-12`}
             >
               <Picker
-                className="bg-[#61D48300] w-[90%] text-[#2E7844] outline-none border-none rounded-[999px]"
-                style={{ fontFamily: "Poppins_500Medium" }}
+                style={[
+                  { fontFamily: "Poppins_500Medium" },
+                  tw`w-[90%] h-full text-[#2E7844]`,
+                ]}
                 selectedValue={selectedEsporte}
                 onValueChange={(value) => setSelectedEsporte(value)}
               >
@@ -559,10 +564,6 @@ export default function ProfileScreen() {
         </View>
       </ScrollView>
 
-      {/* MODAL DE EDIÇÃO DE PERFIL PRINCIPAL*/}
-      {/* MODAL DE EDIÇÃO DE PERFIL PRINCIPAL*/}
-      {/* MODAL DE EDIÇÃO DE PERFIL PRINCIPAL*/}
-      {/* MODAL DE EDIÇÃO DE PERFIL PRINCIPAL*/}
       {/* MODAL DE EDIÇÃO DE PERFIL PRINCIPAL*/}
 
       <ModalEditarPerfil

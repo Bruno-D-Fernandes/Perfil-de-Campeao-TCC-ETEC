@@ -3,6 +3,7 @@ import React, { useMemo, useRef, useState, useCallback } from "react";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 
 import { inscreverOportunidade } from "../services/oportunidades";
+import { API_URL } from "@env";
 
 export default function Oportunidade({ data }) {
   const {
@@ -117,9 +118,9 @@ export default function Oportunidade({ data }) {
   };
 
   const fotoPerfilUrl = data?.clube?.fotoPerfilClube
-    ? `http://127.0.0.1:8000/storage/${data.clube.fotoPerfilClube}`
+    ? `${API_URL}/storage/${data.clube.fotoPerfilClube}`
     : data?.oportunidade?.clube?.fotoPerfilClube
-      ? `http://127.0.0.1:8000/storage/${data.oportunidade.clube.fotoPerfilClube}`
+      ? `${API_URL}/storage/${data.oportunidade.clube.fotoPerfilClube}`
       : null;
 
   return (

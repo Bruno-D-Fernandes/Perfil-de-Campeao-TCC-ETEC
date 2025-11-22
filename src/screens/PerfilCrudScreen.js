@@ -321,7 +321,7 @@ export default function PerfilCrudScreen() {
             />
             <Text
               style={[
-                tw`font-semibold text-base text-[120%] ml-2 text-white`,
+                tw`font-semibold text-base text-[120] ml-2 text-white`,
                 { fontFamily: "Poppins_500Medium" },
               ]}
             >
@@ -336,7 +336,7 @@ export default function PerfilCrudScreen() {
         >
           <Text
             style={[
-              tw`font-semibold text-base text-[120%] ml-2 text-white`,
+              tw`font-semibold text-base text-[120] ml-2 text-white`,
               { fontFamily: "Poppins_500Medium" },
             ]}
           >

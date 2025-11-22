@@ -66,9 +66,6 @@ export default function ModalPerfilEsporte({
   }, [crud, perfis]);
 
   // FUNÇÕES DE USO
-  // FUNÇÕES DE USO
-  // FUNÇÕES DE USO
-  // FUNÇÕES DE USO
 
   const fetchDataCreate = async () => {
     try {
