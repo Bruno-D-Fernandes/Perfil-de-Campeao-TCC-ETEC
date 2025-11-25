@@ -12,7 +12,7 @@ import {
   Image
 } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { Calendar } from "react-native-calendars";
+import { Calendar, LocaleConfig  } from "react-native-calendars";
 
 const mockConvites = [
   {
@@ -75,6 +75,25 @@ const mockAgenda = [
     local: "CT de Cotia",
   },
 ];
+
+LocaleConfig.locales['pt'] = {
+  monthNames: [
+    'janeiro','fevereiro','março','abril','maio','junho','julho',
+    'agosto','setembro','outubro','novembro','dezembro'
+  ],
+  monthNamesShort: [
+    'jan','fev','mar','abr','mai','jun',
+    'jul','ago','set','out','nov','dez'
+  ],
+  dayNames: [
+    'domingo','segunda-feira','terça-feira','quarta-feira',
+    'quinta-feira','sexta-feira','sábado'
+  ],
+  dayNamesShort: ['dom','seg','ter','qua','qui','sex','sab'],
+  today: "Hoje"
+};
+
+LocaleConfig.defaultLocale = 'pt';
 
 export default function AgendaScreen() {
   const today = new Date().toISOString().split("T")[0];
@@ -241,15 +260,15 @@ const handleDismiss = () => {
 
       <View className="w-full flex-row items-center justify-between">
 
-        <Pressable className="flex-row px-2 w-[40%] bg-white h-10 mb-2 items-center justify-between rounded-full" onPress={() => navigation.navigate('MainTabs', { screen: 'Oportunidades' })}>
+        <Pressable className="flex-row px-2 w-[33%] bg-white h-10 mb-2 items-center justify-between rounded-full" onPress={() => navigation.navigate('MainTabs', { screen: 'Oportunidades' })}>
           <View className="bg-green-500 rounded-full w-8 p-2">
             <Image style={{width:10, height:16,}} source={require("../../assets/icons/icon_voltar.png")}/>
           </View>
           <Text className="mr-2" style={{fontFamily:'Poppins_500Medium',}}>Voltar</Text>
         </Pressable>
-        <Pressable className="flex-row bg-green-50 w-[40%] h-10 mb-2 items-center justify-between p-4 rounded-[12px]" onPress={() => setModalMeusEventos(true)}>
-          <View className="flex-row items-center justify-center w-[30%] gap-1">
-            <Text className="text-green-600 text-sm" style={{fontFamily:'Poppins_500Medium',}}>Peneiras </Text>
+        <Pressable className="flex-row bg-green-50 w-[33%] h-10 mb-2 items-center justify-between p-2 rounded-[12px]" onPress={() => setModalMeusEventos(true)}>
+          <View className="flex-row items-center justify-center w-[80%] ">
+            <Text className="text-green-600 text-sm" style={{fontFamily:'Poppins_500Medium',}}>Eventos </Text>
             <Text className="text-green-600" style={{fontFamily:'Poppins_500Medium',}}> {agenda.length} </Text>
           </View>
             <Image style={{width:10, height:16,}} source={require("../../assets/icons/icon_proximo.png")}/>
@@ -258,26 +277,27 @@ const handleDismiss = () => {
 
 
         <View className="p-1 bg-white rounded-[12px]">
-        <Calendar
-          markedDates={getMarkedDates()}
-          onDayPress={(day) => {
-          setSelectedDate(day.dateString);
-          setEventoSelecionado(null); 
-          abrirBottomSheet(); 
-         }}
+<Calendar
+  markedDates={getMarkedDates()}
 
-        theme={{
-          todayTextColor: "#16a34a", 
-          arrowColor: '#72bd4d',
+  onDayPress={(day) => {
+    setSelectedDate(day.dateString);
+    setEventoSelecionado(null);
+    abrirBottomSheet();
+  }}
 
-          'stylesheet.day.basic': {
-            today: {
-            backgroundColor: '#e5f7dc', 
-            borderRadius: 12, 
-            },
-          },
-        }}
-      />
+  firstDay={1}
+  theme={{
+    todayTextColor: "#16a34a",
+    selectedDayBackgroundColor: "#16a34a",
+    selectedDayTextColor: "#fff",
+    dotColor: "#22c55e",
+    textDayHeaderFontSize: 13,
+    textMonthFontSize: 17,
+    arrowColor: "#72bd4d",
+  }}
+/>
+
       </View>
 
       <Modal 
@@ -292,7 +312,7 @@ const handleDismiss = () => {
                     <Image style={{width:10, height:16,}} source={require("../../assets/icons/icon_voltar.png")}/>
     
                 </Pressable>
-                <Text className="text-2xl font-semibold text-gray-800" style={{fontFamily:'Poppins_500Medium',}}>Agenda de Peneiras</Text> 
+                <Text className="text-2xl font-semibold text-gray-800" style={{fontFamily:'Poppins_500Medium',}}>Agenda de Eventos</Text> 
             </View>
 
             <View className="flex-1">
@@ -411,7 +431,7 @@ const handleDismiss = () => {
 <BottomSheetModal
   ref={sheetRef}
   index={0}
-  snapPoints={["50%", "90%"]} // snap inicial e snap maior
+  snapPoints={["53%", "90%"]} // snap inicial e snap maior
   enablePanDownToClose={false}
   backgroundStyle={{ backgroundColor: "#f0efed", borderRadius: 20 }}
   handleIndicatorStyle={{ backgroundColor: "#a8a8a8" }} // cor e altura da barra
@@ -423,12 +443,10 @@ const handleDismiss = () => {
     onScroll={({ nativeEvent }) => {
       const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
 
-      // Quando chega no final da lista, expande
       if (layoutMeasurement.height + contentOffset.y >= contentSize.height - 10) {
         sheetRef.current?.expand();
       }
 
-      // Quando volta para o topo da lista, recolhe
       if (contentOffset.y <= 0) {
         sheetRef.current?.collapse(); // vai para o snap menor
       }
@@ -445,8 +463,8 @@ const handleDismiss = () => {
     const day = parseInt(parts[2]);
     const date = new Date(year, monthIndex, day); 
     const monthNames = [
-      "janeiro", "fevereiro", "março", "abril", "maio", "junho",
-      "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+      "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+      "Julho", "Agosto", "Setembro", "outubro", "Novembro", "Dezembro"
     ];
     const month = monthNames[date.getMonth()];
     return `${date.getDate()} de ${month}`; 
@@ -455,7 +473,7 @@ const handleDismiss = () => {
   </View>
 
   <View>
-    <Text className="color-[#0d9853] text-[14px]" style={{fontFamily:'Poppins_500Medium'}}>{eventosDoDia.length} Peneira{eventosDoDia.length !== 1 ? "s" : ""}</Text>
+    <Text className="color-[#0d9853] text-[14px]" style={{fontFamily:'Poppins_500Medium'}}>{eventosDoDia.length} Evento{eventosDoDia.length !== 2 ? "" : "s"}</Text>
   </View>
 </View>
 
@@ -503,7 +521,7 @@ const handleDismiss = () => {
             : "bg-white border-gray-200"
         }`}
       >
-        <View className="w-[30%] justify-center items-center">
+        <View className="w-[20%]">
           {evento ? (
             <Text className="text-white text-lg" style={{fontFamily:'Poppins_400Regular',}}>{hora}</Text>
           ) : (
