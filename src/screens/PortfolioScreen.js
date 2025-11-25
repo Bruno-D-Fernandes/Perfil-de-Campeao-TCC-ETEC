@@ -16,6 +16,48 @@ import usuario from "../services/usuario";
 import { loadPerfilAll } from "../services/perfil";
 import FloatingOptionsModal from "../components/portfolioComponents/FloatingOptionsModal";
 import PortfolioActionModal from "../components/portfolioComponents/PortfolioActionModal";
+// Importação necessária para vídeos
+import { Video } from "expo-av";
+
+// Função auxiliar para verificar se a URI é de um vídeo
+const isVideo = (uri) => {
+  if (!uri) return false;
+  const lowerCaseUri = uri.toLowerCase();
+  return (
+    lowerCaseUri.endsWith(".mp4") ||
+    lowerCaseUri.endsWith(".mov") ||
+    lowerCaseUri.endsWith(".avi") ||
+    lowerCaseUri.endsWith(".webm")
+  );
+};
+
+// Componente para renderizar a mídia (Imagem ou Vídeo)
+const PostMedia = ({ mediaPath }) => {
+  const uri = `${API_URL}/storage/${mediaPath}`;
+
+  if (isVideo(uri)) {
+    return (
+      <Video
+        source={{ uri }}
+        style={[
+          tw`w-full h-48 rounded-2xl mb-3`,
+          { backgroundColor: "#000" }, // Adiciona um fundo preto para o vídeo
+        ]}
+        useNativeControls
+        resizeMode="cover"
+        isLooping={false}
+      />
+    );
+  }
+
+  return (
+    <Image
+      source={{ uri }}
+      style={[tw`w-full h-48 rounded-2xl mb-3`, { tintColor: undefined }]}
+      resizeMode="cover"
+    />
+  );
+};
 
 export default function PortifolioScreen() {
   const [perfilMain, setPerfilMain] = useState({});
@@ -184,18 +226,9 @@ export default function PortifolioScreen() {
                 </Text>
               </View>
 
+              {/* Renderização da Mídia (Imagem ou Vídeo) */}
               {item.imagens?.length > 0 && (
-                <Image
-                  key={item.imagens[0].caminhoImagem} // Adicionado key para forçar recarregamento
-                  source={{
-                    uri: `${API_URL}/storage/${item.imagens[0].caminhoImagem}`,
-                  }}
-                  style={[
-                    tw`w-full h-48 rounded-2xl mb-3`,
-                    { tintColor: undefined },
-                  ]}
-                  resizeMode="cover"
-                />
+                <PostMedia mediaPath={item.imagens[0].caminhoImagem} />
               )}
 
               <View style={tw`flex-row justify-end gap-4`}>

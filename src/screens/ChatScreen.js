@@ -4,157 +4,243 @@ import {
   FlatList,
   Image,
   Pressable,
-  Modal,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState, useEffect } from "react";
-import ChatConversation from "../..";
-import Pusher from "pusher-js/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { EXPO_PUBLIC_PUSHER_KEY } from "@env";
+import { API_URL } from "@env";
+import { useRoute } from "@react-navigation/native";
+import { usePusher } from "../context/PusherProvider";
+import api from "../services/axios";
 
 export default function ChatScreen() {
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedBtn, setSelectedBtn] = useState("Todas");
+  const route = useRoute();
+  const { conversationId, contactName, contactAvatar, receiverID } =
+    route.params;
 
   const [userId, setUserId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [messages, setMessages] = useState([]);
+  const [text, setText] = useState("");
+
+  const pusher = usePusher();
 
   useEffect(() => {
     const loadUser = async () => {
       const jsonUser = await AsyncStorage.getItem("user");
-      if (!jsonUser) return;
-
-      const user = JSON.parse(jsonUser);
-      setUserId(user.id);
+      if (jsonUser) {
+        setUserId(JSON.parse(jsonUser).id);
+      }
     };
-
     loadUser();
   }, []);
 
   useEffect(() => {
-    if (!userId) return;
+    const loadMessages = async () => {
+      try {
+        const response = await api.get(
+          `/conversations/${conversationId}/messages`,
+          {
+            baseURL: `${API_URL}/api`,
+          }
+        );
+        setMessages(response.data);
+      } catch (error) {
+        console.log("Erro ao carregar mensagens", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    const PUSHER_KEY = EXPO_PUBLIC_PUSHER_KEY;
-    const pusher = new Pusher(PUSHER_KEY, {
-      cluster: "sa1",
-      wsPort: 80,
-      wssPort: 443,
-      enabledTransports: ["ws", "wss"],
-    });
+    if (conversationId) loadMessages();
+  }, [conversationId]);
 
-    const channel = pusher.subscribe(`private-chat.${userId}`);
+  useEffect(() => {
+    if (!pusher || !userId) return;
 
-    channel.bind("message", (data) => {
-      const messageData = typeof data === "string" ? JSON.parse(data) : data;
-      setMessages((prevMessages) => [...prevMessages, messageData]);
-    });
-  }, [userId]);
+    const channel = pusher.channel(`private-chat.${userId}`);
 
-  const btns = ["Todas", "Não lidas"];
+    const handleMessage = (data) => {
+      console.log("Nova mensagem recebida:", data.message);
 
-  const [contacts, setContacts] = useState([
-    // aqui vai ser preenchido com dados reais
-  ]);
+      setMessages((prev) => [...prev, data.message]);
+    };
 
-  const updateLastMessage = (userId, { text, time }) => {
-    setContacts((prev) =>
-      prev.map((c) => (c.id === userId ? { ...c, lastMessage: text, time } : c))
-    );
+    channel.bind("new-message", handleMessage);
+
+    return () => {
+      channel.unbind("new-message", handleMessage);
+    };
+  }, [pusher, userId]);
+
+  const sendMessage = async () => {
+    if (!text.trim()) return;
+
+    try {
+      const response = await api.post(
+        "/chat/send",
+        {
+          receiver_id: receiverID,
+          receiver_type: "clube",
+          message: text,
+        },
+        {
+          baseURL: `${API_URL}/api`,
+        }
+      );
+
+      setMessages((prev) => [...prev, response.data]);
+      setText("");
+    } catch (error) {
+      console.log("Erro ao enviar mensagem:", error);
+    }
   };
 
-  const openConversation = (user) => {
-    setSelectedUser(user);
-    setModalVisible(true);
-  };
+  if (loading) {
+    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
+  }
 
   return (
-    <View className="flex-1 p-4 bg-white">
-      <View className="gap-4 mb-4">
-        <Text className="text-2xl font-bold ">Conversas</Text>
-
-        <View className="h-[50px] w-[100%] rounded-full bg-[#EFEFEF] gap-4 flex-row items-center">
-          <Image
-            source={require("../../assets/icons/pesquisa.png")}
-            style={{ width: "22px", height: "22px", marginLeft: 15 }}
-          />
-          <TextInput
-            className="color-gray-600 font-normal w-[80%] h-[90%]"
-            style={{ fontFamily: "Poppins_400Regular" }}
-            placeholder="Pesquisar..."
-          />
-        </View>
-
-        <View className="flex-row items-center gap-4">
-          {btns.map((btn) => {
-            const isSelected = selectedBtn === btn;
-            return (
-              <Pressable
-                key={btn}
-                onPress={() => setSelectedBtn(btn)}
-                className={`items-center justify-center px-6 h-[37px] rounded-full ${
-                  isSelected
-                    ? "bg-[#61D483] border-[2px] border-[#61D483]"
-                    : "border-[2px] border-[#61D483]"
-                }`}
-              >
-                <Text
-                  className={`${isSelected ? "text-white" : "text-[#61D483]"}`}
-                  style={{ fontFamily: "Poppins_500Medium" }}
-                >
-                  {btn}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
+    <View style={{ flex: 1, backgroundColor: "white" }}>
+      {/* HEADER */}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          padding: 16,
+          borderBottomWidth: 1,
+          borderBottomColor: "#ddd",
+        }}
+      >
+        <Image
+          source={{
+            uri: `${API_URL}/storage/${contactAvatar}`,
+          }}
+          style={{ width: 40, height: 40, borderRadius: 20, marginRight: 12 }}
+        />
+        <Text style={{ fontSize: 18, fontWeight: "bold" }}>{contactName}</Text>
       </View>
 
+      {/* MENSAGENS */}
       <FlatList
-        data={contacts}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <Pressable
-            onPress={() => openConversation(item)}
-            className="flex-row items-center px-4 py-3 border-b border-gray-200"
-          >
-            <Image
-              source={item.image}
-              className="w-12 h-12 rounded-full mr-4"
-            />
+        data={messages}
+        keyExtractor={(item, index) => (item.id ?? index).toString()}
+        contentContainerStyle={{ padding: 16 }}
+        renderItem={({ item }) => {
+          if (!item || !item.message) return null;
+          const isMe = item.receiver_type === "App\\Models\\Clube";
 
-            <View className="flex-1">
-              <Text
-                className="text-lg "
-                style={{ fontFamily: "Poppins_500Medium" }}
+          if (item.type === "convite") {
+            return (
+              <View
+                style={{
+                  marginVertical: 8,
+                  padding: 12,
+                  backgroundColor: "#4b7bec",
+                  borderRadius: 12,
+                  maxWidth: "75%",
+                  alignSelf:
+                    item.sender_id === userId ? "flex-end" : "flex-start",
+                }}
               >
-                {item.name}
-              </Text>
-              <Text
-                className="text-gray-500"
-                style={{ fontFamily: "Poppins_500Medium" }}
-              >
-                {item.lastMessage}
-              </Text>
-            </View>
+                <Text style={{ color: "white", fontWeight: "bold" }}>
+                  Convite: {item.payload.event_name}
+                </Text>
 
-            <Text
-              className="text-[#61D483] text-sm"
-              style={{ fontFamily: "Poppins_500Medium" }}
+                <Text style={{ color: "white" }}>
+                  Data: {item.payload.data}
+                </Text>
+
+                <Pressable
+                  onPress={() => openEvent(item.payload.event_id)}
+                  style={{
+                    backgroundColor: "white",
+                    padding: 8,
+                    borderRadius: 8,
+                    marginTop: 8,
+                  }}
+                >
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      fontWeight: "bold",
+                      color: "#4b7bec",
+                    }}
+                  >
+                    Ver evento
+                  </Text>
+                </Pressable>
+              </View>
+            );
+          }
+
+          return (
+            <View
+              style={{
+                marginVertical: 6,
+                flexDirection: "row",
+                justifyContent: isMe ? "flex-end" : "flex-start",
+              }}
             >
-              {item.time}
-            </Text>
-          </Pressable>
-        )}
+              <View
+                style={{
+                  maxWidth: "75%",
+                  padding: 10,
+                  borderRadius: 12,
+                  backgroundColor: isMe ? "#61D483" : "#E5E7EB", // verde / cinza
+                  borderBottomRightRadius: isMe ? 2 : 12,
+                  borderBottomLeftRadius: isMe ? 12 : 2,
+                }}
+              >
+                <Text
+                  style={{
+                    color: isMe ? "white" : "black",
+                    fontSize: 15,
+                  }}
+                >
+                  {item.message}
+                </Text>
+              </View>
+            </View>
+          );
+        }}
       />
 
-      <Modal visible={modalVisible} animationType="slide">
-        <ChatConversation
-          user={selectedUser}
-          onClose={() => setModalVisible(false)}
-          onNewMessage={(msg) => updateLastMessage(selectedUser.id, msg)}
+      {/* INPUT */}
+      <View
+        style={{
+          flexDirection: "row",
+          padding: 12,
+          borderTopWidth: 1,
+          borderTopColor: "#ddd",
+        }}
+      >
+        <TextInput
+          style={{
+            flex: 1,
+            backgroundColor: "#f0f0f0",
+            padding: 10,
+            borderRadius: 8,
+          }}
+          placeholder="Digite uma mensagem..."
+          value={text}
+          onChangeText={setText}
         />
-      </Modal>
+
+        <Pressable
+          onPress={sendMessage}
+          style={{
+            backgroundColor: "#4ADE80",
+            paddingHorizontal: 16,
+            justifyContent: "center",
+            marginLeft: 8,
+            borderRadius: 8,
+          }}
+        >
+          <Text style={{ color: "white", fontWeight: "bold" }}>Enviar</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }

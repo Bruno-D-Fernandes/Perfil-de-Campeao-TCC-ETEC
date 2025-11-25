@@ -11,7 +11,7 @@ import { Pressable, Text } from "react-native";
 import Animated from "react-native-reanimated";
 import CustomTabBar from "./src/components/CustomTabBar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-
+import { PusherProvider } from "./src/context/PusherProvider";
 import { Feather } from "@expo/vector-icons";
 
 // Telas
@@ -26,6 +26,7 @@ import NotificaScreen from "./src/screens/NotificaScreen";
 import PortfolioScreen from "./src/screens/PortfolioScreen";
 import PerfilCrudScreen from "./src/screens/PerfilCrudScreen";
 import ChatScreen from "./src/screens/ChatScreen";
+import ContatosScreen from "./src/screens/ContatosScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -162,45 +163,53 @@ function InitialSplashScreen({ navigation }) {
 
 export default function App() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <BottomSheetModalProvider>
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName="Splash">
-            <Stack.Screen
-              name="Splash"
-              component={InitialSplashScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AuthStack"
-              component={AuthStack}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="MainTabs"
-              component={MainTabs}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Config"
-              component={ConfigScreen}
-              options={{ headerShown: false }}
-            />
+    <PusherProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <BottomSheetModalProvider>
+          <NavigationContainer>
+            <Stack.Navigator initialRouteName="Splash">
+              <Stack.Screen
+                name="Splash"
+                component={InitialSplashScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="AuthStack"
+                component={AuthStack}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="MainTabs"
+                component={MainTabs}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Config"
+                component={ConfigScreen}
+                options={{ headerShown: false }}
+              />
 
-            <Stack.Screen
-              name="Chat"
-              component={ChatScreen}
-              options={{ headerShown: false }}
-            />
+              <Stack.Screen
+                name="Chat"
+                component={ChatScreen}
+                options={{ headerShown: false }}
+              />
 
-            <Stack.Screen
-              name="PerfilCrudScreen"
-              component={PerfilCrudScreen}
-              options={{ headerShown: false }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </BottomSheetModalProvider>
-    </GestureHandlerRootView>
+              <Stack.Screen
+                name="Contatos"
+                component={ContatosScreen}
+                options={{ headerShown: false }}
+              />
+
+              <Stack.Screen
+                name="PerfilCrudScreen"
+                component={PerfilCrudScreen}
+                options={{ headerShown: false }}
+              />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView>
+    </PusherProvider>
   );
 }

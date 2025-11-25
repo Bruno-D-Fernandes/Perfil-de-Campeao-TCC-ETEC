@@ -231,7 +231,7 @@ export default function OportunidadesScreen() {
 
           <View className="w-[30%] h-[45px] flex-row items-center justify-center gap-4">
             <Pressable
-              onPress={() => navigation.navigate("Chat")}
+              onPress={() => navigation.navigate("Contatos")}
               className="rounded-full bg-[#EFEFEF] h-[100%] w-11 items-center justify-center"
             >
               <Image

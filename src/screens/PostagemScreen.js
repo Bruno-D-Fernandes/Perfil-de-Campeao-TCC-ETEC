@@ -23,6 +23,8 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Platform } from "react-native";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import tw from "twrnc";
+// Importação necessária para vídeos
+import { Video } from "expo-av";
 
 import usuario from "../services/usuario";
 import { loadPerfilAll } from "../services/perfil";
@@ -116,13 +118,26 @@ export default function PostagemScreen() {
     return true;
   };
 
+  // Função auxiliar para verificar se a URI é de um vídeo
+  const isVideo = (uri) => {
+    if (!uri) return false;
+    const lowerCaseUri = uri.toLowerCase();
+    // Corrigido: A verificação deve ser feita na URI completa, que contém a extensão
+    return (
+      lowerCaseUri.endsWith(".mp4") ||
+      lowerCaseUri.endsWith(".mov") ||
+      lowerCaseUri.endsWith(".avi") ||
+      lowerCaseUri.endsWith(".webm")
+    );
+  };
+
   const handlePostagem = async () => {
     console.log("Handle postagem chamado");
 
     setIsPosting(true);
 
     if (!textoPostagem && !imagem) {
-      setError("A postagem precisa de texto ou imagem.");
+      setError("A postagem precisa de texto ou mídia (imagem/vídeo).");
       setViewError(true);
       setIsPosting(false);
       return;
@@ -151,16 +166,22 @@ export default function PostagemScreen() {
       }
 
       if (imagem) {
-        const fileName = imagem.split("/").pop() || "image.jpg";
+        // Modificação para suportar vídeos
+        const fileName = imagem.split("/").pop() || "media.bin";
         let fileType;
 
-        if (fileName.toLowerCase().endsWith(".png")) fileType = "image/png";
+        const lowerCaseUri = imagem.toLowerCase(); // Usar a URI completa para checar a extensão
+
+        if (lowerCaseUri.endsWith(".png")) fileType = "image/png";
         else if (
-          fileName.toLowerCase().endsWith(".jpg") ||
-          fileName.toLowerCase().endsWith(".jpeg")
+          lowerCaseUri.endsWith(".jpg") ||
+          lowerCaseUri.endsWith(".jpeg")
         )
           fileType = "image/jpeg";
-        else fileType = "application/octet-stream";
+        else if (isVideo(imagem)) {
+          // Usando um tipo genérico de vídeo, ajuste se souber o tipo exato
+          fileType = "video/mp4";
+        } else fileType = "application/octet-stream";
 
         if (Platform.OS === "web") {
           const response = await fetch(imagem);
@@ -224,12 +245,13 @@ export default function PostagemScreen() {
     });
   }, [navigation, handlePostagem, isPosting, loading]);
 
-  const tirarFoto = async () => {
+  // Função renomeada e modificada para permitir seleção de todos os tipos de mídia
+  const selecionarMidia = async () => {
     const permissao = await solicitarPermissaoCamera();
     if (!permissao) return;
 
     const resultado = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ImagePicker.MediaTypeOptions.All, // Alterado para All
       allowsEditing: true,
       quality: 1,
     });
@@ -378,7 +400,7 @@ export default function PostagemScreen() {
               placeholderTextColor="#61D48399"
               value={textoPostagem}
               onChangeText={setTextoPostagem}
-              className="bg-white rounded-[20px] border-[2px] border-[#61D483]/60 text-[#575757] text-[16px] mt-2 p-3"
+              className="bg-white p-4 rounded-[20px] border-[2px] border-[#61D483]/60 font-medium text-[#575757] text-[16px] mt-2"
               style={{
                 minHeight: 100,
                 maxHeight: 160,
@@ -399,7 +421,7 @@ export default function PostagemScreen() {
             </Text>
           </View>
 
-          {/* Imagem selecionada */}
+          {/* Mídia selecionada (Imagem ou Vídeo) */}
           {imagem && (
             <View
               style={{
@@ -413,11 +435,21 @@ export default function PostagemScreen() {
                 marginTop: 12,
               }}
             >
-              <Image
-                source={{ uri: imagem }}
-                style={{ width: "100%", height: 180 }}
-                resizeMode="cover"
-              />
+              {isVideo(imagem) ? (
+                <Video
+                  source={{ uri: imagem }}
+                  style={{ width: "100%", height: 180 }}
+                  useNativeControls
+                  resizeMode="cover"
+                  isLooping
+                />
+              ) : (
+                <Image
+                  source={{ uri: imagem }}
+                  style={{ width: "100%", height: 180 }}
+                  resizeMode="cover"
+                />
+              )}
 
               <Pressable
                 onPress={() => setImagem(null)}
@@ -528,7 +560,7 @@ export default function PostagemScreen() {
                   nome={"Mídia"}
                   imagem={0}
                   color={"#2B87EF"}
-                  onPress={tirarFoto}
+                  onPress={selecionarMidia} // Alterado para a nova função
                 />
               </View>
 
