@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import React, { useEffect, useState, useRef, useMemo, useCallback  } from "react";
+import { BottomSheetModal, BottomSheetView, BottomSheetScrollView  } from "@gorhom/bottom-sheet";
 
 import {
   View,
@@ -9,7 +9,9 @@ import {
   FlatList,
   ScrollView,
   Pressable,
+  Image
 } from "react-native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Calendar } from "react-native-calendars";
 
 const mockConvites = [
@@ -30,27 +32,27 @@ const mockConvites = [
     local: "Parque São Jorge",
   },
   {
-    id: 2,
+    id: 5,
     clube: "Botafogo",
     oportunidade: "Sub-15 - Lateral",
     data: "2025-12-22",
-    hora: "09:00",
+    hora: "12:00",
     local: "Parque São Jorge",
   },
   {
-    id: 2,
+    id: 4,
     clube: "Vasco da Gama",
     oportunidade: "Sub-15 - Lateral",
     data: "2025-12-22",
-    hora: "09:00",
+    hora: "11:00",
     local: "Parque São Jorge",
   },
   {
-    id: 2,
+    id: 3,
     clube: "Barcelona",
     oportunidade: "Sub-25 - Lateral",
     data: "2025-12-22",
-    hora: "09:00",
+    hora: "10:00",
     local: "Parque São Jorge",
   },
 ];
@@ -76,6 +78,8 @@ const mockAgenda = [
 
 export default function AgendaScreen() {
   const today = new Date().toISOString().split("T")[0];
+    const navigation = useNavigation();
+  
 
   const [convites, setConvites] = useState([]);
   const [agenda, setAgenda] = useState([]);
@@ -89,12 +93,19 @@ export default function AgendaScreen() {
 
     // BottomSheet
 const sheetRef = useRef(null);
-const snapPoints = useMemo(() => ["40%", "70%"], []);
+const snapPoints = useMemo(() => ["40%", "30%"], []);
 
-const abrirBottomSheet = useCallback(() => {
-  sheetRef.current?.present();
-}, []);
+useFocusEffect(
+  useCallback(() => {
+    // Ao entrar na tela, abre o BottomSheet
+    sheetRef.current?.present();
 
+    return () => {
+      // Ao sair da tela, fecha o BottomSheet
+      sheetRef.current?.dismiss();
+    };
+  }, [])
+);
 const fecharBottomSheet = useCallback(() => {
   sheetRef.current?.dismiss();
 }, []);
@@ -181,7 +192,7 @@ const handleDismiss = () => {
         <View className="flex-col items-center w-20 pr-4">
             {displayDate && (
                 <>
-                    <Text className="text-gray-900 font-bold text-2xl leading-7">{day}</Text>
+                    <Text className="text-green-900 font-bold text-2xl leading-7">{day}</Text>
                     <Text className="text-gray-500 text-sm mb-2 font-semibold">{dayOfWeek}</Text>
                 </>
             )}
@@ -226,43 +237,68 @@ const handleDismiss = () => {
   };
 
   return (
-    <View className="flex-1 p-3 bg-white">
-      <Pressable onPress={() => setModalMeusEventos(true)}>
-        <Text> meus eventos </Text>
-      </Pressable>
+    <View className="flex-1 p-3 bg-[#f0efed] ">
 
-      <Calendar
-        markedDates={getMarkedDates()}
-        onDayPress={(day) => {
+      <View className="w-full flex-row items-center justify-between">
+
+        <Pressable className="flex-row px-2 w-[40%] bg-white h-10 mb-2 items-center justify-between rounded-full" onPress={() => navigation.navigate('MainTabs', { screen: 'Oportunidades' })}>
+          <View className="bg-green-500 rounded-full w-8 p-2">
+            <Image style={{width:10, height:16,}} source={require("../../assets/icons/icon_voltar.png")}/>
+          </View>
+          <Text className="mr-2" style={{fontFamily:'Poppins_500Medium',}}>Voltar</Text>
+        </Pressable>
+        <Pressable className="flex-row bg-green-50 w-[40%] h-10 mb-2 items-center justify-between p-4 rounded-[12px]" onPress={() => setModalMeusEventos(true)}>
+          <View className="flex-row items-center justify-center w-[30%] gap-1">
+            <Text className="text-green-600 text-sm" style={{fontFamily:'Poppins_500Medium',}}>Peneiras </Text>
+            <Text className="text-green-600" style={{fontFamily:'Poppins_500Medium',}}> {agenda.length} </Text>
+          </View>
+            <Image style={{width:10, height:16,}} source={require("../../assets/icons/icon_proximo.png")}/>
+        </Pressable>
+      </View>
+
+
+        <View className="p-1 bg-white rounded-[12px]">
+        <Calendar
+          markedDates={getMarkedDates()}
+          onDayPress={(day) => {
           setSelectedDate(day.dateString);
           setEventoSelecionado(null); 
           abrirBottomSheet(); 
-        }}
+         }}
 
         theme={{
-          todayTextColor: "#16a34a",
+          todayTextColor: "#16a34a", 
+          arrowColor: '#72bd4d',
+
+          'stylesheet.day.basic': {
+            today: {
+            backgroundColor: '#e5f7dc', 
+            borderRadius: 12, 
+            },
+          },
         }}
       />
+      </View>
 
       <Modal 
         visible={modalMeusEventos}
         animationType="slide"
       >
-        <View className="flex-1 bg-gray-50 pt-10 px-5">
+        <View className="flex-1 bg-gray-50 pt-3 px-5">
             
-            <View className="flex-row justify-between items-center mb-6">
-                <TouchableOpacity onPress={() => setModalMeusEventos(false)}>
-                    <Text className="text-3xl font-light text-gray-800">☰</Text>
-                </TouchableOpacity>
-                <Text className="text-2xl font-semibold text-gray-800">Agenda de Peneiras</Text> 
-                <TouchableOpacity onPress={() => console.log('Mais Opções')}>
-                    <Text className="text-3xl font-light text-gray-800">⋮</Text>
-                </TouchableOpacity>
+            <View className="   mb-6">
+               <Pressable className="bg-green-500 rounded-full mb-8 w-8 p-2" onPress={() => setModalMeusEventos(false)}>
+    
+                    <Image style={{width:10, height:16,}} source={require("../../assets/icons/icon_voltar.png")}/>
+    
+                </Pressable>
+                <Text className="text-2xl font-semibold text-gray-800" style={{fontFamily:'Poppins_500Medium',}}>Agenda de Peneiras</Text> 
             </View>
 
             <View className="flex-1">
+                
+                {/*TIRAR ESSE BTN DEPOIS */}
                 <TouchableOpacity
-
                     className="bg-[#61D483] p-4 rounded-xl items-center mb-6"
                     onPress={() => setModalConvitesVisible(true)}
                 >
@@ -301,49 +337,7 @@ const handleDismiss = () => {
       </Modal>
 
     
-      <Modal visible={modalHorasVisible} animationType="slide">
-        <View className="flex-1 bg-white p-5">
-          <Text className="text-2xl font-bold mb-3">
-            Horários de {selectedDate}
-          </Text>
-
-          <FlatList
-            data={horasDia}
-            keyExtractor={(item) => item}
-            renderItem={({ item }) => {
-              const evento = eventosDoDia.find((e) => e.hora === item);
-
-              return (
-                <TouchableOpacity
-                  className={`p-4 rounded-xl mb-2 ${
-                    evento ? "bg-green-300" : "bg-gray-100"
-                  }`}
-                  onPress={() => {
-                    if (evento) {
-                      setEventoSelecionado(evento);
-                      setModalDayVisible(true);
-                    }
-                  }}
-                >
-                  <Text className="text-lg">{item}</Text>
-                  {evento && (
-                    <Text className="font-bold text-green-900">
-                      {evento.clube}
-                    </Text>
-                  )}
-                </TouchableOpacity>
-              );
-            }}
-          />
-
-          <TouchableOpacity
-            onPress={() => setModalHorasVisible(false)}
-            className="mt-5 p-4 bg-red-600 rounded-xl items-center"
-          >
-            <Text className="text-white font-semibold">Fechar</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
+      
 
     
       <Modal visible={modalDayVisible} animationType="slide">
@@ -417,70 +411,132 @@ const handleDismiss = () => {
 <BottomSheetModal
   ref={sheetRef}
   index={0}
-  snapPoints={snapPoints}
-  onDismiss={handleDismiss}
-  backgroundStyle={{
-    backgroundColor: "white",
-    borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 12,
-  }}
+  snapPoints={["50%", "90%"]} // snap inicial e snap maior
+  enablePanDownToClose={false}
+  backgroundStyle={{ backgroundColor: "#f0efed", borderRadius: 20 }}
+  handleIndicatorStyle={{ backgroundColor: "#a8a8a8" }} // cor e altura da barra
 >
+  <BottomSheetScrollView
+    contentContainerStyle={{paddingHorizontal: 20, flexGrow: 1 }}
+    showsVerticalScrollIndicator={true}
+    scrollEventThrottle={16}
+    onScroll={({ nativeEvent }) => {
+      const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
 
- <BottomSheetView style={{ flex: 1 }}> 
-    <View style={{ paddingHorizontal: 20 }}>
-        <Text className="text-2xl font-bold mb-3">
-            Horários de {selectedDate}
-        </Text>
-    </View>
+      // Quando chega no final da lista, expande
+      if (layoutMeasurement.height + contentOffset.y >= contentSize.height - 10) {
+        sheetRef.current?.expand();
+      }
 
-    <FlatList
-        data={horasDia}
-        keyExtractor={(item) => item}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 20 }} 
-        renderItem={({ item }) => {
-            const evento = eventosDoDia.find((e) => e.hora === item);
+      // Quando volta para o topo da lista, recolhe
+      if (contentOffset.y <= 0) {
+        sheetRef.current?.collapse(); // vai para o snap menor
+      }
+    }}
+  >
 
-            return (
-                <TouchableOpacity
-                    className={`p-4 rounded-xl mb-2 ${
-                        evento ? "bg-green-300" : "bg-gray-100"
-                    }`}
-                    onPress={() => {
-                        if (evento) {
-                            setEventoSelecionado(evento);
-                        }
-                    }}
-                >
-                    <Text className="text-lg">{item}</Text>
+   <View className="bg-[#d1d1d1] rounded-[12px] p-4 mb-[16px] flex-row justify-between items-center">
+  <View>
+<Text style={{ fontSize: 18, fontWeight: "bold", fontFamily:'Poppins_500Medium', }}>
+  {(() => {
+    const parts = selectedDate.split('-'); 
+    const year = parseInt(parts[0]);
+    const monthIndex = parseInt(parts[1]) - 1; 
+    const day = parseInt(parts[2]);
+    const date = new Date(year, monthIndex, day); 
+    const monthNames = [
+      "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+      "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+    ];
+    const month = monthNames[date.getMonth()];
+    return `${date.getDate()} de ${month}`; 
+  })()}
+</Text>
+  </View>
 
-                    {evento && (
-                        <Text className="font-bold text-green-900">
-                            {evento.clube}
-                        </Text>
-                    )}
-                </TouchableOpacity>
-            );
-        }}
-    />
-    
-    {eventoSelecionado && (
-        <View className="mt-5 p-4 bg-white rounded-xl shadow" style={{ marginHorizontal: 20 }}>
-            <Text className="text-xl font-bold">
-                {eventoSelecionado.clube}
-            </Text>
-            <Text>{eventoSelecionado.oportunidade}</Text>
-            <Text>
-                {eventoSelecionado.data} às {eventoSelecionado.hora}
-            </Text>
-            <Text>Local: {eventoSelecionado.local}</Text>
+  <View>
+    <Text className="color-[#0d9853] text-[14px]" style={{fontFamily:'Poppins_500Medium'}}>{eventosDoDia.length} Peneira{eventosDoDia.length !== 1 ? "s" : ""}</Text>
+  </View>
+</View>
+
+   {horasDia.map((hora, index) => {
+  const evento = eventosDoDia.find((e) => e.hora === hora);
+
+  const primeiro = index === 0;
+  const ultimo = index === horasDia.length - 1;
+
+  return (
+    <View key={hora} className="flex-row min-h-[80px] relative">
+
+
+      {!primeiro && (
+        <View className="absolute left-[103px] top-0 w-[2px] h-1/2 bg-green-500 z-20" />
+      )}
+      {!ultimo && (
+        <View className="absolute left-[103px] bottom-0 w-[2px] h-1/2 bg-green-500 z-20" />
+      )}
+
+   
+
+{evento ? (
+          <View
+  className="
+    absolute  top-1/2 z-30 rounded-full
+    -translate-y-[50%] w-[22px] left-[93px] h-[22px] bg-green-500 border-[3px] border-[#ffff]">
+      </View>
+        ) : (
+           <View
+  className="
+    absolute  top-1/2 z-30 rounded-full
+    -translate-y-[50%] w-[8px] left-[100px] h-[8px] bg-green-500"/>
+        )}
+
+
+
+      {/* CAMPO */}
+      <TouchableOpacity
+        onPress={() => evento && setEventoSelecionado(evento)}
+        activeOpacity={0.7}
+        className={` mb-2 h-[90px] w-full rounded-xl border flex-row justify-around items-center ${
+          evento
+            ? "bg-green-400  border-green-400"
+            : "bg-white border-gray-200"
+        }`}
+      >
+        <View className="w-[30%] justify-center items-center">
+          {evento ? (
+            <Text className="text-white text-lg" style={{fontFamily:'Poppins_400Regular',}}>{hora}</Text>
+          ) : (
+            <Text className="text-gray-800 text-lg" style={{fontFamily:'Poppins_400Regular',}}>{hora}</Text>
+          )}
         </View>
-    )}
-</BottomSheetView>
+
+        <View className="w-[50%]">
+          {evento ? (
+            <View>
+              <Text className="text-white text-base" style={{fontFamily:'Poppins_500Medium'}}>{evento.clube}</Text>
+
+              <Text className="text-white text-xs" style={{fontFamily:'Poppins_400Regular'}}>
+                {evento.local}
+              </Text>
+
+              {/* Posição */}
+              <Text className="text-white text-xs" style={{fontFamily:'Poppins_400Regular'}}>
+                {evento.oportunidade}
+              </Text>
+
+            </View>
+          ) : (
+            <Text className="text-gray-400 text-xs">Sem evento</Text>
+          )}
+        </View>
+      </TouchableOpacity>
+
+    </View>
+  );
+})}
+
+  </BottomSheetScrollView>
 </BottomSheetModal>
 
 
