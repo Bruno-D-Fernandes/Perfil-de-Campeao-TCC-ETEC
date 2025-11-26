@@ -2,13 +2,17 @@ import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, FlatList, ActivityIndicator } from "react-native";
 import { Notificacoes } from "../services/notificacoes";
 import Notificacao from "../components/Notificacao";
+import { usePusher } from "../context/PusherProvider";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function NotificationsScreen() {
+export default function NotificaScreen() {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const perPage = 10;
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+
+  const pusher = usePusher();
 
   const parseItems = (payload) => {
     if (!payload) return [];
@@ -51,9 +55,58 @@ export default function NotificationsScreen() {
     [loading, hasMore, page]
   );
 
+  const handleNewNotification = useCallback((notification) => {
+    console.log("Notificação em tempo real recebida:", notification);
+    setData((prevData) => [notification, ...prevData]);
+  }, []);
+
   useEffect(() => {
     fetchNotificacoes(true);
   }, []);
+
+  // 2. Lógica de Inscrição no Canal de Notificações
+  useEffect(() => {
+    // Verifica se o Pusher está conectado
+    if (pusher) {
+      const subscribeToNotifications = async () => {
+        const userJson = await AsyncStorage.getItem("user");
+        if (!userJson) return;
+
+        const user = JSON.parse(userJson);
+        const channelName = `notifications.user.${user.id}`;
+
+        console.log(
+          `NotificationsScreen: Inscrevendo-se no canal: ${channelName}`
+        );
+        const channel = pusher.subscribe(channelName);
+
+        channel.bind("pusher:subscription_succeeded", () => {
+          console.log(
+            `NotificationsScreen: Inscrição no canal ${channelName} foi um SUCESSO!`
+          );
+        });
+
+        channel.bind("pusher:subscription_error", (error) => {
+          console.error(
+            `NotificationsScreen: Erro de inscrição no canal ${channelName}:`,
+            error
+          );
+        });
+
+        channel.bind("NewNotification", handleNewNotification);
+
+        return () => {
+          console.log(
+            `NotificationsScreen: Desinscrevendo do canal: ${channelName}`
+          );
+          channel.unbind("NewNotification", handleNewNotification);
+          pusher.unsubscribe(channelName);
+        };
+      };
+
+      subscribeToNotifications();
+    }
+  }, [pusher, handleNewNotification]);
 
   return (
     <View className="flex-1 bg-[#F3F7F5] px-6 pt-6">

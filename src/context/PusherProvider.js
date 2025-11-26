@@ -100,6 +100,31 @@ export const PusherProvider = ({ children }) => {
         channel.bind("new-message", (data) => {
           console.log("Mensagem recebida globalmente no contexto!", data);
         });
+
+        const notificationChannelName = `notifications.user.${user.id}`;
+        console.log(
+          `Contexto: Inscrevendo-se no canal de notificações: ${notificationChannelName}`
+        );
+        const notificationChannel = pusherInstance.subscribe(
+          notificationChannelName
+        );
+
+        notificationChannel.bind("pusher:subscription_succeeded", () => {
+          console.log(
+            `Contexto: Inscrição no canal ${notificationChannelName} foi um SUCESSO!`
+          );
+        });
+
+        notificationChannel.bind("pusher:subscription_error", (error) => {
+          console.error(
+            `Contexto: pusher:subscription_error no canal de notificações. Erro:`,
+            JSON.stringify(error, null, 2)
+          );
+        });
+
+        notificationChannel.bind("NewNotification", (data) => {
+          console.log("Nova notificação recebida!", data);
+        });
       }
     };
 
