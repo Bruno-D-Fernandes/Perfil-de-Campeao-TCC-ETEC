@@ -39,6 +39,8 @@ export default function OportunidadesScreen() {
   const [filterIdadeMin, setFilterIdadeMin] = useState("");
   const [filterIdadeMax, setFilterIdadeMax] = useState("");
   const [appliedFilters, setAppliedFilters] = useState(null);
+  const today = new Date().getDate();
+
 
   const navigation = useNavigation();
 
@@ -231,7 +233,7 @@ export default function OportunidadesScreen() {
             resizeMode="stretch"
           />
 
-          <View className="w-[25%] h-[45px] flex-row items-center justify-center gap-4">
+          <View className="w-[40%] h-[45px] flex-row items-center justify-center gap-4">
 
             <Pressable
               onPress={() => navigation.navigate("Config")}
@@ -244,12 +246,13 @@ export default function OportunidadesScreen() {
             </Pressable>
             <Pressable
               onPress={() => navigation.navigate("Agenda")}
-              className="rounded-full bg-[#EFEFEF] h-[100%] w-11 items-center justify-center"
+              className="rounded-full bg-[#EFEFEF] h-[100%] w-22 flex-row p-4 gap-2 items-center justify-between"
             >
               <Image
                 source={require("../../assets/cadastro/icon_data.png")}
                 style={{ width: "23px", height: "20px", tintColor: "#36A958" }}
               />
+              <Text style={{ fontFamily: "Poppins_500Medium", color:'#36A958' }}>{today}</Text>
             </Pressable>
           </View>
         </View>
