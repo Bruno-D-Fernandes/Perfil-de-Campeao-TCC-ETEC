@@ -69,7 +69,7 @@ export default function ChatScreen() {
         }
       );
 
-      if (response.status === 200) navigation.navigate("Eventos");
+      if (response.status === 200) navigation.navigate("Calendario");
 
       console.log("Convite aceito:", response.data);
     } catch (error) {
