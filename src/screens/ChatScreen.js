@@ -13,6 +13,7 @@ import { API_URL } from "@env";
 import { useRoute } from "@react-navigation/native";
 import { usePusher } from "../context/PusherProvider";
 import api from "../services/axios";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ChatScreen() {
   const route = useRoute();
@@ -55,6 +56,26 @@ export default function ChatScreen() {
 
     if (conversationId) loadMessages();
   }, [conversationId]);
+
+  const navigation = useNavigation();
+
+  const aceitoInvite = async (convite_evento_id) => {
+    try {
+      const response = await api.post(
+        "accept_invite/" + convite_evento_id,
+        {},
+        {
+          baseURL: `${API_URL}/api`,
+        }
+      );
+
+      if (response.status === 200) navigation.navigate("Eventos");
+
+      console.log("Convite aceito:", response.data);
+    } catch (error) {
+      console.log("Erro ao aceitar convite:", error);
+    }
+  };
 
   useEffect(() => {
     if (!pusher || !userId) return;
@@ -132,6 +153,30 @@ export default function ChatScreen() {
           const isMe = item.receiver_type === "App\\Models\\Clube";
 
           if (item.type === "convite") {
+            console.log("Renderizando convite:", item);
+
+            const inicio = new Date(item.evento?.data_hora_inicio);
+            const fim = new Date(item.evento?.data_hora_fim);
+
+            const dataInicio = inicio.toLocaleDateString("pt-BR");
+            const dataFim = fim.toLocaleDateString("pt-BR");
+
+            const horaInicio = inicio.toLocaleTimeString("pt-BR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+            const horaFim = fim.toLocaleTimeString("pt-BR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+
+            //   bairro : "Guaianases" cep : "03545-200" cidade : "São Paulo"
+            // clube_id : 1 color : null complemento : "Quadra 2" created_at :
+            //                "2025-11-29T11:08:11.000000Z" descricao : "Competição oficial
+            // organizada pelo clube." estado : "SP" id : 1
+            //  limite_participantes : 30 numero : "120" rua : "Rua do Clube"
+            //   titulo : "Torneio da Zona Leste" exemplo de info de ento para estilizaç˜ão --Bruno
+
             return (
               <View
                 style={{
@@ -140,20 +185,21 @@ export default function ChatScreen() {
                   backgroundColor: "#4b7bec",
                   borderRadius: 12,
                   maxWidth: "75%",
-                  alignSelf:
-                    item.sender_id === userId ? "flex-end" : "flex-start",
+                  alignSelf: "flex-start",
                 }}
               >
                 <Text style={{ color: "white", fontWeight: "bold" }}>
-                  Convite: {item.payload.event_name}
+                  Convite: {item.evento?.titulo}
                 </Text>
 
                 <Text style={{ color: "white" }}>
-                  Data: {item.payload.data}
+                  Início: {dataInicio} às {horaInicio}
                 </Text>
-
+                <Text style={{ color: "white" }}>
+                  Fim: {dataFim} às {horaFim}
+                </Text>
                 <Pressable
-                  onPress={() => openEvent(item.payload.event_id)}
+                  onPress={() => aceitoInvite(item?.convite_evento_id)}
                   style={{
                     backgroundColor: "white",
                     padding: 8,
@@ -168,7 +214,7 @@ export default function ChatScreen() {
                       color: "#4b7bec",
                     }}
                   >
-                    Ver evento
+                    Aceitar Convite
                   </Text>
                 </Pressable>
               </View>
