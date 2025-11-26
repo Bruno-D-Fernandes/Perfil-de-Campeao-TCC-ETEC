@@ -25,6 +25,7 @@ import CadastroScreen from "./src/screens/CadastroScreen";
 import NotificaScreen from "./src/screens/NotificaScreen";
 import PortfolioScreen from "./src/screens/PortfolioScreen";
 import PerfilCrudScreen from "./src/screens/PerfilCrudScreen";
+import AgendaScreen from "./src/screens/agendaScreen";
 import ChatScreen from "./src/screens/ChatScreen";
 import ContatosScreen from "./src/screens/ContatosScreen";
 
@@ -198,6 +199,12 @@ export default function App() {
               <Stack.Screen
                 name="Contatos"
                 component={ContatosScreen}
+                options={{ headerShown: false }}
+              />
+
+              <Stack.Screen
+                name="Agenda"
+                component={AgendaScreen}
                 options={{ headerShown: false }}
               />
 
