@@ -85,6 +85,9 @@ const formatEventData = (evento) => {
     hour: "2-digit",
     minute: "2-digit",
   });
+  
+    const [color, setColor] = useState('');
+
 
   return {
     ...evento,
@@ -96,6 +99,7 @@ const formatEventData = (evento) => {
     local: `${evento.rua}, ${evento.numero} - ${evento.bairro}, ${evento.cidade}/${evento.estado}`,
     descricaoCompleta: evento.descricao,
     limite: evento.limite_participantes,
+    color: color,
   };
 };
 
@@ -145,40 +149,19 @@ export default function AgendaScreen() {
 
   useEffect(() => {
     const fetchAgenda = async () => {
-      // Simulação da resposta da API com os dados fornecidos
-      const dadosMock = {
-        eventos: [
-          {
-            id: 1,
-            clube_id: 1,
-            titulo: "Torneio da Zona Leste",
-            descricao: "Competição oficial organizada pelo clube.",
-            data_hora_inicio: "2025-11-29T13:00:10.000000Z",
-            data_hora_fim: "2025-11-29T17:00:10.000000Z",
-            cep: "03545-200",
-            estado: "SP",
-            cidade: "São Paulo",
-            bairro: "Guaianases",
-            rua: "Rua do Clube",
-            numero: "120",
-            complemento: "Quadra 2",
-            limite_participantes: 30,
-            color: null,
-            created_at: "2025-11-26T13:00:10.000000Z",
-            updated_at: "2025-11-26T13:00:10.000000Z",
-          },
-        ],
-      };
 
-      // Processa os dados mockados para o formato esperado
-      const eventosFormatados = dadosMock.eventos.map(formatEventData);
+    const dadosAgenda = await api.get("/eventos");
 
-      // Define a agenda com os eventos formatados
+    console.log(dadosAgenda.data.eventos)
+
+      const eventosFormatados = dadosAgenda.data.eventos.map(formatEventData);
+
+    console.log('awui', eventosFormatados)
+
+
       setAgenda(eventosFormatados);
 
-      // O código original fazia uma chamada real à API, que foi comentada/substituída
-      // const dadosAgenda = await api.get("eventos");
-      // return console.log(dadosAgenda.data);
+
     };
 
     fetchAgenda();
@@ -210,7 +193,7 @@ export default function AgendaScreen() {
       marks[event.data] = {
         ...(marks[event.data] || {}),
         marked: true,
-        dotColor: "#22c55e",
+        dotColor: color || "#22c55e",
       };
     });
 

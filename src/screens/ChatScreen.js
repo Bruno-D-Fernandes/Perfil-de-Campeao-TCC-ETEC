@@ -69,7 +69,7 @@ export default function ChatScreen() {
         }
       );
 
-      if (response.status === 200) navigation.navigate("Calendario");
+      if (response.status === 200) navigation.navigate("Agenda");
 
       console.log("Convite aceito:", response.data);
     } catch (error) {
@@ -134,13 +134,16 @@ export default function ChatScreen() {
           borderBottomColor: "#ddd",
         }}
       >
+        <Pressable className="mr-4" onPress={() => navigation.navigate("Contatos")}>
+          <Image source={require("../../assets/cadastro/icon_voltar.png")} style={{width:11, height:18, tintColor:'grey'}}/>
+        </Pressable>
         <Image
           source={{
             uri: `${API_URL}/storage/${contactAvatar}`,
           }}
           style={{ width: 40, height: 40, borderRadius: 20, marginRight: 12 }}
         />
-        <Text style={{ fontSize: 18, fontWeight: "bold" }}>{contactName}</Text>
+        <Text style={{ fontSize: 14, fontWeight: "bold", fontFamily:'Poppins_500Medium', }}>{contactName}</Text>
       </View>
 
       {/* MENSAGENS */}
@@ -182,41 +185,62 @@ export default function ChatScreen() {
                 style={{
                   marginVertical: 8,
                   padding: 12,
-                  backgroundColor: "#4b7bec",
+                  backgroundColor: "#61D483",
                   borderRadius: 12,
                   maxWidth: "75%",
                   alignSelf: "flex-start",
+                  justifyContent:'center',
+                  alignItems:'center',
                 }}
               >
-                <Text style={{ color: "white", fontWeight: "bold" }}>
-                  Convite: {item.evento?.titulo}
+                <View className="w-60 bg-white p-2 rounded-[12px]">
+                <Text style={{ color: "#61D483",fontSize:20, fontWeight: "bold", borderBottomWidth:1, borderColor:'#9a9b9c', paddingBottom:4,fontFamily:'Poppins_500Medium',}}>
+                  Convite
                 </Text>
-
-                <Text style={{ color: "white" }}>
-                  Início: {dataInicio} às {horaInicio}
+                <View>
+                   <Text style={{ color: "#61D483", fontFamily:'Poppins_500Medium', }}>
+                  {item.evento?.titulo}
                 </Text>
-                <Text style={{ color: "white" }}>
-                  Fim: {dataFim} às {horaFim}
-                </Text>
+                </View>
+                <View className="w-full  flex-row items-center gap-3">
+                  <Image source={require("../../assets/cadastro/icon_data.png")} style={{width:16, height:16}}/>
+                  <Text style={{ color: '', fontFamily:'Poppins_500Medium', marginTop:5, }}>
+                    {dataInicio}
+                  </Text>
+                </View>
+                <View className="w-full  flex-row items-center gap-3">
+                  <Image source={require("../../assets/cadastro/icon_tempo.png")} style={{width:15, height:16}}/>
+                  <Text style={{ color: '', fontFamily:'Poppins_500Medium', }}>
+                     às {horaInicio} até às {horaFim}
+                  </Text>
+                </View>
+                <View className="w-full  flex-row items-center gap-3">
+                  <Image source={require("../../assets/cadastro/icon_local.png")} style={{width:13, height:16}}/>
+                  <Text style={{ color: "",fontFamily:'Poppins_500Medium', }}>
+                    {item.evento?.cidade}, {item.evento?.bairro}
+                  </Text>
+                </View>
+   
                 <Pressable
                   onPress={() => aceitoInvite(item?.convite_evento_id)}
                   style={{
-                    backgroundColor: "white",
+                    backgroundColor: "#61D483",
                     padding: 8,
                     borderRadius: 8,
-                    marginTop: 8,
+                    marginTop: 12,
                   }}
                 >
                   <Text
                     style={{
                       textAlign: "center",
-                      fontWeight: "bold",
-                      color: "#4b7bec",
+                      color: "white",
+                      fontFamily:'Poppins_500Medium'
                     }}
                   >
                     Aceitar Convite
                   </Text>
                 </Pressable>
+                </View>
               </View>
             );
           }
@@ -234,15 +258,16 @@ export default function ChatScreen() {
                   maxWidth: "75%",
                   padding: 10,
                   borderRadius: 12,
-                  backgroundColor: isMe ? "#61D483" : "#E5E7EB", // verde / cinza
+                  backgroundColor: isMe ? "#61D48390" : "#E5E7EB",
                   borderBottomRightRadius: isMe ? 2 : 12,
                   borderBottomLeftRadius: isMe ? 12 : 2,
                 }}
               >
                 <Text
                   style={{
-                    color: isMe ? "white" : "black",
-                    fontSize: 15,
+                    color: "black",
+                    fontSize: 14,
+                    fontFamily:'Poppins_400Regular'
                   }}
                 >
                   {item.message}
