@@ -145,40 +145,15 @@ export default function AgendaScreen() {
 
   useEffect(() => {
     const fetchAgenda = async () => {
-      // Simulação da resposta da API com os dados fornecidos
-      const dadosMock = {
-        eventos: [
-          {
-            id: 1,
-            clube_id: 1,
-            titulo: "Torneio da Zona Leste",
-            descricao: "Competição oficial organizada pelo clube.",
-            data_hora_inicio: "2025-11-29T13:00:10.000000Z",
-            data_hora_fim: "2025-11-29T17:00:10.000000Z",
-            cep: "03545-200",
-            estado: "SP",
-            cidade: "São Paulo",
-            bairro: "Guaianases",
-            rua: "Rua do Clube",
-            numero: "120",
-            complemento: "Quadra 2",
-            limite_participantes: 30,
-            color: null,
-            created_at: "2025-11-26T13:00:10.000000Z",
-            updated_at: "2025-11-26T13:00:10.000000Z",
-          },
-        ],
-      };
+      try {
+        const dadosAgenda = await api.get("eventos");
 
-      // Processa os dados mockados para o formato esperado
-      const eventosFormatados = dadosMock.eventos.map(formatEventData);
+        const eventosFormatados = dadosAgenda.data.eventos.map(formatEventData);
 
-      // Define a agenda com os eventos formatados
-      setAgenda(eventosFormatados);
-
-      // O código original fazia uma chamada real à API, que foi comentada/substituída
-      // const dadosAgenda = await api.get("eventos");
-      // return console.log(dadosAgenda.data);
+        setAgenda(eventosFormatados);
+      } catch (error) {
+        console.error("Erro ao buscar eventos:", error);
+      }
     };
 
     fetchAgenda();
@@ -280,7 +255,6 @@ export default function AgendaScreen() {
               setModalDayVisible(true);
             }}
           >
-            {/* Removido a condição 'Palmeiras' e mantido apenas a lógica de 'NOVO' se necessário */}
             {isFirst && (
               <View className="absolute top-0 right-0 p-2 bg-[#61D483] rounded-tr-xl rounded-bl-lg">
                 <Text className="text-white font-bold text-xs">NOVO</Text>

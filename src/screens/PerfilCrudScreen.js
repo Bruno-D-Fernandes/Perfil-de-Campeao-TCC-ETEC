@@ -37,6 +37,7 @@ export default function PerfilCrudScreen() {
   const [selectedCategoria, setSelectedCategoria] = useState(null);
   const [selectedPosicoes, setSelectedPosicoes] = useState([]);
   const [caracteristicaValues, setCaracteristicaValues] = useState({});
+  const [totalPerfisUsuario, setTotalPerfisUsuario] = useState(0); // Novo estado
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -50,6 +51,24 @@ export default function PerfilCrudScreen() {
     setPosicoes(response.posicoes);
     setCategorias(response.categorias);
     setCaracteristicas(response.caracteristicas);
+  };
+
+  // Função para contar o total de perfis do usuário
+  const contarTotalPerfis = async () => {
+    try {
+      const todosPerfis = await loadPerfilAll();
+      let total = 0;
+
+      // Conta todos os perfis em todas as categorias
+      Object.values(todosPerfis).forEach((perfisPorEsporte) => {
+        total += perfisPorEsporte.length;
+      });
+
+      setTotalPerfisUsuario(total);
+      console.log("Total de perfis do usuário:", total);
+    } catch (error) {
+      console.error("Erro ao contar perfis:", error);
+    }
   };
 
   const togglePosicao = (posicaoId) => {
@@ -66,7 +85,6 @@ export default function PerfilCrudScreen() {
 
   const handleDelete = async () => {
     const perfilArray = Object.values(perfis).flat();
-
     const perfil = perfilArray[0];
     const response = await excluirPerfil(perfil.id);
 
@@ -107,7 +125,6 @@ export default function PerfilCrudScreen() {
         });
       } else if (crud === "update") {
         const perfilArray = Object.values(perfis).flat();
-
         const perfil = perfilArray[0];
 
         if (!perfil) {
@@ -137,7 +154,6 @@ export default function PerfilCrudScreen() {
 
       if (crud === "update" && perfis) {
         const perfisArray = Object.values(perfis).flat();
-
         const perfil = perfisArray[0];
 
         if (perfil) {
@@ -155,6 +171,9 @@ export default function PerfilCrudScreen() {
         }
       }
     };
+
+    // Carrega o total de perfis quando o componente montar
+    contarTotalPerfis();
 
     console.log(selectedPosicoes);
     carregarDados();
@@ -310,7 +329,8 @@ export default function PerfilCrudScreen() {
       )}
 
       <View style={tw`flex-row justify-between gap-4 mt-10`}>
-        {crud === "update" && (
+        {/* Botão de deletar - APENAS se for update E o usuário tiver mais de um perfil */}
+        {crud === "update" && totalPerfisUsuario > 1 && (
           <Pressable
             className="bg-[#f06969] w-[150px] h-12 flex-row items-center justify-center rounded-[12px] p-1 gap-2"
             onPress={handleDelete}
@@ -321,7 +341,7 @@ export default function PerfilCrudScreen() {
             />
             <Text
               style={[
-                tw`font-semibold text-base text-[120] ml-2 text-white`,
+                tw`font-semibold text-base text-[6] ml-2 text-white`,
                 { fontFamily: "Poppins_500Medium" },
               ]}
             >
@@ -331,12 +351,12 @@ export default function PerfilCrudScreen() {
         )}
 
         <Pressable
-          className="bg-[#61D483] w-[150px] h-12 flex-row items-center justify-center gap-8 rounded-[12px] p-1 flex"
+          className="bg-[#61D483] w-[150px] h-12 flex-row items-center justify-center gap-4 rounded-[12px] p-1 flex"
           onPress={handleSubmit}
         >
           <Text
             style={[
-              tw`font-semibold text-base text-[120] ml-2 text-white`,
+              tw`font-semibold text-base text-[6] ml-2 text-white`,
               { fontFamily: "Poppins_500Medium" },
             ]}
           >

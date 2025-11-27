@@ -261,7 +261,7 @@ export default function CadastroScreen() {
             style={tw`flex-row justify-between w-40 h-12 bg-[#4ADC76] rounded-full items-center`}
             onPress={() => {
               if (currentStep === 3) {
-                navigation.replace("MainTabs");
+                navigation.replace("AuthStack");
               } else if (currentStep === 2) {
                 handleSubmit();
               } else {

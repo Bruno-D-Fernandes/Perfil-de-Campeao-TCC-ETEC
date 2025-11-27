@@ -19,6 +19,7 @@ import Animated from "react-native-reanimated";
 import { FlatList } from "react-native";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   useFonts,
   Poppins_400Regular,
@@ -99,6 +100,17 @@ export default function ModalPerfilEsporte({
     onClose();
   };
 
+  const [sair, setSair] = useState(false);
+
+  useEffect(() => {
+    async function TensPerfil() {
+      const value = await AsyncStorage.getItem("firstTime");
+      setSair(!!JSON.parse(value));
+    }
+
+    TensPerfil();
+  }, []);
+
   return (
     <>
       <Modal
@@ -128,12 +140,14 @@ export default function ModalPerfilEsporte({
                     ? "Editar Perfil"
                     : "Deletar Perfil"}
               </Text>
-              <Pressable onPress={onClose}>
-                <Image
-                  source={require("../../../assets/icons/cancelar.png")}
-                  style={{ width: 18, height: 18 }}
-                />
-              </Pressable>
+              {sair && (
+                <Pressable onPress={onClose}>
+                  <Image
+                    source={require("../../../assets/icons/cancelar.png")}
+                    style={{ width: 18, height: 18 }}
+                  />
+                </Pressable>
+              )}
             </View>
 
             {/* Body Modal */}

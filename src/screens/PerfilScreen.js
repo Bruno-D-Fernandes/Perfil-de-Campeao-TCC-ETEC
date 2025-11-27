@@ -11,7 +11,7 @@ import {
   Alert,
   Platform,
 } from "react-native";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, use } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import tw from "twrnc";
@@ -31,6 +31,8 @@ import {
   Poppins_700Bold,
   Poppins_500Medium,
 } from "@expo-google-fonts/poppins";
+
+import api from "../services/axios";
 
 export default function ProfileScreen() {
   const [showModal, setShowModal] = useState(false);
@@ -85,7 +87,20 @@ export default function ProfileScreen() {
     setControllSheet(crud);
     setModalEsportes(true);
   };
-  // _
+
+  useEffect(() => {
+    async function TensPerfil() {
+      const response = await api.get("/hasPerfil");
+      const userHasProfile = response?.data?.hasPerfil === true;
+
+      console.log("ai estaá", response);
+      AsyncStorage.setItem("firstTime", String(userHasProfile));
+
+      if (!userHasProfile) ControllTypeModal("create");
+    }
+
+    TensPerfil();
+  }, []);
 
   const formatDateToBR = (isoDate) => {
     if (!isoDate) return "";

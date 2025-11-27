@@ -101,10 +101,12 @@ export const PusherProvider = ({ children }) => {
           console.log("Mensagem recebida globalmente no contexto!", data);
         });
 
-        const notificationChannelName = `notifications.user.${user.id}`;
+        const notificationChannelName = `private-notification.user.${user.id}`;
+
         console.log(
           `Contexto: Inscrevendo-se no canal de notificações: ${notificationChannelName}`
         );
+
         const notificationChannel = pusherInstance.subscribe(
           notificationChannelName
         );
@@ -117,7 +119,7 @@ export const PusherProvider = ({ children }) => {
 
         notificationChannel.bind("pusher:subscription_error", (error) => {
           console.error(
-            `Contexto: pusher:subscription_error no canal de notificações. Erro:`,
+            `Contexto: pusher:subscription_error no canal de notificações.`,
             JSON.stringify(error, null, 2)
           );
         });
