@@ -222,56 +222,43 @@ export default function OportunidadesScreen() {
     <View className="bg-white flex-1 w-full px-6">
       {/* HEADER */}
       <View className="w-full pt-6 pb-4 flex-none">
-        <View className="w-full flex-row items-center justify-between mb-[3%]">
-          <Image
-            source={require("../../assets/Logo_PerfilDeCampeao.png")}
-            style={{ width: 50, height: 50 }}
-            resizeMode="stretch"
-          />
-
-          <View className="w-[30%] h-[45px] flex-row items-center justify-center gap-4">
+        <View className="w-full flex-row items-center justify-end mb-6 ">
+                <Image source={require("../../assets/logoNome.png")} style={{width:150, height:70, tintColor:'#36A958', position:"absolute", top:-18, left:-34,}}/>
+          <View className="w-[30%] h-[37px] flex-row items-center justify-center gap-4">
             <Pressable
               onPress={() => navigation.navigate("Contatos")}
-              className="rounded-full bg-[#EFEFEF] h-[100%] w-11 items-center justify-center"
+              className="rounded-full bg-[#EFEFEF] h-8 w-8 items-center justify-center"
             >
               <Image
                 source={require("../../assets/icons/mensagem.png")}
-                style={{ width: 20, height: 20 }}
+                style={{ width: 16, height: 16 }}
               />
             </Pressable>
 
             <Pressable
               onPress={() => navigation.navigate("Agenda")}
-              className="rounded-full bg-[#EFEFEF] h-[100%] w-11 items-center justify-center"
+              className="rounded-full bg-[#EFEFEF] h-8 w-8 items-center justify-center"
             >
               <Image
                 source={require("../../assets/cadastro/icon_data.png")}
-                style={{ width: "23px", height: "20px", tintColor: "#36A958" }}
+                style={{ width: "18px", height: "16px", tintColor: "#36A958" }}
               />
             </Pressable>
 
             <Pressable
               onPress={() => navigation.navigate("Config")}
-              className="rounded-full bg-[#EFEFEF] h-[100%] w-11 items-center justify-center"
+              className="rounded-full bg-[#EFEFEF] h-8 w-8 items-center justify-center"
             >
               <Image
                 source={require("../../assets/icons/config.png")}
-                style={{ width: 23, height: 20, tintColor: "#36A958" }}
+                style={{ width: 18, height: 16, tintColor: "#36A958" }}
               />
             </Pressable>
-            <Pressable
-              onPress={() => navigation.navigate("Agenda")}
-              className="rounded-full bg-[#EFEFEF] h-[100%] w-11 items-center justify-center"
-            >
-              <Image
-                source={require("../../assets/cadastro/icon_data.png")}
-                style={{ width: "23px", height: "20px", tintColor: "#36A958" }}
-              />
-            </Pressable>
+           
           </View>
         </View>
 
-        <View className="w-full mb-[7%] gap-5">
+        <View className="w-full mb-[7%] gap-2">
           <Text
             className="text-[26px] font-medium"
             style={{ fontFamily: "Poppins_500Medium" }}
@@ -279,7 +266,7 @@ export default function OportunidadesScreen() {
             Olá, {nameUser}
           </Text>
           <Text
-            className="text-[24px] font-medium text-[#2E7844]"
+            className="text-[18px] font-medium text-[#2E7844]"
             style={{ fontFamily: "Poppins_500Medium" }}
           >
             {inscritoAba ? "Inscrições" : "Oportunidades"}

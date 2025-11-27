@@ -4,6 +4,7 @@ import {
   View,
   Image,
   Pressable,
+  ScrollView,
   Switch,
   Modal,
   TouchableOpacity,
@@ -150,7 +151,7 @@ export default function ConfigScreen() {
       
       <View className="mb-4">
         <Text className="text-[#61D483] text-lg font-semibold mb-2 ml-2">
-          sobre
+          Sobre
         </Text>
         <View className="bg-[#E6F9EC] p-4 rounded-xl">
           <ConfiguracaoItem
@@ -220,25 +221,152 @@ export default function ConfigScreen() {
 
 
       {/* Modal de Privacidade */}
+{/* Modal de Política de Privacidade */}
 <Modal
-  visible={privModalVisible }
+  visible={privModalVisible}
   transparent
   animationType="fade"
   onRequestClose={() => setPrivModalVisible(false)}
 >
   <View className="flex-1 justify-center items-center bg-black/40">
-    <View className="bg-white p-6 rounded-3xl w-80 ">
+    <View className="bg-white p-6 rounded-3xl w-80 max-h-[80%]">
 
+      {/* Título */}
       <Text className="text-lg font-semibold mb-3 text-center text-[#61D483]">
         Política de Privacidade
       </Text>
 
-      <Text className="text-sm text-gray-700 mb-4">
-        • Suas informações são utilizadas apenas para melhorar sua experiência.
-        {"\n"}• Não compartilhamos seus dados com terceiros sem sua permissão.
-        {"\n"}• Você pode solicitar remoção de dados a qualquer momento.
-      </Text>
+      {/* Scroll interno */}
+      <ScrollView className="mb-4">
 
+        <Text className="text-sm text-gray-700 leading-5">
+
+A presente Política de Privacidade estabelece como o Perfil de Campeão,
+desenvolvido pela Norven, coleta, utiliza, armazena, compartilha e protege
+os dados pessoais dos usuários de sua plataforma mobile e web. O uso do
+sistema implica plena concordância com as práticas aqui descritas.{"\n\n"}
+
+
+1. Coleta de Informações{"\n\n"}
+
+Coletamos diferentes tipos de dados para garantir o funcionamento adequado
+da plataforma.{"\n\n"}
+
+1.1 Dados fornecidos pelo usuário:{"\n"}
+• Nome completo{"\n"}
+• E-mail{"\n"}
+• Senha (criptografada){"\n"}
+• Data de nascimento{"\n"}
+• Foto de perfil{"\n"}
+• Informações esportivas (modalidade, posição, estatísticas, histórico){"\n"}
+• Dados de clubes (razão social, CNPJ, localização, contatos){"\n\n"}
+
+1.2 Dados coletados automaticamente:{"\n"}
+• Endereço IP{"\n"}
+• Informações de dispositivo e sistema operacional{"\n"}
+• Cookies e identificadores únicos{"\n"}
+• Dados de navegação dentro do app e site{"\n"}
+• Registros de acesso{"\n\n"}
+
+1.3 Conteúdos enviados pelo usuário:{"\n"}
+Postagens, vídeos, fotos, mensagens e demais informações publicadas no perfil.{"\n\n"}
+
+
+2. Uso das Informações{"\n\n"}
+
+As informações coletadas são utilizadas para:{"\n"}
+• Criar e gerenciar contas de usuários (atletas e clubes){"\n"}
+• Permitir buscas e conexões entre atletas e clubes{"\n"}
+• Exibir o perfil esportivo ao público permitido{"\n"}
+• Melhorar a experiência de uso e personalizar funcionalidades{"\n"}
+• Garantir segurança, monitoramento e prevenção de fraudes{"\n"}
+• Cumprir obrigações legais e regulatórias{"\n"}
+• Realizar análises internas de desempenho e usabilidade{"\n\n"}
+
+
+3. Compartilhamento de Informações{"\n\n"}
+
+Os dados dos usuários não são vendidos. O compartilhamento pode ocorrer:{"\n"}
+• Com clubes registrados, quando o atleta escolhe tornar seu perfil público{"\n"}
+• Com serviços de hospedagem e infraestrutura{"\n"}
+• Com autoridades, mediante obrigação legal{"\n"}
+• Em prevenção de fraudes ou riscos à segurança{"\n\n"}
+
+Apenas o mínimo necessário de dados é compartilhado.{"\n\n"}
+
+
+4. Armazenamento e Proteção dos Dados{"\n\n"}
+
+Utilizamos medidas técnicas e administrativas para proteger os dados:{"\n"}
+• Criptografia de senhas{"\n"}
+• Servidores seguros{"\n"}
+• Comunicação criptografada (HTTPS){"\n"}
+• Controles de acesso{"\n"}
+• Monitoramento e auditorias internas{"\n\n"}
+
+Os dados são mantidos pelo tempo necessário às finalidades propostas
+ou conforme exigência legal.{"\n\n"}
+
+
+5. Direitos do Usuário (LGPD){"\n\n"}
+
+O usuário pode:{"\n"}
+• Confirmar tratamento de dados{"\n"}
+• Solicitar acesso, correção ou atualização{"\n"}
+• Solicitar exclusão de dados ou da conta{"\n"}
+• Solicitar portabilidade{"\n"}
+• Solicitar anonimização{"\n"}
+• Revogar consentimento{"\n"}
+• Ver compartilhamentos realizados{"\n\n"}
+
+Solicitações podem ser feitas pelo suporte do Perfil de Campeão.{"\n\n"}
+
+
+6. Exclusão da Conta e Dados{"\n\n"}
+
+Ao solicitar exclusão:{"\n"}
+• Dados pessoais são removidos{"\n"}
+• Conteúdos podem ser anonimizados{"\n"}
+• Dados podem ser retidos por exigência legal{"\n\n"}
+
+
+7. Uso por Menores de Idade{"\n\n"}
+
+• Menores de 13 anos: autorização obrigatória{"\n"}
+• Entre 13 e 18: recomendada supervisão{"\n\n"}
+
+
+8. Cookies e Tecnologias de Rastreamento{"\n\n"}
+
+Utilizamos cookies para:{"\n"}
+• Lembrar preferências{"\n"}
+• Garantir funcionalidades essenciais{"\n"}
+• Análises de desempenho{"\n"}
+• Melhoria de usabilidade{"\n\n"}
+
+O usuário pode desativar cookies no navegador,
+mas algumas funções podem ser afetadas.{"\n\n"}
+
+
+9. Alterações na Política{"\n\n"}
+
+A política pode ser atualizada quando necessário.
+Alterações importantes serão comunicadas.{"\n\n"}
+
+
+10. Contato{"\n\n"}
+
+Para dúvidas ou solicitações:{"\n"}
+E-mail: norven.suporte@empresa.com{"\n\n"}
+
+
+Ao utilizar o Perfil de Campeão,
+o usuário concorda com esta Política de Privacidade.
+
+        </Text>
+      </ScrollView>
+
+      {/* Botão Fechar */}
       <TouchableOpacity
         onPress={() => setPrivModalVisible(false)}
         className="bg-[#61D483] py-2 rounded-xl"
@@ -251,6 +379,7 @@ export default function ConfigScreen() {
 </Modal>
 
 {/* Modal de Termos */}
+{/* Modal de Termos e Condições */}
 <Modal
   visible={termosModalVisible}
   transparent
@@ -258,18 +387,151 @@ export default function ConfigScreen() {
   onRequestClose={() => setTermosModalVisible(false)}
 >
   <View className="flex-1 justify-center items-center bg-black/40">
-    <View className="bg-white p-6 rounded-3xl w-80  ">
+    <View className="bg-white p-6 rounded-3xl w-80 max-h-[80%]">
 
+      {/* Título */}
       <Text className="text-lg font-semibold mb-3 text-center text-[#61D483]">
-        Termos e Condições
+        Termos e Condições de Uso
       </Text>
 
-      <Text className="text-sm text-gray-700 mb-4">
-        • Ao usar o aplicativo, você concorda com nossas diretrizes.
-        {"\n"}• É proibido uso para fins ilegais ou abusivos.
-        {"\n"}• Reservamo-nos o direito de ajustar regras a qualquer momento.
-      </Text>
+      {/* Scroll interno */}
+      <ScrollView className="mb-4">
+        <Text className="text-sm text-gray-700 leading-5">
 
+
+Os presentes Termos e Condições regulam o uso da plataforma Perfil de Campeão,
+disponibilizada nas versões mobile e web pela Norven. Ao acessar ou utilizar
+o sistema, o usuário declara ter lido, compreendido e concordado com todas
+as regras aqui estabelecidas.{"\n\n"}
+
+
+1. Aceitação dos Termos{"\n\n"}
+
+O uso da plataforma implica concordância integral com estes Termos.
+Caso o usuário não concorde com alguma cláusula, deverá interromper o uso
+imediatamente.{"\n\n"}
+
+
+2. Objetivo da Plataforma{"\n\n"}
+
+O Perfil de Campeão tem como finalidade conectar jovens atletas a clubes,
+permitindo a criação de perfis esportivos, publicação de conteúdos e
+interação entre usuários.{"\n\n"}
+
+A plataforma não garante contratação, testes ou convites esportivos,
+apenas facilita a visibilidade e conexão.{"\n\n"}
+
+
+3. Cadastro e Conta do Usuário{"\n\n"}
+
+Para utilizar o sistema, o usuário deve fornecer informações verdadeiras
+e atualizadas. É proibido criar perfis falsos, duplicados ou usar dados
+de terceiros sem autorização.{"\n\n"}
+
+Responsabilidades do usuário:{"\n"}
+• Manter a confidencialidade da senha{"\n"}
+• Não compartilhar acesso{"\n"}
+• Informar uso indevido da conta{"\n\n"}
+
+O Perfil de Campeão pode suspender ou excluir contas que violem estes Termos.{"\n\n"}
+
+
+4. Conteúdo Publicado pelo Usuário{"\n\n"}
+
+O usuário é totalmente responsável pelos conteúdos enviados.{"\n\n"}
+
+É proibido publicar:{"\n"}
+• Conteúdo ofensivo, discriminatório ou ilegal{"\n"}
+• Informações falsas{"\n"}
+• Material com direitos autorais sem permissão{"\n"}
+• Conteúdo violento ou impróprio{"\n\n"}
+
+A plataforma pode remover conteúdos que violem estes Termos.{"\n\n"}
+
+
+5. Regras de Uso da Plataforma{"\n\n"}
+
+O usuário concorda em NÃO:{"\n"}
+• Utilizar o sistema para fins ilegais{"\n"}
+• Tentar violar a segurança{"\n"}
+• Copiar ou modificar partes da plataforma{"\n"}
+• Usar bots ou automações{"\n"}
+• Assediar ou ameaçar usuários{"\n"}
+• Realizar práticas comerciais não autorizadas{"\n\n"}
+
+
+6. Conexão Entre Atletas e Clubes{"\n\n"}
+
+A plataforma permite busca e interação. O uso das informações encontradas
+deve respeitar:{"\n"}
+• A privacidade{"\n"}
+• A legislação vigente{"\n"}
+• O propósito esportivo da plataforma{"\n\n"}
+
+Conversas ou negociações são responsabilidade exclusiva dos usuários.{"\n\n"}
+
+
+7. Limitação de Responsabilidade{"\n\n"}
+
+A Norven não se responsabiliza por:{"\n"}
+• Conteúdo publicado pelos usuários{"\n"}
+• Falhas de conexão ou indisponibilidade{"\n"}
+• Atos de atletas, clubes ou terceiros{"\n"}
+• Expectativas de contratação ou resultados esportivos{"\n\n"}
+
+O sistema é oferecido “como está”, sem garantias de resultados.{"\n\n"}
+
+
+8. Suspensão e Exclusão da Conta{"\n\n"}
+
+Contas podem ser suspensas ou excluídas por:{"\n"}
+• violação dos Termos{"\n"}
+• uso de dados falsos{"\n"}
+• condutas suspeitas ou ilegais{"\n"}
+• danos ao sistema ou usuários{"\n\n"}
+
+O usuário também pode excluir a própria conta.{"\n\n"}
+
+
+9. Propriedade Intelectual{"\n\n"}
+
+Todo design, código, nome, marca e funcionalidades do Perfil de Campeão
+são propriedade da Norven.{"\n\n"}
+
+É proibido copiar, modificar ou distribuir qualquer parte da plataforma
+sem autorização.{"\n\n"}
+
+
+10. Atualizações e Mudanças nos Termos{"\n\n"}
+
+Os Termos podem ser atualizados. Alterações importantes serão comunicadas.{"\n\n"}
+
+O uso contínuo após mudanças implica concordância.{"\n\n"}
+
+
+11. Legislação Aplicável{"\n\n"}
+
+Documento regido pelas leis brasileiras:{"\n"}
+• Código Civil{"\n"}
+• Marco Civil da Internet{"\n"}
+• LGPD{"\n\n"}
+
+Conflitos serão resolvidos no foro de São Paulo – SP.{"\n\n"}
+
+
+12. Contato{"\n\n"}
+
+Para dúvidas sobre os Termos:{"\n"}
+E-mail: norven.suporte@empresa.com{"\n\n"}
+
+
+Ao utilizar o Perfil de Campeão, o usuário declara concordar integralmente
+com estes Termos e Condições de Uso.
+
+        </Text>
+      </ScrollView>
+
+      {/* Botão Fechar */}
       <TouchableOpacity
         onPress={() => setTermosModalVisible(false)}
         className="bg-[#61D483] py-2 rounded-xl"
@@ -280,6 +542,7 @@ export default function ConfigScreen() {
     </View>
   </View>
 </Modal>
+
 
 
 

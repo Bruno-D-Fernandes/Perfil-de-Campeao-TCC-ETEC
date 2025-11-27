@@ -140,9 +140,18 @@ export default function Step3({
             onPress={() => setShowPassword((s) => !s)}
             style={tw`pr-3`}
           >
-            <Text style={{ color: "#4ADC76", fontFamily: "Poppins_500Medium" }}>
-              {showPassword ? "Ocultar" : "Mostrar"}
-            </Text>
+            {showPassword ?
+                   <Image
+                
+                style={{ width: 18, height: 18, tintColor:'#4ADC76', }}
+                source={require("../../../assets/login/olho-fechado.png")}
+              />
+                    : 
+                       <Image
+                style={{ width: 18, height: 18, tintColor:'#4ADC76' }}
+                source={require("../../../assets/login/olho-aberto.png")}
+              />
+                    }
           </Pressable>
         </View>
         {formData.senhaUsuario.length > 0 && (
@@ -202,9 +211,18 @@ export default function Step3({
             onPress={() => setShowConfirmPassword((s) => !s)}
             style={tw`pr-3`}
           >
-            <Text style={{ color: "#4ADC76", fontFamily: "Poppins_500Medium" }}>
-              {showConfirmPassword ? "Ocultar" : "Mostrar"}
-            </Text>
+             {showConfirmPassword ?
+                   <Image
+                
+                style={{ width: 18, height: 18, tintColor:'#4ADC76', }}
+                source={require("../../../assets/login/olho-fechado.png")}
+              />
+                    : 
+                       <Image
+                style={{ width: 18, height: 18, tintColor:'#4ADC76' }}
+                source={require("../../../assets/login/olho-aberto.png")}
+              />
+                    }
           </Pressable>
         </View>
       </View>

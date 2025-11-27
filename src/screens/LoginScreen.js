@@ -112,11 +112,11 @@ export default function HomeScreen() {
       resizeMode="cover"
     >
       {viewError && <TopNotification error={error} />}
-      <SafeAreaView style={{ flex: 1 }}>
-        <View className="flex-1 justify-center items-center p-[2%] gap-4">
+      <SafeAreaView style={{ flex: 1 }}> 
+        <View className="flex-1 justify-center items-center p-[2%] ">
           <View className="w-[90%] h-[23%] ">
             <Text
-              className="text-[29px] w-[50%] font-bold text-white leading-tight"
+              className="text-[29px] w-[50%] font-bold text-white leading-tight "
               style={{ fontFamily: "Poppins_500Medium" }}
             >
               Se <Text className="text-[#98FFB7]">você </Text>acredita...
@@ -130,7 +130,7 @@ export default function HomeScreen() {
             </Text>
           </View>
 
-          <View className="w-[90%] h-[25%] mt-[10%] ">
+          <View className="w-[90%] h-[25%] mt-14  ">
             {/* Email */}
             <Text
               className="text-[14px] text-[#98FFB7]"
@@ -171,7 +171,7 @@ export default function HomeScreen() {
               Senha
             </Text>
             <View
-              className={`w-full mb-[10%] p-[3%] rounded-[8px] border-[3px] flex-row items-center ${
+              className={`w-full p-[3%] rounded-[8px] border-[3px] flex-row items-center ${
                 senhaValida ? "border-[#98FFB7]" : "border-red-500"
               }`}
             >
@@ -196,11 +196,20 @@ export default function HomeScreen() {
                 onPress={() => setShowPassword((s) => !s)}
                 className="pr-[3%]"
               >
-                <Text
-                  style={{ color: "#98FFB7", fontFamily: "Poppins_500Medium" }}
-                >
-                  {showPassword ? "Ocultar" : "Mostrar"}
-                </Text>
+               
+                  {showPassword ?
+                   <Image
+                
+                style={{ width: 18, height: 18, tintColor:'#98FFB7', }}
+                source={require("../../assets/login/olho-fechado.png")}
+              />
+                    : 
+                       <Image
+                style={{ width: 18, height: 18, tintColor:'#98FFB7' }}
+                source={require("../../assets/login/olho-aberto.png")}
+              />
+                    }
+               
               </Pressable>
             </View>
           </View>

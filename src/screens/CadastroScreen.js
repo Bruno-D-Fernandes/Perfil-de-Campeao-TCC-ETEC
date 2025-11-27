@@ -34,6 +34,62 @@ import Step3 from "../components/cadastroComponents/step3";
 import Step4 from "../components/cadastroComponents/step4";
 import TopNotification from "../components/TopNotification";
 
+const TypingText = ({ texts, speed = 150, pause = 1200, style }) => {
+  const [index, setIndex] = useState(0);
+  const [subIndex, setSubIndex] = useState(0);
+  const [reverse, setReverse] = useState(false);
+  const [dots, setDots] = useState("");
+
+  // animação dos pontinhos (mas só mostra quando o texto completo aparecer)
+  useEffect(() => {
+    if (subIndex !== texts[index].length || reverse) return; // só ativa no final
+
+    const interval = setInterval(() => {
+      setDots((prev) => {
+        if (prev === "...") return "";
+        if (prev === "..") return "...";
+        if (prev === ".") return "..";
+        return ".";
+      });
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [subIndex, reverse, index]);
+
+  // efeito de digitação
+  useEffect(() => {
+    if (index === texts.length) return;
+
+    const fullText = texts[index];
+
+    if (!reverse) {
+      if (subIndex === fullText.length) {
+        setTimeout(() => setReverse(true), pause);
+        return;
+      }
+      setTimeout(() => setSubIndex(subIndex + 1), speed);
+    } else {
+      if (subIndex === 0) {
+        setReverse(false);
+        setIndex((prev) => (prev + 1) % texts.length);
+        setDots(""); // resetar pontinhos
+        return;
+      }
+      setTimeout(() => setSubIndex(subIndex - 1), speed / 1.5);
+    }
+  }, [subIndex, index, reverse]);
+
+  return (
+    <Text style={style}>
+      {texts[index].substring(0, subIndex)}
+      {subIndex === texts[index].length && !reverse ? dots : ""}
+    </Text>
+  );
+};
+
+
+
+
 export default function CadastroScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
@@ -45,6 +101,18 @@ export default function CadastroScreen() {
   const progress = useSharedValue(0);
 
   const [passwordStrength, setPasswordStrength] = useState(0);
+
+  const frases = [
+  "Acredite no seu potencial.",
+  "Um atleta nunca desiste.",
+  "Treine com alma.",
+  "Você nasceu para vencer.",
+  "Sua dedicação constrói seu futuro.",
+  "A vitória começa na mente.",
+  "Foco, força e disciplina.",
+];
+
+
 
   const progressStyle = useAnimatedStyle(() => ({
     width: `${progress.value}%`,
@@ -209,26 +277,40 @@ export default function CadastroScreen() {
   };
 
   return (
-    <View style={tw`flex-1 bg-gray-100`}>
+    <View style={tw`flex-1 bg-[#2E7844]`}>
       {/* Notificação de erro */}
       {viewError && <TopNotification error={error} />}
 
-      <Image
-        style={[
-          { width: "100%", height: "40%", position: "absolute", top: 0 },
-          Platform.OS === "android" && { marginTop: -StatusBar.currentHeight },
-        ]}
-        source={require("../../assets/cadastro/cadastro_imagem.png")}
-        resizeMode="cover"
-      />
+      <Image source={require("../../assets/logoNome.png")} style={{width:150, height:70, tintColor:'#98FFB7', position:"absolute", top:8, left:-10,}}/>
+      <View style={{
+        position: "absolute",
+        top: 100,
+        width:'100%',
+        alignItems :'center',
+        justifyContent:'center',
+      }}>
+        <TypingText
+          texts={frases}
+          speed={80}
+          pause={3200}
+          style={{
+            color: "white",
+            fontSize: 20,
+            fontFamily: "Poppins_500Medium",
+            width: '80%',
+                    alignItems :'center',
+        justifyContent:'center',
+          }}
+        />
+      </View>
 
       <View
         style={[
-          tw`absolute bottom-0 w-full max-w-xl self-center bg-white p-5 rounded-tl-[30px] rounded-tr-[30px] shadow-lg h-[74%]`,
+          tw`absolute bottom-0 w-full max-w-xl self-center bg-white p-5 rounded-tl-[30px] rounded-tr-[30px] shadow-lg h-[75%]`,
           { paddingBottom: insets.bottom + 20 },
         ]}
       >
-        <View style={tw`w-full h-10 justify-center`}>
+        <View style={tw`w-full h-10 justify-center mt-4`}>
           <View
             style={tw`w-full h-[10px] bg-gray-400 rounded-full`}
             onLayout={(event) => setBarWidth(event.nativeEvent.layout.width)}
