@@ -84,7 +84,7 @@ export default function Step3({
             { fontFamily: "Poppins_500Medium" },
           ]}
         >
-          E-mail
+          E-mail*
         </Text>
         <View
           style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}
@@ -116,7 +116,7 @@ export default function Step3({
             { fontFamily: "Poppins_500Medium" },
           ]}
         >
-          Senha
+          Senha*
         </Text>
         <View
           style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}
@@ -185,7 +185,7 @@ export default function Step3({
             { fontFamily: "Poppins_500Medium" },
           ]}
         >
-          Confirme a Senha
+          Confirme a Senha*
         </Text>
         <View
           style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}

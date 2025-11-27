@@ -25,7 +25,6 @@ import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import tw from "twrnc";
 // Importação necessária para vídeos
 import { Video } from "expo-av";
-
 import usuario from "../services/usuario";
 import { loadPerfilAll } from "../services/perfil";
 import { postagemData } from "../services/postagem";
@@ -48,6 +47,7 @@ export default function PostagemScreen() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isPosting, setIsPosting] = useState(false);
+  const [tipoMidia, setTipoMidia] = useState(null);
 
   const snapPoints = useMemo(() => ["60%", "90%"], []);
   const sheetRef = useRef(null);
@@ -166,22 +166,23 @@ export default function PostagemScreen() {
       }
 
       if (imagem) {
-        // Modificação para suportar vídeos
         const fileName = imagem.split("/").pop() || "media.bin";
         let fileType;
 
-        const lowerCaseUri = imagem.toLowerCase(); // Usar a URI completa para checar a extensão
-
-        if (lowerCaseUri.endsWith(".png")) fileType = "image/png";
-        else if (
-          lowerCaseUri.endsWith(".jpg") ||
-          lowerCaseUri.endsWith(".jpeg")
-        )
-          fileType = "image/jpeg";
-        else if (isVideo(imagem)) {
-          // Usando um tipo genérico de vídeo, ajuste se souber o tipo exato
+        if (tipoMidia === "image") {
+          const lowerCaseUri = imagem.toLowerCase();
+          if (lowerCaseUri.endsWith(".png")) fileType = "image/png";
+          else if (
+            lowerCaseUri.endsWith(".jpg") ||
+            lowerCaseUri.endsWith(".jpeg")
+          )
+            fileType = "image/jpeg";
+          else fileType = "image/jpeg";
+        } else if (tipoMidia === "video") {
           fileType = "video/mp4";
-        } else fileType = "application/octet-stream";
+        } else {
+          fileType = "application/octet-stream";
+        }
 
         if (Platform.OS === "web") {
           const response = await fetch(imagem);
@@ -245,18 +246,22 @@ export default function PostagemScreen() {
     });
   }, [navigation, handlePostagem, isPosting, loading]);
 
-  // Função renomeada e modificada para permitir seleção de todos os tipos de mídia
   const selecionarMidia = async () => {
     const permissao = await solicitarPermissaoCamera();
     if (!permissao) return;
 
     const resultado = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All, // Alterado para All
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       quality: 1,
     });
 
-    if (!resultado.canceled) setImagem(resultado.assets[0].uri);
+    if (!resultado.canceled) {
+      const asset = resultado.assets[0];
+      setImagem(asset.uri);
+      setTipoMidia(asset.type); // 'image' ou 'video'
+      console.log("Midia selecionada:", asset.uri, "Tipo:", asset.type);
+    }
   };
 
   const imageMap = {
@@ -435,13 +440,14 @@ export default function PostagemScreen() {
                 marginTop: 12,
               }}
             >
-              {isVideo(imagem) ? (
+              {tipoMidia === "video" ? (
                 <Video
                   source={{ uri: imagem }}
                   style={{ width: "100%", height: 180 }}
                   useNativeControls
                   resizeMode="cover"
-                  isLooping
+                  shouldPlay={true}
+                  isMuted={false}
                 />
               ) : (
                 <Image

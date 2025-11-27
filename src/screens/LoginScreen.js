@@ -198,16 +198,16 @@ export default function HomeScreen() {
               >
                
                   {showPassword ?
-                   <Image
-                
-                style={{ width: 18, height: 18, tintColor:'#98FFB7', }}
-                source={require("../../assets/login/olho-fechado.png")}
-              />
+                    <Image
+                    style={{ width: 18, height: 18, tintColor:'#98FFB7' }}
+                    source={require("../../assets/login/olho-aberto.png")}
+                    />
                     : 
-                       <Image
-                style={{ width: 18, height: 18, tintColor:'#98FFB7' }}
-                source={require("../../assets/login/olho-aberto.png")}
-              />
+                    <Image
+                 
+                 style={{ width: 18, height: 18, tintColor:'#98FFB7', }}
+                 source={require("../../assets/login/olho-fechado.png")}
+               />
                     }
                
               </Pressable>

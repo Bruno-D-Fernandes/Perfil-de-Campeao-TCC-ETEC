@@ -26,7 +26,7 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
   return (
     <View style={tw`flex-1`}>
       <View style={tw`w-full`}>
-        <Text style={tw`text-[#4ADC76] text-sm mb-2`}>Nome</Text>
+        <Text style={tw`text-[#4ADC76] text-sm mb-2`}>Nome*</Text>
         <View
           style={[
             tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`,
@@ -59,7 +59,7 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
               { fontFamily: "Poppins_500Medium" },
             ]}
           >
-            Ano de nasc.
+            Ano de nasc.*
           </Text>
           <View
             style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}
@@ -93,7 +93,7 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
               { fontFamily: "Poppins_500Medium" },
             ]}
           >
-            Gênero
+            Gênero*
           </Text>
           <View
             style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2 px-2`}
@@ -130,7 +130,7 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
             { fontFamily: "Poppins_500Medium" },
           ]}
         >
-          Estado
+          Estado*
         </Text>
         <View
           style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}
@@ -160,7 +160,7 @@ export default function Step1({ formData, updateField, pickerSelectStyles }) {
             { fontFamily: "Poppins_500Medium" },
           ]}
         >
-          Cidade
+          Cidade*
         </Text>
         <View
           style={tw`flex-row items-center rounded-xl h-12 border-[#4ADC76] border-2`}

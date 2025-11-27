@@ -14,11 +14,13 @@ import { useRoute } from "@react-navigation/native";
 import { usePusher } from "../context/PusherProvider";
 import api from "../services/axios";
 import { useNavigation } from "@react-navigation/native";
+import { useRef } from "react";
 
 export default function ChatScreen() {
   const route = useRoute();
   const { conversationId, contactName, contactAvatar, receiverID } =
     route.params;
+  const flatListRef = useRef(0);
 
   const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -62,14 +64,14 @@ export default function ChatScreen() {
   const aceitoInvite = async (convite_evento_id) => {
     try {
       const response = await api.post(
-        "accept_invite/" + convite_evento_id,
+        "/accept_invite/" + convite_evento_id,
         {},
         {
           baseURL: `${API_URL}/api`,
         }
       );
 
-      if (response.status === 200) navigation.navigate("Agenda");
+      if (response.status === 200) navigation.replace("Agenda");
 
       console.log("Convite aceito:", response.data);
     } catch (error) {
@@ -134,8 +136,14 @@ export default function ChatScreen() {
           borderBottomColor: "#ddd",
         }}
       >
-        <Pressable className="mr-4" onPress={() => navigation.navigate("Contatos")}>
-          <Image source={require("../../assets/cadastro/icon_voltar.png")} style={{width:11, height:18, tintColor:'grey'}}/>
+        <Pressable
+          className="mr-4"
+          onPress={() => navigation.navigate("Contatos")}
+        >
+          <Image
+            source={require("../../assets/cadastro/icon_voltar.png")}
+            style={{ width: 11, height: 18, tintColor: "grey" }}
+          />
         </Pressable>
         <Image
           source={{
@@ -143,11 +151,20 @@ export default function ChatScreen() {
           }}
           style={{ width: 40, height: 40, borderRadius: 20, marginRight: 12 }}
         />
-        <Text style={{ fontSize: 14, fontWeight: "bold", fontFamily:'Poppins_500Medium', }}>{contactName}</Text>
+        <Text
+          style={{
+            fontSize: 14,
+            fontWeight: "bold",
+            fontFamily: "Poppins_500Medium",
+          }}
+        >
+          {contactName}
+        </Text>
       </View>
 
       {/* MENSAGENS */}
       <FlatList
+        ref={flatListRef}
         data={messages}
         keyExtractor={(item, index) => (item.id ?? index).toString()}
         contentContainerStyle={{ padding: 16 }}
@@ -173,13 +190,6 @@ export default function ChatScreen() {
               minute: "2-digit",
             });
 
-            //   bairro : "Guaianases" cep : "03545-200" cidade : "São Paulo"
-            // clube_id : 1 color : null complemento : "Quadra 2" created_at :
-            //                "2025-11-29T11:08:11.000000Z" descricao : "Competição oficial
-            // organizada pelo clube." estado : "SP" id : 1
-            //  limite_participantes : 30 numero : "120" rua : "Rua do Clube"
-            //   titulo : "Torneio da Zona Leste" exemplo de info de ento para estilizaç˜ão --Bruno
-
             return (
               <View
                 style={{
@@ -189,57 +199,113 @@ export default function ChatScreen() {
                   borderRadius: 12,
                   maxWidth: "75%",
                   alignSelf: "flex-start",
-                  justifyContent:'center',
-                  alignItems:'center',
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 <View className="w-60 bg-white p-2 rounded-[12px]">
-                <Text style={{ color: "#61D483",fontSize:20, fontWeight: "bold", borderBottomWidth:1, borderColor:'#9a9b9c', paddingBottom:4,fontFamily:'Poppins_500Medium',}}>
-                  Convite
-                </Text>
-                <View>
-                   <Text style={{ color: "#61D483", fontFamily:'Poppins_500Medium', }}>
-                  {item.evento?.titulo}
-                </Text>
-                </View>
-                <View className="w-full  flex-row items-center gap-3">
-                  <Image source={require("../../assets/cadastro/icon_data.png")} style={{width:16, height:16}}/>
-                  <Text style={{ color: '', fontFamily:'Poppins_500Medium', marginTop:5, }}>
-                    {dataInicio}
-                  </Text>
-                </View>
-                <View className="w-full  flex-row items-center gap-3">
-                  <Image source={require("../../assets/cadastro/icon_tempo.png")} style={{width:15, height:16}}/>
-                  <Text style={{ color: '', fontFamily:'Poppins_500Medium', }}>
-                     às {horaInicio} até às {horaFim}
-                  </Text>
-                </View>
-                <View className="w-full  flex-row items-center gap-3">
-                  <Image source={require("../../assets/cadastro/icon_local.png")} style={{width:13, height:16}}/>
-                  <Text style={{ color: "",fontFamily:'Poppins_500Medium', }}>
-                    {item.evento?.cidade}, {item.evento?.bairro}
-                  </Text>
-                </View>
-   
-                <Pressable
-                  onPress={() => aceitoInvite(item?.convite_evento_id)}
-                  style={{
-                    backgroundColor: "#61D483",
-                    padding: 8,
-                    borderRadius: 8,
-                    marginTop: 12,
-                  }}
-                >
                   <Text
                     style={{
-                      textAlign: "center",
-                      color: "white",
-                      fontFamily:'Poppins_500Medium'
+                      color: "#61D483",
+                      fontSize: 20,
+                      fontWeight: "bold",
+                      borderBottomWidth: 1,
+                      borderColor: "#9a9b9c",
+                      paddingBottom: 4,
+                      fontFamily: "Poppins_500Medium",
                     }}
                   >
-                    Aceitar Convite
+                    Convite
                   </Text>
-                </Pressable>
+                  <View>
+                    <Text
+                      style={{
+                        color: "#61D483",
+                        fontFamily: "Poppins_500Medium",
+                      }}
+                    >
+                      {item.evento?.titulo}
+                    </Text>
+                  </View>
+                  <View className="w-full  flex-row items-center gap-3">
+                    <Image
+                      source={require("../../assets/cadastro/icon_data.png")}
+                      style={{ width: 16, height: 16 }}
+                    />
+                    <Text
+                      style={{
+                        color: "",
+                        fontFamily: "Poppins_500Medium",
+                        marginTop: 5,
+                      }}
+                    >
+                      {dataInicio}
+                    </Text>
+                  </View>
+                  <View className="w-full  flex-row items-center gap-3">
+                    <Image
+                      source={require("../../assets/cadastro/icon_tempo.png")}
+                      style={{ width: 15, height: 16 }}
+                    />
+                    <Text
+                      style={{ color: "", fontFamily: "Poppins_500Medium" }}
+                    >
+                      às {horaInicio} até às {horaFim}
+                    </Text>
+                  </View>
+                  <View className="w-full  flex-row items-center gap-3">
+                    <Image
+                      source={require("../../assets/cadastro/icon_local.png")}
+                      style={{ width: 13, height: 16 }}
+                    />
+                    <Text
+                      style={{ color: "", fontFamily: "Poppins_500Medium" }}
+                    >
+                      {item.evento?.cidade}, {item.evento?.bairro}
+                    </Text>
+                  </View>
+
+                  {item?.convite_evento.status == "aceito" ? (
+                    <View
+                      style={{
+                        backgroundColor: "#4CAF50",
+                        padding: 8,
+                        borderRadius: 8,
+                        marginTop: 12,
+                        opacity: 0.8,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          textAlign: "center",
+                          color: "white",
+                          fontFamily: "Poppins_500Medium",
+                        }}
+                      >
+                        Aceito ✓
+                      </Text>
+                    </View>
+                  ) : (
+                    <Pressable
+                      onPress={() => aceitoInvite(item?.convite_evento_id)}
+                      style={{
+                        backgroundColor: "#61D483",
+                        padding: 8,
+                        borderRadius: 8,
+                        marginTop: 12,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          textAlign: "center",
+                          color: "white",
+                          fontFamily: "Poppins_500Medium",
+                        }}
+                      >
+                        Aceitar Convite
+                      </Text>
+                    </Pressable>
+                  )}
                 </View>
               </View>
             );
@@ -267,7 +333,7 @@ export default function ChatScreen() {
                   style={{
                     color: "black",
                     fontSize: 14,
-                    fontFamily:'Poppins_400Regular'
+                    fontFamily: "Poppins_400Regular",
                   }}
                 >
                   {item.message}
@@ -276,6 +342,10 @@ export default function ChatScreen() {
             </View>
           );
         }}
+        onContentSizeChange={() =>
+          flatListRef.current?.scrollToEnd({ animated: true })
+        }
+        onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
       />
 
       {/* INPUT */}

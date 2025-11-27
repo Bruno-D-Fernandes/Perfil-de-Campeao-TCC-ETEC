@@ -14,15 +14,17 @@ import {
   Poppins_700Bold,
   Poppins_500Medium,
 } from "@expo-google-fonts/poppins";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import Oportunidade from "../components/Oportunidade";
 import oportunidadesService from "../services/oportunidades";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import usuarioService from "../services/usuario";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { inscricoesOportunidades } from "../services/oportunidades";
 import { useNavigation } from "@react-navigation/native";
 import ChatScreen from "./ChatScreen";
-
+import api from "../services/axios";
+import ProfileCreationBottomSheet from "../components/ProfileCreationBottomSheet";
 export default function OportunidadesScreen() {
   const [nameUser, setNameUser] = useState("Usuário");
   const [data, setData] = useState([]);
@@ -39,30 +41,39 @@ export default function OportunidadesScreen() {
   const [filterIdadeMin, setFilterIdadeMin] = useState("");
   const [filterIdadeMax, setFilterIdadeMax] = useState("");
   const [appliedFilters, setAppliedFilters] = useState(null);
+  const [hasPerfil, setHasPerfil] = useState(false);
 
   const navigation = useNavigation();
+  const profileSheetRef = useRef(null);
 
-  const fetchAndSetUserData = async () => {
-    try {
-      const response = await usuarioService.perfilUser();
+  const showProfileCreationSheet = useCallback(() => {
+    profileSheetRef.current?.present();
+  }, []);
 
-      const userObj = response?.data || response || null;
-      if (userObj) {
-        setLoading(true);
-        await AsyncStorage.setItem("user", JSON.stringify(userObj));
-        setLoading(false);
-        const firstName = userObj?.nomeCompletoUsuario
-          ? String(userObj.nomeCompletoUsuario).split(" ")[0]
-          : "Usuário";
-        setNameUser(firstName || setLoading(true));
+  useEffect(() => {
+    async function temPerfil() {
+      try {
+        const response = await api.get("/hasPerfil");
+        const userHasProfile = response?.data?.hasPerfil === true;
+
+        AsyncStorage.setItem("firstTime", String(userHasProfile));
+
+        setHasPerfil(userHasProfile);
+
+        if (!userHasProfile) {
+          setTimeout(showProfileCreationSheet, 500);
+        }
+      } catch (error) {
+        console.error("Erro ao verificar perfil:", error);
+        setHasPerfil(false);
+        setTimeout(showProfileCreationSheet, 500);
       }
-    } catch (err) {
-      console.error("Erro ao buscar dados do usuário da API:", err);
     }
-  };
+
+    temPerfil();
+  }, []);
 
   const fetchOportunidades = async () => {
-    // não pagina quando há busca por texto ou filtros aplicados (carregamento específico)
     if (loading || !hasMore || searchText.length > 0 || appliedFilters) return;
 
     setLoading(true);
@@ -222,9 +233,10 @@ export default function OportunidadesScreen() {
     <View className="bg-white flex-1 w-full px-6">
       {/* HEADER */}
       <View className="w-full pt-6 pb-4 flex-none">
-        <View className="w-full flex-row items-center justify-end mb-6 ">
-                <Image source={require("../../assets/logoNome.png")} style={{width:150, height:70, tintColor:'#36A958', position:"absolute", top:-18, left:-34,}}/>
-          <View className="w-[30%] h-[37px] flex-row items-center justify-center gap-4">
+        <View className="w-full flex-row items-center justify-end mb-8">
+                 <Image source={require("../../assets/logoNome.png")} style={{width:150, height:70, tintColor:'#36A958', position:"absolute", top:-10, left:-25,}}/>
+
+          <View className="w-[30%] h-[45px] mr-5 flex-row items-center justify-center gap-4">
             <Pressable
               onPress={() => navigation.navigate("Contatos")}
               className="rounded-full bg-[#EFEFEF] h-8 w-8 items-center justify-center"
@@ -241,7 +253,11 @@ export default function OportunidadesScreen() {
             >
               <Image
                 source={require("../../assets/cadastro/icon_data.png")}
-                style={{ width: "18px", height: "16px", tintColor: "#36A958" }}
+                style={{
+                  width: "18px",
+                  height: "16px",
+                  tintColor: "#36A958",
+                }}
               />
             </Pressable>
 
@@ -254,7 +270,6 @@ export default function OportunidadesScreen() {
                 style={{ width: 18, height: 16, tintColor: "#36A958" }}
               />
             </Pressable>
-           
           </View>
         </View>
 
@@ -476,6 +491,8 @@ export default function OportunidadesScreen() {
           }
         />
       )}
+
+      <ProfileCreationBottomSheet ref={profileSheetRef} onDismiss={() => {}} />
     </View>
   );
 }

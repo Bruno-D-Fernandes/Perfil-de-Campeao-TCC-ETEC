@@ -27,7 +27,7 @@ export default function Step2({ formData, updateField }) {
             { fontFamily: "Poppins_500Medium" },
           ]}
         >
-          Mão Dominante
+          Mão Dominante*
         </Text>
         <View
           style={tw`bg-green-400 border-2 border-green-400 justify-between rounded-2xl px-4 bg-white flex-row items-center p-3 w-full`}
@@ -60,7 +60,7 @@ export default function Step2({ formData, updateField }) {
             { fontFamily: "Poppins_500Medium" },
           ]}
         >
-          Pé Dominante
+          Pé Dominante*
         </Text>
         <View
           style={tw`bg-green-400 border-2 border-green-400 justify-between rounded-2xl px-4 bg-white flex-row items-center p-3 w-full`}
@@ -95,7 +95,7 @@ export default function Step2({ formData, updateField }) {
               { fontFamily: "Poppins_500Medium" },
             ]}
           >
-            Peso
+            Peso*
           </Text>
           <TextInput
             style={[
@@ -118,7 +118,7 @@ export default function Step2({ formData, updateField }) {
               { fontFamily: "Poppins_500Medium" },
             ]}
           >
-            Altura
+            Altura*
           </Text>
           <TextInput
             style={[

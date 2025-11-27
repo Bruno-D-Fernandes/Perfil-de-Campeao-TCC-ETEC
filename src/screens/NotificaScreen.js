@@ -17,9 +17,10 @@ export default function NotificaScreen() {
   const parseItems = (payload) => {
     if (!payload) return [];
     if (Array.isArray(payload)) return payload;
-    if (Array.isArray(payload?.data)) return payload.data;
-    if (Array.isArray(payload?.items)) return payload.items;
-    if (Array.isArray(payload?.todas?.data)) return payload.todas.data;
+    if (payload?.data && Array.isArray(payload.data)) return payload.data;
+    if (payload?.items && Array.isArray(payload.items)) return payload.items;
+    if (payload?.todas?.data && Array.isArray(payload.todas.data))
+      return payload.todas.data;
     return [];
   };
 
@@ -30,7 +31,6 @@ export default function NotificaScreen() {
       try {
         setLoading(true);
         const result = await Notificacoes(initial ? 1 : page, perPage);
-        console.log("Retorno da API:", result);
 
         const newItems = parseItems(result);
 
@@ -40,14 +40,11 @@ export default function NotificaScreen() {
           setHasMore(newItems.length >= perPage);
         } else {
           setData((prev) => [...prev, ...newItems]);
-          setPage((p) => p + 1);
+          setPage((prev) => prev + 1);
           if (newItems.length < perPage) setHasMore(false);
         }
       } catch (err) {
-        console.error(
-          "Erro ao buscar notificações:",
-          err?.response?.data || err?.message
-        );
+        console.error("Erro ao buscar notificações:", err);
       } finally {
         setLoading(false);
       }
@@ -56,7 +53,7 @@ export default function NotificaScreen() {
   );
 
   const handleNewNotification = useCallback((notification) => {
-    console.log("Notificação em tempo real recebida:", notification);
+    console.log("📡 Nova notificação recebida:", notification);
     setData((prevData) => [notification, ...prevData]);
   }, []);
 
@@ -64,48 +61,42 @@ export default function NotificaScreen() {
     fetchNotificacoes(true);
   }, []);
 
-  // 2. Lógica de Inscrição no Canal de Notificações
   useEffect(() => {
-    // Verifica se o Pusher está conectado
-    if (pusher) {
-      const subscribeToNotifications = async () => {
-        const userJson = await AsyncStorage.getItem("user");
-        if (!userJson) return;
+    if (!pusher) return;
 
-        const user = JSON.parse(userJson);
-        const channelName = `notifications.user.${user.id}`;
+    let channel;
 
-        console.log(
-          `NotificationsScreen: Inscrevendo-se no canal: ${channelName}`
-        );
-        const channel = pusher.subscribe(channelName);
+    const subscribeToNotifications = async () => {
+      const userJson = await AsyncStorage.getItem("user");
+      if (!userJson) return;
 
-        channel.bind("pusher:subscription_succeeded", () => {
-          console.log(
-            `NotificationsScreen: Inscrição no canal ${channelName} foi um SUCESSO!`
-          );
-        });
+      const user = JSON.parse(userJson);
+      const channelName = `notifications.user.${user.id}`;
 
-        channel.bind("pusher:subscription_error", (error) => {
-          console.error(
-            `NotificationsScreen: Erro de inscrição no canal ${channelName}:`,
-            error
-          );
-        });
+      console.log("Inscrevendo no canal:", channelName);
 
-        channel.bind("NewNotification", handleNewNotification);
+      channel = pusher.subscribe(channelName);
 
-        return () => {
-          console.log(
-            `NotificationsScreen: Desinscrevendo do canal: ${channelName}`
-          );
-          channel.unbind("NewNotification", handleNewNotification);
-          pusher.unsubscribe(channelName);
-        };
-      };
+      channel.bind("pusher:subscription_succeeded", () => {
+        console.log("Sucesso ao inscrever:", channelName);
+      });
 
-      subscribeToNotifications();
-    }
+      channel.bind("pusher:subscription_error", (error) => {
+        console.error("Erro na inscrição:", error);
+      });
+
+      channel.bind("NewNotification", handleNewNotification);
+    };
+
+    subscribeToNotifications();
+
+    return () => {
+      if (channel) {
+        console.log("❌ Desinscrevendo do canal...");
+        channel.unbind("NewNotification", handleNewNotification);
+        pusher.unsubscribe(channel.name);
+      }
+    };
   }, [pusher, handleNewNotification]);
 
   return (

@@ -286,8 +286,6 @@ export default function CadastroScreen() {
         position: "absolute",
         top: 100,
         width:'100%',
-        alignItems :'center',
-        justifyContent:'center',
       }}>
         <TypingText
           texts={frases}
@@ -295,11 +293,10 @@ export default function CadastroScreen() {
           pause={3200}
           style={{
             color: "white",
-            fontSize: 20,
+            fontSize: 22,
             fontFamily: "Poppins_500Medium",
-            width: '80%',
-                    alignItems :'center',
-        justifyContent:'center',
+            width: '60%',
+            marginLeft:10,
           }}
         />
       </View>
@@ -343,7 +340,7 @@ export default function CadastroScreen() {
             style={tw`flex-row justify-between w-40 h-12 bg-[#4ADC76] rounded-full items-center`}
             onPress={() => {
               if (currentStep === 3) {
-                navigation.replace("MainTabs");
+                navigation.replace("AuthStack");
               } else if (currentStep === 2) {
                 handleSubmit();
               } else {
