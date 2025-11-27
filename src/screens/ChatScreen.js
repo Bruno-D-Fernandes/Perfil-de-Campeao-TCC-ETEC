@@ -71,7 +71,6 @@ export default function ChatScreen() {
         }
       );
 
-      console.log(response);
       if (response.status === 200) navigation.replace("Agenda");
 
       console.log("Convite aceito:", response.data);
@@ -137,13 +136,30 @@ export default function ChatScreen() {
           borderBottomColor: "#ddd",
         }}
       >
+        <Pressable
+          className="mr-4"
+          onPress={() => navigation.navigate("Contatos")}
+        >
+          <Image
+            source={require("../../assets/cadastro/icon_voltar.png")}
+            style={{ width: 11, height: 18, tintColor: "grey" }}
+          />
+        </Pressable>
         <Image
           source={{
             uri: `${API_URL}/storage/${contactAvatar}`,
           }}
           style={{ width: 40, height: 40, borderRadius: 20, marginRight: 12 }}
         />
-        <Text style={{ fontSize: 18, fontWeight: "bold" }}>{contactName}</Text>
+        <Text
+          style={{
+            fontSize: 14,
+            fontWeight: "bold",
+            fontFamily: "Poppins_500Medium",
+          }}
+        >
+          {contactName}
+        </Text>
       </View>
 
       {/* MENSAGENS */}
@@ -249,13 +265,14 @@ export default function ChatScreen() {
                     </Text>
                   </View>
 
-                  {item?.convite_evento?.status === "aceito" ? (
-                    <Pressable
+                  {item?.convite_evento.status == "aceito" ? (
+                    <View
                       style={{
-                        backgroundColor: "#61D483",
+                        backgroundColor: "#4CAF50",
                         padding: 8,
                         borderRadius: 8,
                         marginTop: 12,
+                        opacity: 0.8,
                       }}
                     >
                       <Text
@@ -265,9 +282,9 @@ export default function ChatScreen() {
                           fontFamily: "Poppins_500Medium",
                         }}
                       >
-                        Convite aceito
+                        Aceito ✓
                       </Text>
-                    </Pressable>
+                    </View>
                   ) : (
                     <Pressable
                       onPress={() => aceitoInvite(item?.convite_evento_id)}
@@ -307,15 +324,16 @@ export default function ChatScreen() {
                   maxWidth: "75%",
                   padding: 10,
                   borderRadius: 12,
-                  backgroundColor: isMe ? "#61D483" : "#E5E7EB", // verde / cinza
+                  backgroundColor: isMe ? "#61D48390" : "#E5E7EB",
                   borderBottomRightRadius: isMe ? 2 : 12,
                   borderBottomLeftRadius: isMe ? 12 : 2,
                 }}
               >
                 <Text
                   style={{
-                    color: isMe ? "white" : "black",
-                    fontSize: 15,
+                    color: "black",
+                    fontSize: 14,
+                    fontFamily: "Poppins_400Regular",
                   }}
                 >
                   {item.message}

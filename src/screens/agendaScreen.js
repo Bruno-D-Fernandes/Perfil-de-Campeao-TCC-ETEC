@@ -69,14 +69,11 @@ LocaleConfig.locales["pt"] = {
 
 LocaleConfig.defaultLocale = "pt";
 
-// Função auxiliar para formatar a data e hora
 const formatEventData = (evento) => {
   const dataInicio = new Date(evento.data_hora_inicio);
   const dataFim = new Date(evento.data_hora_fim);
 
-  // Formato YYYY-MM-DD para o calendário
   const data = dataInicio.toISOString().split("T")[0];
-  // Formato HH:MM
   const horaInicio = dataInicio.toLocaleTimeString("pt-BR", {
     hour: "2-digit",
     minute: "2-digit",
@@ -86,16 +83,19 @@ const formatEventData = (evento) => {
     minute: "2-digit",
   });
 
+  const color = evento.color || "#22c55e";
+
   return {
     ...evento,
     data: data,
-    hora: horaInicio, // Usaremos a hora de início para a exibição na timeline
+    hora: horaInicio,
     horaFim: horaFim,
-    clube: `Clube ID ${evento.clube_id}`, // Adaptado para usar o ID do clube
-    oportunidade: evento.titulo, // Usando o título como "oportunidade"
+    clube: `Clube ID ${evento.clube_id}`,
+    oportunidade: evento.titulo,
     local: `${evento.rua}, ${evento.numero} - ${evento.bairro}, ${evento.cidade}/${evento.estado}`,
     descricaoCompleta: evento.descricao,
     limite: evento.limite_participantes,
+    color: color,
   };
 };
 
@@ -185,8 +185,11 @@ export default function AgendaScreen() {
       marks[event.data] = {
         ...(marks[event.data] || {}),
         marked: true,
-        dotColor: "#22c55e",
+        dotColor: event.color || "#22c55e",
       };
+      {
+        console.log(event);
+      }
     });
 
     marks[selectedDate] = {
@@ -485,7 +488,7 @@ export default function AgendaScreen() {
       <BottomSheetModal
         ref={sheetRef}
         index={0}
-        snapPoints={["53%", "90%"]} // snap inicial e snap maior
+        snapPoints={["53%", "90%"]}
         enablePanDownToClose={false}
         backgroundStyle={{ backgroundColor: "#f0efed", borderRadius: 20 }}
         handleIndicatorStyle={{ backgroundColor: "#a8a8a8" }} // cor e altura da barra
@@ -506,7 +509,7 @@ export default function AgendaScreen() {
             }
 
             if (contentOffset.y <= 0) {
-              sheetRef.current?.collapse(); // vai para o snap menor
+              sheetRef.current?.collapse();
             }
           }}
         >
