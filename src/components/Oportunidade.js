@@ -4,6 +4,7 @@ import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 
 import { inscreverOportunidade } from "../services/oportunidades";
 import { API_URL } from "@env";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Oportunidade({ data }) {
   const {
@@ -19,6 +20,9 @@ export default function Oportunidade({ data }) {
     estadoOportunidade = "",
     enderecoOportunidade = "",
   } = data.oportunidade || data || {};
+  const navigation = useNavigation();
+
+  console.log(clube);
 
   const { status = null } = data || {};
   const [localStatus, setLocalStatus] = useState(status || null);
@@ -226,7 +230,15 @@ export default function Oportunidade({ data }) {
       >
         <BottomSheetView style={{ padding: 20 }}>
           <View className="w-full justify-center gap-4">
-            <View className="flex-row items-center gap-4">
+            <Pressable
+              onPress={() => {
+                sheetRef.current?.close();
+                navigation.navigate("PerfilClubeScreen", {
+                  idClube: clube.id,
+                });
+              }}
+              className="flex-row items-center gap-4 border-2 rounded-2xl border-[#36A958]"
+            >
               <View className="rounded-full w-[70px] h-[70px]">
                 <Image
                   source={
@@ -247,7 +259,7 @@ export default function Oportunidade({ data }) {
               >
                 {clube.nomeClube}
               </Text>
-            </View>
+            </Pressable>
 
             <View className="gap-1">
               <Text

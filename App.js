@@ -28,11 +28,11 @@ import PerfilCrudScreen from "./src/screens/PerfilCrudScreen";
 import AgendaScreen from "./src/screens/agendaScreen";
 import ChatScreen from "./src/screens/ChatScreen";
 import ContatosScreen from "./src/screens/ContatosScreen";
+import PerfilClubeScreen from "./src/screens/PerfilClubeScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// ---
 function MainTabs() {
   return (
     <Tab.Navigator
@@ -211,6 +211,12 @@ export default function App() {
               <Stack.Screen
                 name="PerfilCrudScreen"
                 component={PerfilCrudScreen}
+                options={{ headerShown: false }}
+              />
+
+              <Stack.Screen
+                name="PerfilClubeScreen"
+                component={PerfilClubeScreen}
                 options={{ headerShown: false }}
               />
             </Stack.Navigator>
