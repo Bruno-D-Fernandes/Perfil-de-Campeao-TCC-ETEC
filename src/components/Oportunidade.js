@@ -22,8 +22,6 @@ export default function Oportunidade({ data }) {
   } = data.oportunidade || data || {};
   const navigation = useNavigation();
 
-  console.log(clube);
-
   const { status = null } = data || {};
   const [localStatus, setLocalStatus] = useState(status || null);
   const [showStatusInfo, setShowStatusInfo] = useState(false);
