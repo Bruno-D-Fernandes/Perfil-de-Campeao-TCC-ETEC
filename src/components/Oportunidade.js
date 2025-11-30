@@ -237,7 +237,7 @@ export default function Oportunidade({ data }) {
                   idClube: clube.id,
                 });
               }}
-              className="flex-row items-center gap-4 border-2 rounded-2xl border-[#36A958]"
+              className="flex-row items-center gap-4 rounded-2xl "
             >
               <View className="rounded-full w-[70px] h-[70px]">
                 <Image
