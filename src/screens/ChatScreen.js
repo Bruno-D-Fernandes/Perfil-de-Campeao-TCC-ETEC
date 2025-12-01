@@ -265,7 +265,7 @@ export default function ChatScreen() {
                     </Text>
                   </View>
 
-                  {item?.convite_evento.status == "aceito" ? (
+                  {item?.convite_evento.status === "aceito" ? (
                     <View
                       style={{
                         backgroundColor: "#4CAF50",
@@ -283,6 +283,26 @@ export default function ChatScreen() {
                         }}
                       >
                         Aceito ✓
+                      </Text>
+                    </View>
+                  ) : item?.convite_evento.status === "expirado" ? (
+                    <View
+                      style={{
+                        backgroundColor: "#4CAF50",
+                        padding: 8,
+                        borderRadius: 8,
+                        marginTop: 12,
+                        opacity: 0.8,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          textAlign: "center",
+                          color: "white",
+                          fontFamily: "Poppins_500Medium",
+                        }}
+                      >
+                        Convite expirou
                       </Text>
                     </View>
                   ) : (

@@ -125,7 +125,7 @@ export const PusherProvider = ({ children }) => {
         });
 
         notificationChannel.bind("NewNotification", (data) => {
-          console.log("Nova notificação recebida!", data);
+          console.log("Nova notificação recebida via EVENTO!", data);
         });
       }
     };
