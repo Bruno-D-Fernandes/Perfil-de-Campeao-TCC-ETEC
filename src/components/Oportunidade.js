@@ -28,8 +28,6 @@ export default function Oportunidade({ data }) {
   const [showStatusInfo, setShowStatusInfo] = useState(false);
   const statusTimeoutRef = useRef(null);
 
-  console.log(data);
-
   const normalizedStatus =
     (localStatus ?? status)
       ? String(localStatus ?? status).toLowerCase()
