@@ -73,7 +73,37 @@ export default function OportunidadesScreen() {
     temPerfil();
   }, []);
 
+  // Carrega oportunidades quando volta para aba de Oportunidades
+  useEffect(() => {
+    const fetchOportunidadesAba = async () => {
+      try {
+        setLoading(true);
+        setData([]);
+        setPage(1);
+        setHasMore(true);
+        
+        const response = await usuarioService.oportunidadeData(1, perPage);
+        const newItems = response?.data?.data || response?.data || [];
+      
+        
+        setData(newItems);
+        setHasMore(newItems.length >= perPage);
+      } catch (error) {
+        console.error("Erro ao buscar oportunidades:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!inscritoAba) {
+      fetchOportunidadesAba();
+    }
+  }, [inscritoAba]);
+
   const fetchOportunidades = async () => {
+    // Não carrega mais se estamos na aba de inscrições
+    if (inscritoAba) return;
+    
     if (loading || !hasMore || searchText.length > 0 || appliedFilters) return;
 
     setLoading(true);
@@ -93,6 +123,12 @@ export default function OportunidadesScreen() {
       setLoading(false);
     }
   };
+
+  const loadMoreOportunidades = useCallback(() => {
+    if (!inscritoAba) {
+      fetchOportunidades();
+    }
+  }, [inscritoAba, page, loading, hasMore, searchText, appliedFilters]);
 
   const applyFilters = async () => {
     const filters = {};
@@ -145,11 +181,32 @@ export default function OportunidadesScreen() {
         setLoading(true);
         setData([]);
         const response = await inscricoesOportunidades();
-        const inscricoes = response?.data || [];
+        const inscricoes = response?.data?.data || response?.data || [];
 
-        setData(inscricoes);
+
+        const transformedData = inscricoes.map((item) => {
+          if (item.oportunidade) {
+            return {
+              ...item.oportunidade,
+              status: item.status ?? item.oportunidade?.status ?? null,
+              oportunidade: item.oportunidade,
+              clube: item.oportunidade?.clube ?? item.clube ?? null,
+            };
+          }
+
+          return {
+            ...item,
+            status: item.status ?? null,
+            oportunidade: item,
+            clube: item.clube ?? null,
+          };
+        });
+
+        console.log("Dados transformados para setar:", transformedData);
+        console.log("======================");
+        setData(transformedData);
       } catch (error) {
-        console.error("Erro ao buscar inscrições:", error);
+        console.error("Errzo ao buscar inscrições:", error);
       } finally {
         setLoading(false);
       }
@@ -476,7 +533,7 @@ export default function OportunidadesScreen() {
           data={filteredData}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => <Oportunidade data={item} />}
-          onEndReached={fetchOportunidades}
+          onEndReached={loadMoreOportunidades}
           onEndReachedThreshold={0.2}
           contentContainerStyle={{ paddingTop: "4%", paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}

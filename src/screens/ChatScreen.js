@@ -49,6 +49,8 @@ export default function ChatScreen() {
           }
         );
         setMessages(response.data);
+
+        console.log(response.data);
       } catch (error) {
         console.log("Erro ao carregar mensagens", error);
       } finally {
@@ -87,7 +89,13 @@ export default function ChatScreen() {
     const handleMessage = (data) => {
       console.log("Nova mensagem recebida:", data.message);
 
-      setMessages((prev) => [...prev, data.message]);
+      const messageData = data.message;
+      // Garante que a mensagem tem um ID único
+      if (!messageData.id) {
+        messageData.id = `temp-${Date.now()}-${Math.random()}`;
+      }
+
+      setMessages((prev) => [...prev, messageData]);
     };
 
     channel.bind("new-message", handleMessage);
@@ -100,23 +108,42 @@ export default function ChatScreen() {
   const sendMessage = async () => {
     if (!text.trim()) return;
 
+    const messageText = text;
+    setText(""); // Limpa o input imediatamente
+
     try {
       const response = await api.post(
         "/chat/send",
         {
           receiver_id: receiverID,
           receiver_type: "clube",
-          message: text,
+          message: messageText,
         },
         {
           baseURL: `${API_URL}/api`,
         }
       );
 
-      setMessages((prev) => [...prev, response.data]);
-      setText("");
+      // Garante que cada mensagem tem um ID único e estrutura correta
+      const messageData = response.data.message || response.data;
+      if (!messageData.id) {
+        messageData.id = `temp-${Date.now()}-${Math.random()}`;
+      }
+
+      // Garante que tem a propriedade 'message'
+      if (!messageData.message && messageText) {
+        messageData.message = messageText;
+      }
+
+      if (!messageData.sender_id && userId) {
+        messageData.sender_id = userId;
+      }
+
+      console.log("Mensagem enviada:", messageData);
+      setMessages((prev) => [...prev, messageData]);
     } catch (error) {
       console.log("Erro ao enviar mensagem:", error);
+      setText(messageText);
     }
   };
 
@@ -170,7 +197,7 @@ export default function ChatScreen() {
         contentContainerStyle={{ padding: 16 }}
         renderItem={({ item }) => {
           if (!item || !item.message) return null;
-          const isMe = item.receiver_type === "App\\Models\\Clube";
+          const isMe = item.sender_id === userId;
 
           if (item.type === "convite") {
             console.log("Renderizando convite:", item);
