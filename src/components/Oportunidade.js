@@ -19,6 +19,7 @@ export default function Oportunidade({ data }) {
     descricaoOportunidades = "",
     estadoOportunidade = "",
     enderecoOportunidade = "",
+    limite_inscricoes = 0,
   } = data.oportunidade || data || {};
   const navigation = useNavigation();
 
@@ -26,6 +27,8 @@ export default function Oportunidade({ data }) {
   const [localStatus, setLocalStatus] = useState(status || null);
   const [showStatusInfo, setShowStatusInfo] = useState(false);
   const statusTimeoutRef = useRef(null);
+
+  console.log(data);
 
   const normalizedStatus =
     (localStatus ?? status)
@@ -195,7 +198,8 @@ export default function Oportunidade({ data }) {
                   numberOfLines={1}
                   style={{ fontFamily: "Poppins_500Medium" }}
                 >
-                  {nomeEsporte} - {idadeMinima} a {idadeMaxima} anos
+                  {nomeEsporte} - {idadeMinima} a {idadeMaxima} anos -{" "}
+                  {limite_inscricoes} vagas
                 </Text>
               </View>
             </View>
@@ -271,6 +275,12 @@ export default function Oportunidade({ data }) {
                 style={{ fontFamily: "Poppins_500Medium" }}
               >
                 {nomeEsporte} - {idadeMinima} a {idadeMaxima} anos
+              </Text>
+              <Text
+                className=" text-[16px] text-gray-500"
+                style={{ fontFamily: "Poppins_500Medium" }}
+              >
+                Vagas: {limite_inscricoes}
               </Text>
             </View>
 
