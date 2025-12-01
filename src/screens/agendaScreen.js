@@ -632,14 +632,6 @@ export default function AgendaScreen() {
                         >
                           {evento.local}
                         </Text>
-
-                        {/* Posição */}
-                        <Text
-                          className="text-white text-xs"
-                          style={{ fontFamily: "Poppins_400Regular" }}
-                        >
-                          {evento.descricao}
-                        </Text>
                       </View>
                     ) : (
                       <Text className="text-gray-400 text-xs">Sem evento</Text>
