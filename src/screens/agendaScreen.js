@@ -90,6 +90,7 @@ const formatEventData = (evento) => {
     data: data,
     hora: horaInicio,
     horaFim: horaFim,
+    horarioCompleto: `${horaInicio} - ${horaFim}`,
     clube: `Clube ID ${evento.clube_id}`,
     oportunidade: evento.titulo,
     local: `${evento.rua}, ${evento.numero} - ${evento.bairro}, ${evento.cidade}/${evento.estado}`,
@@ -112,6 +113,8 @@ export default function AgendaScreen() {
   const [modalHorasVisible, setModalHorasVisible] = useState(false);
   const [modalMeusEventos, setModalMeusEventos] = useState(false);
   const [eventoSelecionado, setEventoSelecionado] = useState(null);
+  const [linhas, setLinhas] = useState([]);
+
 
   // BottomSheet
   const sheetRef = useRef(null);
@@ -142,6 +145,67 @@ export default function AgendaScreen() {
     { length: 24 },
     (_, i) => `${i.toString().padStart(2, "0")}:00`
   );
+
+function gerarLinhasDoDia(eventos) {
+  const linhas = new Set();
+
+  // adiciona apenas horas inteiras do dia (00:00, 01:00, 02:00... 23:00)
+  for (let h = 0; h < 24; h++) {
+    linhas.add(String(h).padStart(2, "0") + ":00");
+  }
+
+  // Se houver eventos, adiciona as horas que os eventos ocupam
+  eventos.forEach((e) => {
+    if (!e.data_hora_inicio || !e.data_hora_fim) return;
+
+    const inicio = new Date(e.data_hora_inicio);
+    const fim = new Date(e.data_hora_fim);
+
+    // Adiciona horário QUEBRADO de início (com minutos se existirem)
+    const horarioInicio = String(inicio.getHours()).padStart(2, "0") + ":" + String(inicio.getMinutes()).padStart(2, "0");
+    if (inicio.getMinutes() !== 0) {
+      linhas.add(horarioInicio);
+    } else {
+      linhas.add(String(inicio.getHours()).padStart(2, "0") + ":00");
+    }
+
+    // Adiciona todas as horas inteiras ENTRE início e fim
+    let hora = new Date(inicio);
+    hora.setMinutes(0, 0, 0);
+    hora.setHours(hora.getHours() + 1); // Começa da próxima hora inteira
+
+    while (hora.getTime() < fim.getTime()) {
+      const hStr = String(hora.getHours()).padStart(2, "0") + ":00";
+      linhas.add(hStr);
+      hora.setHours(hora.getHours() + 1);
+    }
+
+    // Adiciona horário QUEBRADO de fim (com minutos se existirem)
+    const horarioFim = String(fim.getHours()).padStart(2, "0") + ":" + String(fim.getMinutes()).padStart(2, "0");
+    if (fim.getMinutes() !== 0) {
+      linhas.add(horarioFim);
+    } else {
+      linhas.add(String(fim.getHours()).padStart(2, "0") + ":00");
+    }
+  });
+
+  // transforma em array e ordena numericamente
+  return Array.from(linhas).sort((a, b) => {
+    const [ah] = a.split(":").map(Number);
+    const [bh] = b.split(":").map(Number);
+    return ah - bh;
+  });
+}
+
+
+
+useEffect(() => {
+  // recalcula linhas sempre que eventosDoDia mudar
+  setLinhas(gerarLinhasDoDia(eventosDoDia));
+}, [/* eventosDoDia depende de agenda + selectedDate, então observe ambos */ selectedDate, agenda]);
+
+
+
 
   useEffect(() => {
     const fetchAgenda = async () => {
@@ -201,7 +265,18 @@ export default function AgendaScreen() {
     return marks;
   }
 
-  const eventosDoDia = agenda.filter((e) => e.data === selectedDate);
+// eventos que ocorrem — total ou parcialmente — no selectedDate
+// eventos que ocorrem — total ou parcialmente — no selectedDate
+const eventosDoDia = agenda.filter((e) => {
+  if (!e.data_hora_inicio) return false;
+
+  // Converte somente a data (AAAA-MM-DD) — sem hora
+  const dataEvento = e.data_hora_inicio.split("T")[0];
+
+  return dataEvento === selectedDate;
+});
+
+
 
   const formatDateForTimeline = (dateString) => {
     const date = new Date(dateString + "T00:00:00");
@@ -369,16 +444,6 @@ export default function AgendaScreen() {
           </View>
 
           <View className="flex-1">
-            {/*TIRAR ESSE BTN DEPOIS */}
-            <TouchableOpacity
-              className="bg-[#61D483] p-4 rounded-xl items-center mb-6"
-              onPress={() => setModalConvitesVisible(true)}
-            >
-              <Text className="text-white font-semibold text-lg">
-                Ver Convites Pendentes ({convites.length})
-              </Text>
-            </TouchableOpacity>
-
             <Text className="text-xl font-bold mb-4 text-gray-800">
               Próximas Peneiras
             </Text>
@@ -412,37 +477,99 @@ export default function AgendaScreen() {
         </View>
       </Modal>
 
-      <Modal visible={modalDayVisible} animationType="slide">
-        <View className="flex-1 bg-white p-5">
-          {eventoSelecionado ? (
-            <>
-              <Text className="text-2xl font-bold mb-3">
-                {eventoSelecionado.titulo}
-              </Text>
-              <Text className="mb-2">
-                {eventoSelecionado.descricaoCompleta}
-              </Text>
-              <Text className="font-semibold">
-                Data: {eventoSelecionado.data}
-              </Text>
-              <Text className="font-semibold mb-2">
-                Horário: {eventoSelecionado.hora} - {eventoSelecionado.horaFim}
-              </Text>
-              <Text>Local: {eventoSelecionado.local}</Text>
-              <Text>Limite de Participantes: {eventoSelecionado.limite}</Text>
-            </>
-          ) : (
-            <Text>Nenhum evento encontrado.</Text>
-          )}
-
-          <TouchableOpacity
-            onPress={() => setModalDayVisible(false)}
-            className="mt-5 p-4 bg-black rounded-xl items-center"
-          >
-            <Text className="text-white font-semibold">Fechar</Text>
-          </TouchableOpacity>
+      <Modal 
+  visible={modalDayVisible} 
+  animationType="fade"
+  transparent={true} 
+>
+  <View className="flex-1 justify-center items-center bg-black/50 p-4">
+    <View className="w-full max-w-lg bg-white rounded-lg shadow-2xl p-6">
+      
+      <View className="flex-row justify-between items-center pb-3 border-b border-gray-200 mb-4">
+        <View className="flex-row items-center">
+          <Text className="text-xl font-bold">Detalhes do Evento</Text>
         </View>
-      </Modal>
+        
+        {/* Ícone Fechar (X) */}
+        <TouchableOpacity onPress={() => setModalDayVisible(false)}>
+          <Text className="text-gray-500 text-xl font-bold">X</Text>
+        </TouchableOpacity>
+      </View>
+
+      {eventoSelecionado ? (
+        <>
+          <Text className="text-xl font-bold mb-4">{eventoSelecionado.titulo}</Text>
+
+          <View className="flex-row flex-wrap mb-4">
+            
+            <View className="w-1/2 mb-3">
+              <View className="flex-row items-center mb-1">
+                <Image source={require("../../assets/cadastro/icon_tempo.png")} style={{ width: 18, height: 19, marginRight: 8 }} />
+                <Text className="text-gray-600 font-semibold">Início</Text>
+              </View>
+              <Text className="text-base">
+                {eventoSelecionado.data} às {eventoSelecionado.hora}
+              </Text>
+            </View>
+
+            <View className="w-1/2 mb-3">
+              <View className="flex-row items-center mb-1">
+                <Image source={require("../../assets/cadastro/icon_tempo.png")} style={{ width: 18, height: 19 , marginRight: 8 }} />
+                <Text className="text-gray-600 font-semibold">Término</Text>
+              </View>
+              <Text className="text-base">
+                {eventoSelecionado.data} às {eventoSelecionado.horaFim}
+              </Text>
+            </View>
+
+            <View className="w-1/2 mb-3">
+              <View className="flex-row items-center mb-1">
+                <Image source={require("../../assets/cadastro/icon_pessoas.png")} style={{ width: 18, height: 18, marginRight: 8, tintColor:'#4adc76', }} />
+                <Text className="text-gray-600 font-semibold">Limite de Pessoas</Text>
+              </View>
+              <Text className="text-base">
+                {eventoSelecionado.limite} participantes
+              </Text>
+            </View>
+
+          </View>
+          
+          <View className="mb-4">
+            <View className="flex-row items-center mb-1">
+                <Image source={require("../../assets/cadastro/icon_docs.png")} style={{ width: 18, height: 18, marginRight: 8, tintColor:'#4adc76', }} />
+              <Text className="text-gray-600 font-semibold">Descrição</Text>
+            </View>
+            <Text className="text-base text-gray-700">
+              {eventoSelecionado.descricaoCompleta}
+            </Text>
+          </View>
+          
+          <View className="mb-6">
+            <View className="flex-row items-center mb-1">
+                <Image source={require("../../assets/cadastro/icon_local.png")} style={{ width: 16, height: 19, marginRight: 8, tintColor:'#4adc76', }} />
+              <Text className="text-gray-600 font-semibold">Localização</Text>
+            </View>
+            <Text className="text-base text-gray-700">
+              {eventoSelecionado.local}
+            </Text>
+          </View>
+          
+          <View className="flex-row justify-end">
+            <TouchableOpacity
+              onPress={() => setModalDayVisible(false)}
+              className="px-6 py-2 border border-gray-300 rounded-md bg-white items-center"
+            >
+              <Text className="text-black font-semibold">Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      ) : (
+        <Text>Nenhum evento encontrado.</Text>
+      )}
+
+    </View>
+  </View>
+</Modal>
 
       <Modal visible={modalConvitesVisible} animationType="slide">
         <View className="flex-1 p-5 bg-white">
@@ -559,88 +686,142 @@ export default function AgendaScreen() {
             </View>
           </View>
 
-          {horasDia.map((hora, index) => {
-            const evento = eventosDoDia.find((e) => e.hora === hora);
+{linhas.map((hora, index) => {
+  // calcula horaBase (timestamp) para o selectedDate + slot "HH:MM"
+  const [hb, mb] = hora.split(":").map(Number);
+  const horaBase = new Date(selectedDate + "T00:00:00");
+  horaBase.setHours(hb, mb, 0, 0);
+  const horaBaseTs = horaBase.getTime();
 
-            const primeiro = index === 0;
-            const ultimo = index === horasDia.length - 1;
+  // encontra todos os eventos que cobrem esse slot (para marcador/linha)
+  const slotEventos = eventosDoDia.filter((e) => {
+    if (!e.data_hora_inicio || !e.data_hora_fim) return false;
+    const inicioTs = new Date(e.data_hora_inicio).getTime();
+    const fimTs = new Date(e.data_hora_fim).getTime();
+    return horaBaseTs >= inicioTs && horaBaseTs <= fimTs;
+  });
 
-            return (
-              <View key={hora} className="flex-row min-h-[80px] relative">
-                {!primeiro && (
-                  <View className="absolute left-[103px] top-0 w-[2px] h-1/2 bg-green-500 z-20" />
-                )}
-                {!ultimo && (
-                  <View className="absolute left-[103px] bottom-0 w-[2px] h-1/2 bg-green-500 z-20" />
-                )}
+  // Pré-calcula timestamps para cada evento quando necessário
 
-                {evento ? (
-                  <View
-                    className="
-    absolute  top-1/2 z-30 rounded-full
-    -translate-y-[50%] w-[22px] left-[93px] h-[22px] bg-green-500 border-[3px] border-[#ffff]"
-                  ></View>
-                ) : (
-                  <View
-                    className="
-    absolute  top-1/2 z-30 rounded-full
-    -translate-y-[50%] w-[8px] left-[100px] h-[8px] bg-green-500"
-                  />
-                )}
+  // Filtra eventos que COMEÇAM NESTA HORA (compara apenas a hora)
+  const eventosQueComecam = slotEventos.filter((e) => {
+    const inicio = new Date(e.data_hora_inicio);
+    return inicio.getHours() === hb && inicio.getMinutes() === 0;
+  });
 
-                {/* CAMPO */}
-                <TouchableOpacity
-                  onPress={() => evento && setEventoSelecionado(evento)}
-                  activeOpacity={0.7}
-                  className={` mb-2 h-[90px] w-full rounded-xl border flex-row justify-around items-center ${
-                    evento
-                      ? "bg-green-400  border-green-400"
-                      : "bg-white border-gray-200"
-                  }`}
-                >
-                  <View className="w-[20%]">
-                    {evento ? (
-                      <Text
-                        className="text-white text-lg"
-                        style={{ fontFamily: "Poppins_400Regular" }}
-                      >
-                        {hora}
-                      </Text>
-                    ) : (
-                      <Text
-                        className="text-gray-800 text-lg"
-                        style={{ fontFamily: "Poppins_400Regular" }}
-                      >
-                        {hora}
-                      </Text>
-                    )}
-                  </View>
+  // Filtra eventos que COMEÇAM NESTE HORÁRIO QUEBRADO (exemplo: 14:30)
+  const eventosQueComecamQuebrado = eventosDoDia.filter((e) => {
+    if (!e.data_hora_inicio) return false;
+    const inicio = new Date(e.data_hora_inicio);
+    const inicioFormatado = inicio.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const temMinutos = !inicioFormatado.endsWith(":00");
+    return inicioFormatado === hora && temMinutos;
+  });
 
-                  <View className="w-[50%]">
-                    {evento ? (
-                      <View>
-                        <Text
-                          className="text-white text-base"
-                          style={{ fontFamily: "Poppins_500Medium" }}
-                        >
-                          {evento.titulo}
-                        </Text>
+  // Verifica se algum evento TERMINA NESTA HORA (compara apenas a hora)
+  // somente considera término inteiro quando os minutos do fim forem 0
+  const eventosQueterminam = slotEventos.filter((e) => {
+    const fim = new Date(e.data_hora_fim);
+    return fim.getHours() === hb && fim.getMinutes() === 0;
+  });
 
-                        <Text
-                          className="text-white text-xs"
-                          style={{ fontFamily: "Poppins_400Regular" }}
-                        >
-                          {evento.local}
-                        </Text>
-                      </View>
-                    ) : (
-                      <Text className="text-gray-400 text-xs">Sem evento</Text>
-                    )}
-                  </View>
-                </TouchableOpacity>
+  // Filtra eventos que TERMINAM NESTE HORÁRIO QUEBRADO (exemplo: 16:45)
+  const eventosQueterminamQuebrado = eventosDoDia.filter((e) => {
+    if (!e.data_hora_fim) return false;
+    const fim = new Date(e.data_hora_fim);
+    const fimFormatado = fim.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const temMinutos = !fimFormatado.endsWith(":00");
+    return fimFormatado === hora && temMinutos;
+  });
+
+  // Verifica se há eventos que passam por este horário (mas não começam nem terminam)
+  // Usa comparações por timestamp estritas (exclui casos onde a hora do slot é exatamente o fim do evento)
+  const eventosPassando = eventosDoDia.filter((e) => {
+    if (!e.data_hora_inicio || !e.data_hora_fim) return false;
+    const inicioTs = new Date(e.data_hora_inicio).getTime();
+    const fimTs = new Date(e.data_hora_fim).getTime();
+    // em andamento quando o evento começou antes deste slot e termina depois deste slot
+    return inicioTs < horaBaseTs && fimTs > horaBaseTs;
+  });
+
+  const primeiro = index === 0;
+  const ultimo = index === linhas.length - 1;
+
+  const temEventoNeste = eventosQueComecam.length > 0 || eventosPassando.length > 0 || eventosQueterminam.length > 0 || eventosQueterminamQuebrado.length > 0;
+  const bgColor = temEventoNeste ? "bg-green-400" : "bg-white";
+  const borderColor = temEventoNeste ? "border-green-400" : "border-gray-200";
+  const textColor = temEventoNeste ? "text-white" : "text-gray-800";
+
+  return (
+    <View key={`${hora}-${index}`} className="flex-row min-h-[80px] relative">
+      {!primeiro && (
+        <View className="absolute left-[103px] top-0 w-[2px] h-1/2 bg-green-500 z-20" />
+      )}
+      {!ultimo && (
+        <View className="absolute left-[103px] bottom-0 w-[2px] h-1/2 bg-green-500 z-20" />
+      )}
+
+      {slotEventos.length > 0 ? (
+        <View className="absolute top-1/2 z-30 rounded-full -translate-y-[50%] w-[22px] left-[93px] h-[22px] bg-green-500 border-[3px] border-white" />
+      ) : (
+        <View className="absolute top-1/2 z-30 rounded-full -translate-y-[50%] w-[8px] left-[100px] h-[8px] bg-green-500" />
+      )}
+
+      <View className="mb-2 w-full">
+        {eventosQueComecam.length > 0 ? (
+          eventosQueComecam.map((evento, evIndex) => (
+            <TouchableOpacity
+              key={`${evento.id}-${evIndex}-${hora}`}
+              onPress={() => { setEventoSelecionado(evento); setModalDayVisible(true); }}
+              activeOpacity={0.8}
+              
+              className={`mb-2 h-[90px] w-full rounded-xl border flex-row justify-around items-center bg-green-400 border-green-400`}>
+              <View className="w-[20%] ">
+                <Text className="text-white text-lg font-bold" style={{ fontFamily: "Poppins_400Regular" }}>{evento.hora}</Text>
               </View>
-            );
-          })}
+              <View className="w-[50%]"><View><Text className="text-white text-base" style={{ fontFamily: "Poppins_500Medium" }}>{evento.titulo}</Text><Text className="text-white text-xs" style={{ fontFamily: "Poppins_400Regular" }}>{evento.local}</Text></View></View>
+            </TouchableOpacity>
+          ))
+        ) : eventosQueComecamQuebrado.length > 0 ? (
+          eventosQueComecamQuebrado.map((evento, evIndex) => (
+            <View key={`${evento.id}-${evIndex}-${hora}`} className={`mb-2 h-[90px] w-full rounded-xl border flex-row justify-around items-center bg-green-400 border-green-400`}>
+              <View className="w-[20%] "><Text className="text-white text-lg font-bold" style={{ fontFamily: "Poppins_400Regular" }}>{hora}</Text></View>
+              <View className="w-[50%]"><View><Text className="text-white text-base" style={{ fontFamily: "Poppins_500Medium" }}>{evento.titulo}</Text><Text className="text-white text-xs" style={{ fontFamily: "Poppins_400Regular" }}>{evento.local}</Text></View></View>
+            </View>
+          ))
+        ) : eventosQueterminamQuebrado.length > 0 ? (
+          eventosQueterminamQuebrado.map((evento, evIndex) => (
+            <View key={`${evento.id}-${evIndex}-${hora}`} className={`mb-2 h-[90px] w-full rounded-xl border flex-row justify-around items-center ${bgColor} ${borderColor}`}>
+              <View className="w-[20%] flex-row items-center gap-2"><Text className={`text-lg ${textColor}`} style={{ fontFamily: "Poppins_400Regular" }}>{hora}</Text></View>
+              <View className="w-[50%] flex-row items-center gap-2"><Text className={`text-xs ${textColor}`} style={{ fontFamily: "Poppins_400Regular" }}>Término</Text><View className="bg-white px-2 py-1 rounded-full"><Text className="text-green-500 text-xs font-bold">FIM</Text></View></View>
+            </View>
+          ))
+        ) : eventosPassando.length > 0 ? (
+          <View className={`mb-2 h-[90px] w-full rounded-xl border flex-row justify-around items-center ${bgColor} ${borderColor}`}>
+            <View className="w-[20%]"><Text className={`text-lg ${textColor}`} style={{ fontFamily: "Poppins_400Regular" }}>{hora}</Text></View>
+            <View className="w-[50%]"><Text className={`text-xs ${textColor}`} style={{ fontFamily: "Poppins_400Regular" }}>Em andamento</Text></View>
+          </View>
+        ) : eventosQueterminam.length > 0 ? (
+          <View className={`mb-2 h-[90px] w-full rounded-xl border flex-row justify-around items-center ${bgColor} ${borderColor}`}>
+            <View className="w-[20%]"><Text className={`text-lg ${textColor}`} style={{ fontFamily: "Poppins_400Regular" }}>{hora}</Text></View>
+            <View className="w-[50%] flex-row items-center gap-2"><Text className={`text-xs ${textColor}`} style={{ fontFamily: "Poppins_400Regular" }}>Término</Text><View className="bg-white px-2 py-1 rounded-full"><Text className="text-green-500 text-xs font-bold">FIM</Text></View></View>
+          </View>
+        ) : (
+          <TouchableOpacity activeOpacity={0.7} className="h-[90px] w-full rounded-xl border bg-white border-gray-200 flex-row justify-around items-center">
+            <View className="w-[20%]"><Text className="text-gray-800 text-lg" style={{ fontFamily: "Poppins_400Regular" }}>{hora}</Text></View>
+            <View className="w-[50%]"><Text className="text-gray-400 text-xs">Sem evento</Text></View>
+          </TouchableOpacity>
+        )}
+      </View>
+    </View>
+  );
+})}
         </BottomSheetScrollView>
       </BottomSheetModal>
     </View>
