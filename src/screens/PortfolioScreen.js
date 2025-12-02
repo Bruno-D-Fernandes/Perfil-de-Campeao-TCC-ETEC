@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Pressable,
@@ -19,39 +19,100 @@ import PortfolioActionModal from "../components/portfolioComponents/PortfolioAct
 // Importação necessária para vídeos
 import { Video } from "expo-av";
 
-// Função auxiliar para verificar se a URI é de um vídeo
-const isVideo = (uri) => {
-  if (!uri) return false;
-  const lowerCaseUri = uri.toLowerCase();
+// Função auxiliar para verificar se o caminho é de um vídeo
+const isVideo = (path) => {
+  if (!path) return false;
+  const lower = path.toLowerCase();
   return (
-    lowerCaseUri.endsWith(".mp4") ||
-    lowerCaseUri.endsWith(".mov") ||
-    lowerCaseUri.endsWith(".avi") ||
-    lowerCaseUri.endsWith(".webm")
+    lower.endsWith(".mp4") ||
+    lower.endsWith(".mov") ||
+    lower.endsWith(".avi") ||
+    lower.endsWith(".webm")
   );
 };
 
 // Componente para renderizar a mídia (Imagem ou Vídeo)
 const PostMedia = ({ mediaPath }) => {
+  if (!mediaPath) return null;
   const uri = `${API_URL}/storage/${mediaPath}`;
 
-  if (isVideo(uri)) {
+  // Vídeo com controle manual e cleanup
+  if (isVideo(mediaPath)) {
+    const videoRef = useRef(null);
+    const [playing, setPlaying] = useState(false);
+    const [statusErr, setStatusErr] = useState(null);
+
+    useEffect(() => {
+      return () => {
+        // cleanup: pause/unload video when component unmounts
+        (async () => {
+          try {
+            if (videoRef.current?.pauseAsync) await videoRef.current.pauseAsync();
+            if (videoRef.current?.unloadAsync) await videoRef.current.unloadAsync();
+          } catch (e) {}
+        })();
+      };
+    }, []);
+
     return (
-      <Video
-        source={{ uri }}
-        style={[
-          tw`w-full h-48 rounded-2xl mb-3`,
-          { backgroundColor: "#000" }, // Adiciona um fundo preto para o vídeo
-        ]}
-        useNativeControls
-        resizeMode="cover"
-        isLooping={false}
-      />
+      <View key={uri} style={{ position: "relative" }}>
+        <Video
+          ref={videoRef}
+          source={{ uri }}
+          style={[tw`w-full h-48 rounded-2xl mb-3`, { backgroundColor: "#000" }]}
+          useNativeControls={false}
+          resizeMode="cover"
+          shouldPlay={playing}
+          isLooping={false}
+          onPlaybackStatusUpdate={(status) => {
+            if (status.isLoaded === false && status.error) {
+              console.warn("Video load error:", status.error);
+              setStatusErr(status.error);
+            }
+          }}
+        />
+
+        <Pressable
+          onPress={async () => {
+            try {
+              if (playing) {
+                if (videoRef.current?.pauseAsync) await videoRef.current.pauseAsync();
+                setPlaying(false);
+              } else {
+                if (videoRef.current?.playAsync) await videoRef.current.playAsync();
+                setPlaying(true);
+              }
+            } catch (err) {
+              console.error("Video control error", err);
+            }
+          }}
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <View style={{ backgroundColor: "rgba(0,0,0,0.35)", width: 56, height: 56, borderRadius: 28, alignItems: "center", justifyContent: "center" }}>
+            <Text style={{ color: "#fff", fontSize: 22 }}>{playing ? "❚❚" : "▶"}</Text>
+          </View>
+        </Pressable>
+
+        {statusErr && (
+          <Text style={{ color: "red", marginTop: 6, textAlign: "center" }}>
+            Erro ao carregar vídeo
+          </Text>
+        )}
+      </View>
     );
   }
 
   return (
     <Image
+      key={uri}
       source={{ uri }}
       style={[tw`w-full h-48 rounded-2xl mb-3`, { tintColor: undefined }]}
       resizeMode="cover"
