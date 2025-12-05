@@ -73,7 +73,6 @@ export default function OportunidadesScreen() {
     temPerfil();
   }, []);
 
-  // Carrega oportunidades quando volta para aba de Oportunidades
   useEffect(() => {
     const fetchOportunidadesAba = async () => {
       try {
@@ -81,11 +80,10 @@ export default function OportunidadesScreen() {
         setData([]);
         setPage(1);
         setHasMore(true);
-        
+
         const response = await usuarioService.oportunidadeData(1, perPage);
         const newItems = response?.data?.data || response?.data || [];
-      
-        
+
         setData(newItems);
         setHasMore(newItems.length >= perPage);
       } catch (error) {
@@ -101,9 +99,8 @@ export default function OportunidadesScreen() {
   }, [inscritoAba]);
 
   const fetchOportunidades = async () => {
-    // Não carrega mais se estamos na aba de inscrições
     if (inscritoAba) return;
-    
+
     if (loading || !hasMore || searchText.length > 0 || appliedFilters) return;
 
     setLoading(true);
@@ -133,7 +130,6 @@ export default function OportunidadesScreen() {
   const applyFilters = async () => {
     const filters = {};
     if (filterEsporte) filters.esporte = filterEsporte;
-    if (filterEstado) filters.estado = filterEstado;
     if (filterIdadeMin) filters.idadeMinima = Number(filterIdadeMin);
     if (filterIdadeMax) filters.idadeMaxima = Number(filterIdadeMax);
 
@@ -156,7 +152,6 @@ export default function OportunidadesScreen() {
 
   const clearFilters = async () => {
     setFilterEsporte("");
-    setFilterEstado("");
     setFilterIdadeMin("");
     setFilterIdadeMax("");
     setAppliedFilters(null);
@@ -182,7 +177,6 @@ export default function OportunidadesScreen() {
         setData([]);
         const response = await inscricoesOportunidades();
         const inscricoes = response?.data?.data || response?.data || [];
-
 
         const transformedData = inscricoes.map((item) => {
           if (item.oportunidade) {
@@ -291,7 +285,17 @@ export default function OportunidadesScreen() {
       {/* HEADER */}
       <View className="w-full pt-6 pb-4 flex-none">
         <View className="w-full flex-row items-center justify-end mb-8">
-                 <Image source={require("../../assets/logoNome.png")} style={{width:150, height:70, tintColor:'#36A958', position:"absolute", top:-10, left:-25,}}/>
+          <Image
+            source={require("../../assets/logoNome.png")}
+            style={{
+              width: 150,
+              height: 70,
+              tintColor: "#36A958",
+              position: "absolute",
+              top: -10,
+              left: -25,
+            }}
+          />
 
           <View className="w-[30%] h-[45px] mr-5 flex-row items-center justify-center gap-4">
             <Pressable
@@ -409,21 +413,6 @@ export default function OportunidadesScreen() {
                 value={filterEsporte}
                 onChangeText={setFilterEsporte}
               />
-
-              <View className="mt-4">
-                <Text
-                  className="text-gray-600 mt-2 text-[16px] font-semibold "
-                  style={{ fontFamily: "Poppins_500Medium" }}
-                >
-                  Estado / Cidade
-                </Text>
-                <TextInput
-                  className="border border-[#36A958] text-[18px] outline-none p-2 rounded-[10px] mt-"
-                  placeholder="Ex: SP"
-                  value={filterEstado}
-                  onChangeText={setFilterEstado}
-                />
-              </View>
 
               <View className="flex-row gap-2 mt-4 mb-10">
                 <View className="flex-1">
