@@ -433,7 +433,7 @@ export default function ProfileScreen() {
               <Picker
                 style={[
                   { fontFamily: "Poppins_500Medium" },
-                  tw`w-[90%] h-full text-[#2E7844]`,
+                  tw`w-[90%] h-full text-[#2E7844] bg-[#61D48300]`,
                 ]}
                 selectedValue={selectedEsporte}
                 onValueChange={(value) => setSelectedEsporte(value)}
